@@ -1,0 +1,11 @@
+$Id$
+
+FIXME: More descriptive installation instructions might be helpful ;)
+
+
+./configure
+make
+
+Run from within this directory for now (use ./gautoclick et cetera) or install
+the binaries in some bin directory yourself.
+
