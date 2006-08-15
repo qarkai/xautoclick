@@ -339,7 +339,7 @@ qtautoclick::qtautoclick( QWidget* parent, const char* name, WFlags fl )
     textLabel1->setGeometry( QRect( 5, 10, 80, 20 ) );
 
     languageChange();
-    resize(QSize(144, 160).expandedTo(minimumSizeHint()));
+    resize(QSize(144, 170).expandedTo(minimumSizeHint()));
 
     connect(tapButton, SIGNAL(clicked()), this, SLOT(tapButton_clicked()));
     connect(stopButton, SIGNAL(clicked()), this, SLOT(stopButton_clicked()));
