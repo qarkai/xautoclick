@@ -3,6 +3,13 @@ ChangeLog
 
 $Id$
 
+v0.90
+    * bump version number to 0.90 for no apparent reason ;)
+    * migration to subversion
+    * increased upper limits on values
+    * fixed visibility bug in qt3 version (lower half of buttons were
+      sometimes not visible)
+
 v0.18	Finished manpage, webpage, small fixes to configure
 v0.17	Fixed a few bugs, added command line parser
 v0.16	Added command line version and preliminary manual page
