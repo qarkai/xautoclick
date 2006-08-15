@@ -3,8 +3,7 @@ ChangeLog
 
 $Id$
 
-v0.90
-    * bump version number to 0.90 for no apparent reason ;)
+v0.19
     * migration to subversion
     * increased upper limits on values
     * fixed visibility bug in qt3 version (lower half of buttons were
