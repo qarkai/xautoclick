@@ -679,7 +679,7 @@ fi
 
 
 else
-    echo "X11 found, but is does not seem to have the XTest extension"
+    echo "X11 found, but it does not seem to have the XTest extension"
     echo "No X11 dependant applications will be build"
 fi
 
