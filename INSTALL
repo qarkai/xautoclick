@@ -1,11 +1,11 @@
 $Id$
 
-FIXME: More descriptive installation instructions might be helpful ;)
+Be sure you have the proper development packages for your distribution
+installed (i.e. something like xserver-xorg-dev, gtk2-dev, et cetera).
 
+After that, run:
 
 ./configure
 make
-
-Run from within this directory for now (use ./gautoclick et cetera) or install
-the binaries in some bin directory yourself.
+sudo make install
 
