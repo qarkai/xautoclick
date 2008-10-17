@@ -757,7 +757,11 @@ HAVE_QT3=$_qt3
 HAVE_COMMANDLINE=$_commandline
 EOF
 
-cat << __EOF__
+# Clean up
+
+rm -f "$TMPC" "$TMPCXX" "$TMPO"
+
+cat << EOF
 done.
 
 aAutoClick    : $_ascii
@@ -768,12 +772,17 @@ qtAutoClick   : $_qt3
 
 Installation to $_prefix
 
-__EOF__
+EOF
+
+if test "$_ascii$_commandline$_gtk1$_gtk2$_qt3" == "nonononono" ; then
+    cat << EOF
+None of the xautoclick applications can be build. You need to install the
+development packages of X11, GTK+ and/or QT. Check the documentation of
+your distribution for details.
+
+EOF
+    exit 1
+fi
 
 echo "Now type '$_make' to build."
 echo
-
-# Clean up
-
-rm -f "$TMPC" "$TMPCXX" "$TMPO"
-
