@@ -503,7 +503,7 @@ echores "$_xtest"
 
 
 ######################
-# BIG if X!! block !!!
+# BIG if X11 block !!!
 ######################
 
 if test "$_x11" = "yes" ; then
