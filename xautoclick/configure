@@ -757,19 +757,19 @@ HAVE_QT3=$_qt3
 HAVE_COMMANDLINE=$_commandline
 EOF
 
-echo "done."
+cat << __EOF__
+done.
 
-echo
-echo "aAutoClick    : $_ascii"
-echo "cAutoClick    : $_commandline"
-echo "gAutoClick    : $_gtk1"
-echo "gAutoClick2   : $_gtk2"
-echo "qtAutoClick   : $_qt3"
+aAutoClick    : $_ascii
+cAutoClick    : $_commandline
+gAutoClick    : $_gtk1
+gAutoClick2   : $_gtk2
+qtAutoClick   : $_qt3
 
-echo
-echo "Installation to $_prefix"
+Installation to $_prefix
 
-echo
+__EOF__
+
 echo "Now type '$_make' to build."
 echo
 
