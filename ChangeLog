@@ -3,6 +3,9 @@ ChangeLog
 
 $Id$
 
+v0.20
+    * various documentation and typo fixes
+
 v0.19
     * migration to subversion
     * increased upper limits on values
