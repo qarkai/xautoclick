@@ -774,7 +774,7 @@ Installation to $_prefix
 
 EOF
 
-if test "$_ascii$_commandline$_gtk1$_gtk2$_qt3" == "nonononono" ; then
+if test "$_ascii$_commandline$_gtk1$_gtk2$_qt3" = "nonononono" ; then
     cat << EOF
 None of the xautoclick applications can be build. You need to install the
 development packages of X11, GTK+ and/or QT. Check the documentation of
