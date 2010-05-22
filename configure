@@ -571,7 +571,6 @@ fi
 
 
 
-# GTK2 checks
 echocheck "pkg-config"
 if test -z "$_pkg_config" ; then
     if ( pkg-config --version ) >/dev/null 2>&1 ; then
@@ -585,6 +584,8 @@ echores "$_pkg_config"
 
 
 if test "$_pkg_config" != "no" ; then
+
+    # GTK2 checks
     echocheck "GTK+ 2.0"
     
     if $_pkg_config gtk+-2.0 --exists 1>/dev/null 2>>$TMPLOG ; then
@@ -609,71 +610,26 @@ if test "$_pkg_config" != "no" ; then
         echores "no"
     fi
 
+    # Qt3 checks
+    echocheck "Qt 3"
+
+    if $_pkg_config qt-mt --exists 1>/dev/null 2>>$TMPLOG ; then
+        echores "yes"
+        echocheck "Qt 3 cflags"
+        _inc_qt3=`$_pkg_config qt-mt --cflags 2>>$TMPLOG`
+        echores "$_inc_qt3"
+        echocheck "Qt 3 libs"
+        _ld_qt3=`$_pkg_config qt-mt --libs 2>>$TMPLOG`
+        echores "$_ld_qt3"
+
+        _qt3=yes
+    else
+        $_pkg_config qt-mt --cflags >> $TMPLOG 2>&1
+        echores "no"
+    fi
 else
     echores "Not building gAutoClick2"
-fi
-
-
-
-# Qt checks here
-if test "$_cxx" != "" ; then
-    _qt3=no
-    echocheck "Qt 3.x header files"
-    cat > $TMPCXX <<EOF
-#include <qglobal.h>
-#include <stdio.h>
-int main(void) { (void) printf("%i\n", QT_VERSION); }
-EOF
-    _qt_paths="$QTDIR/include /usr/qt3/include /usr/share/qt3/include /usr/include/qt3 /usr/lib/qt3/include"
-    _inc_qt3=""
-    for i in $_qt_paths ; do
-        if test -d "$i" && cxx_check "-I$i" ; then
-            _inc_qt3="-I$i"
-            break
-        fi
-    done
-    if test -z "$_inc_qt3" ; then
-        echores "not found"
-    else
-        echores "$_inc_qt3"
-    fi
-fi
-
-
-
-if test "$_cxx" != "" && test "$_inc_qt3" != ""; then
-    echocheck "Qt 3.x libraries"
-    cat > $TMPCXX <<EOF
-#include <qapplication.h>
-int main(int argc, char **argv) {
-QApplication *a=new QApplication(argc, argv);
-return 0;
-}
-EOF
-    # faster if guess is used
-    _qt_guess=`echo "$_inc_qt3" | sed -e s/include\$/lib/g`
-    _qt_paths="$_qt_guess $QTDIR/lib /usr/qt3/lib /usr/share/qt3/lib /usr/lib/qt3 /usr/lib/qt3/lib"
-    _ld_qt3=
-    # on my (broken?) system it is faster to switch the inner and outer loop
-    # because I only have libqt-mt, but I think this is more generic
-    for _llib in "qt" "qt-mt" ; do
-        for i in $_qt_paths ; do
-            # faster (still slow) with test -e
-            if test -d "$i" && test -e "$i/lib$_llib.so" && cxx_check "$_inc_qt3" "-L$i" "-l$_llib" ; then
-                _ld_qt3="-L$i -l$_llib"
-                break
-            fi
-        done
-        if test -n "$_ld_qt3" ; then
-            break;
-        fi
-    done
-    if test -z "$_ld_qt3" ; then
-        echores "not found"
-    else
-        echores "$_ld_qt3"
-        _qt3=yes
-    fi
+    echores "Not building qtAutoClick"
 fi
 
 
