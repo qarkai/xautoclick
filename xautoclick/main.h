@@ -31,13 +31,13 @@
 /* ------------------------------------------------------------------------- */
 
 typedef enum button_e {
-    BUTTON_TAP,
+    BUTTON_TAP = 0,
     BUTTON_STOP,
     BUTTON_START
 } button_t;
 
 typedef enum spin_e {
-    SPIN_PREDELAY,
+    SPIN_PREDELAY = 0,
     SPIN_INTERVAL,
     SPIN_RANDOM,
     SPIN_NUMBER
