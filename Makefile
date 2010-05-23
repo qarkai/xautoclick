@@ -41,6 +41,10 @@ PRGqt3		= qtautoclick
 OBJSqt3		= $(OBJScommon) \
 			  guiqt3.o \
 
+PRGqt4		= qt4autoclick
+OBJSqt4		= $(OBJScommon) \
+			  guiqt4.o \
+
 PRGcmdl		= cautoclick
 OBJScmdl	= $(OBJScommon) \
 			  guicommandline.o \
@@ -65,6 +69,11 @@ INCLUDES	+= $(INCLUDES_QT3)
 LDFLAGS		+= $(LDFLAGS_QT3)
 endif
 
+ifeq ($(__BUILD_QT4__),yes)
+INCLUDES	+= $(INCLUDES_QT4) -g3
+LDFLAGS		+= $(LDFLAGS_QT4)
+endif
+
 ifeq ($(__BUILD_COMMANDLINE__),yes)
 INCLUDES	+= $(INCLUDES_COMMANDLINE)
 LDFLAGS		+= $(LDFLAGS_COMMANDLINE)
@@ -84,6 +93,9 @@ endif
 ifeq ($(HAVE_QT3),yes)
 	__BUILD_QT3__=yes $(MAKE) -C . $(PRGqt3)
 endif
+ifeq ($(HAVE_QT4),yes)
+	__BUILD_QT4__=yes $(MAKE) -C . $(PRGqt4)
+endif
 ifeq ($(HAVE_COMMANDLINE),yes)
 	__BUILD_COMMANDLINE__=yes $(MAKE) -C . $(PRGcmdl)
 endif
@@ -99,6 +111,9 @@ $(PRGascii):	$(OBJSascii)
 
 $(PRGqt3):		$(OBJSqt3)
 	$(LD) -o $@ $(OBJSqt3) $(LDFLAGS)
+
+$(PRGqt4):		$(OBJSqt4)
+	$(LD) -o $@ $(OBJSqt4) $(LDFLAGS)
 
 $(PRGcmdl):		$(OBJScmdl)
 	$(LD) -o $@ $(OBJScmdl) $(LDFLAGS)
@@ -172,6 +187,9 @@ endif
 ifeq ($(HAVE_QT3),yes)
 	cp $(PRGqt3) $(PREFIX)/bin
 endif
+ifeq ($(HAVE_QT4),yes)
+	cp $(PRGqt4) $(PREFIX)/bin
+endif
 ifeq ($(HAVE_ASCII),yes)
 	cp $(PRGascii) $(PREFIX)/bin
 endif
@@ -186,6 +204,7 @@ uninstall:
 	rm -f $(PREFIX)/bin/$(PRGgtk1)
 	rm -f $(PREFIX)/bin/$(PRGgtk2)
 	rm -f $(PREFIX)/bin/$(PRGqt3)
+	rm -f $(PREFIX)/bin/$(PRGqt4)
 	rm -f $(PREFIX)/bin/$(PRGascii)
 	rm -f $(PREFIX)/bin/$(PRGcmdl)
 	rm -f $(PREFIX)/man/man1/xautoclick.1

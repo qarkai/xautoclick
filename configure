@@ -514,7 +514,7 @@ _ascii=yes
 # same for command line version
 _commandline=yes
 
-# GTK1 checks
+# GTK1
 echocheck "gtk-config"
 if test -z "$_gtk_config" ; then
     if ( gtk-config --version ) >/dev/null 2>&1 ; then
@@ -585,7 +585,6 @@ echores "$_pkg_config"
 
 if test "$_pkg_config" != "no" ; then
 
-    # GTK2 checks
     echocheck "GTK+ 2.0"
     
     if $_pkg_config gtk+-2.0 --exists 1>/dev/null 2>>$TMPLOG ; then
@@ -610,7 +609,6 @@ if test "$_pkg_config" != "no" ; then
         echores "no"
     fi
 
-    # Qt3 checks
     echocheck "Qt 3"
 
     if $_pkg_config qt-mt --exists 1>/dev/null 2>>$TMPLOG ; then
@@ -627,9 +625,27 @@ if test "$_pkg_config" != "no" ; then
         $_pkg_config qt-mt --cflags >> $TMPLOG 2>&1
         echores "no"
     fi
+
+    echocheck "Qt 4"
+
+    if $_pkg_config QtCore QtGui --exists 1>/dev/null 2>>$TMPLOG ; then
+        echores "yes"
+        echocheck "Qt 4 cflags"
+        _inc_qt4=`$_pkg_config QtCore QtGui --cflags 2>>$TMPLOG`
+        echores "$_inc_qt4"
+        echocheck "Qt 4 libs"
+        _ld_qt4=`$_pkg_config QtCore QtGui --libs 2>>$TMPLOG`
+        echores "$_ld_qt4"
+
+        _qt4=yes
+    else
+        $_pkg_config QtCore QtGui --cflags >> $TMPLOG 2>&1
+        echores "no"
+    fi
 else
     echores "Not building gAutoClick2"
     echores "Not building qtAutoClick"
+    echores "Not building qt4AutoClick"
 fi
 
 
@@ -692,6 +708,7 @@ INCLUDES_COMMANDLINE=$_inc_x11
 INCLUDES_GTK1=$_inc_gtk1 $_inc_glib $_inc_x11
 INCLUDES_GTK2=$_inc_gtk2 $_inc_glib $_inc_x11
 INCLUDES_QT3=$_inc_qt3 $_inc_x11
+INCLUDES_QT4=$_inc_qt4 $_inc_x11
 CCFORDEPS=$_ccfordeps
 CXXFORDEPS=$_cxxfordeps
 LD=$_cc
@@ -701,6 +718,7 @@ LDFLAGS_COMMANDLINE=$_ld_x11
 LDFLAGS_GTK1=$_ld_gtk1 $_ld_glib $_ld_x11
 LDFLAGS_GTK2=$_ld_gtk2 $_ld_glib $_ld_x11
 LDFLAGS_QT3=$_ld_qt3 $_ld_x11
+LDFLAGS_QT4=$_ld_qt4 $_ld_x11
 DEBUG=$_debug
 WARNINGS=$_warnings
 MAKE=$_make
@@ -710,6 +728,7 @@ HAVE_ASCII=$_ascii
 HAVE_GTK1=$_gtk1
 HAVE_GTK2=$_gtk2
 HAVE_QT3=$_qt3
+HAVE_QT4=$_qt4
 HAVE_COMMANDLINE=$_commandline
 EOF
 
@@ -725,12 +744,13 @@ cAutoClick    : $_commandline
 gAutoClick    : $_gtk1
 gAutoClick2   : $_gtk2
 qtAutoClick   : $_qt3
+qt4AutoClick  : $_qt4
 
 Installation to $_prefix
 
 EOF
 
-if test "$_ascii$_commandline$_gtk1$_gtk2$_qt3" = "nonononono" ; then
+if test "$_ascii$_commandline$_gtk1$_gtk2$_qt3$_qt4" = "nononononono" ; then
     cat << EOF
 None of the xautoclick applications can be build. You need to install the
 development packages of X11, GTK+ and/or QT. Check the documentation of
