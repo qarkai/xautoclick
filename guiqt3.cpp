@@ -151,29 +151,25 @@ void click_mouse_button(void) {
 
 /* ------------------------------------------------------------------------- */
 
-void qtautoclick::tapButton_clicked()
-{
+void qtautoclick::tapButton_clicked() {
     common_tap_button();
 }
 
 /* ------------------------------------------------------------------------- */
 
-void qtautoclick::startButton_clicked()
-{
+void qtautoclick::startButton_clicked() {
     common_start_button();
 }
 
 /* ------------------------------------------------------------------------- */
 
-void qtautoclick::stopButton_clicked()
-{
+void qtautoclick::stopButton_clicked() {
     common_stop_button();
 }
 
 /* ------------------------------------------------------------------------- */
 
-const char *qtautoclick::className() const
-{
+const char *qtautoclick::className() const {
     return "qtautoclick";
 }
 
@@ -185,20 +181,18 @@ static QMetaObjectCleanUp cleanUp_qtautoclick( "qtautoclick", &qtautoclick::stat
 /* ------------------------------------------------------------------------- */
 
 #ifndef QT_NO_TRANSLATION
-QString qtautoclick::tr( const char *s, const char *c )
-{
+QString qtautoclick::tr( const char *s, const char *c ) {
     if ( qApp )
-	return qApp->translate( "qtautoclick", s, c, QApplication::DefaultCodec );
+        return qApp->translate( "qtautoclick", s, c, QApplication::DefaultCodec );
     else
-	return QString::fromLatin1( s );
+        return QString::fromLatin1( s );
 }
 #ifndef QT_NO_TRANSLATION_UTF8
-QString qtautoclick::trUtf8( const char *s, const char *c )
-{
+QString qtautoclick::trUtf8( const char *s, const char *c ) {
     if ( qApp )
-	return qApp->translate( "qtautoclick", s, c, QApplication::UnicodeUTF8 );
+        return qApp->translate( "qtautoclick", s, c, QApplication::UnicodeUTF8 );
     else
-	return QString::fromUtf8( s );
+        return QString::fromUtf8( s );
 }
 #endif // QT_NO_TRANSLATION_UTF8
 
@@ -206,10 +200,9 @@ QString qtautoclick::trUtf8( const char *s, const char *c )
 
 /* ------------------------------------------------------------------------- */
 
-QMetaObject* qtautoclick::staticMetaObject()
-{
+QMetaObject* qtautoclick::staticMetaObject() {
     if ( metaObj )
-	return metaObj;
+        return metaObj;
     QMetaObject* parentObject = QMainWindow::staticMetaObject();
     static const QUMethod slot_0 = {"tapButton_clicked", 0, 0 };
     static const QUMethod slot_1 = {"startButton_clicked", 0, 0 };
@@ -217,38 +210,36 @@ QMetaObject* qtautoclick::staticMetaObject()
     static const QUMethod slot_3 = {"languageChange", 0, 0 };
     static const QUMethod slot_4 = {"timerDone", 0, 0 };
     static const QMetaData slot_tbl[] = {
-	{ "tapButton_clicked()", &slot_0, QMetaData::Public },
-	{ "startButton_clicked()", &slot_1, QMetaData::Public },
-	{ "stopButton_clicked()", &slot_2, QMetaData::Public },
-	{ "languageChange()", &slot_3, QMetaData::Protected },
-	{ "timerDone()", &slot_4, QMetaData::Public }
+        { "tapButton_clicked()", &slot_0, QMetaData::Public },
+        { "startButton_clicked()", &slot_1, QMetaData::Public },
+        { "stopButton_clicked()", &slot_2, QMetaData::Public },
+        { "languageChange()", &slot_3, QMetaData::Protected },
+        { "timerDone()", &slot_4, QMetaData::Public }
     };
     metaObj = QMetaObject::new_metaobject(
-	"qtautoclick", parentObject,
-	slot_tbl, 5,
-	0, 0,
+        "qtautoclick", parentObject,
+        slot_tbl, 5,
+        0, 0,
 #ifndef QT_NO_PROPERTIES
-	0, 0,
-	0, 0,
+        0, 0,
+        0, 0,
 #endif // QT_NO_PROPERTIES
-	0, 0 );
+        0, 0 );
     cleanUp_qtautoclick.setMetaObject( metaObj );
     return metaObj;
 }
 
 /* ------------------------------------------------------------------------- */
 
-void* qtautoclick::qt_cast( const char* clname )
-{
+void* qtautoclick::qt_cast( const char* clname ) {
     if ( !qstrcmp( clname, "qtautoclick" ) )
-	return this;
+        return this;
     return QMainWindow::qt_cast( clname );
 }
 
 /* ------------------------------------------------------------------------- */
 
-bool qtautoclick::qt_invoke( int _id, QUObject* _o )
-{
+bool qtautoclick::qt_invoke( int _id, QUObject* _o ) {
     switch ( _id - staticMetaObject()->slotOffset() ) {
     case 0: tapButton_clicked(); break;
     case 1: startButton_clicked(); break;
@@ -256,23 +247,21 @@ bool qtautoclick::qt_invoke( int _id, QUObject* _o )
     case 3: languageChange(); break;
     case 4: timerDone(); break;
     default:
-	return QMainWindow::qt_invoke( _id, _o );
+        return QMainWindow::qt_invoke( _id, _o );
     }
     return TRUE;
 }
 
 /* ------------------------------------------------------------------------- */
 
-bool qtautoclick::qt_emit( int _id, QUObject* _o )
-{
+bool qtautoclick::qt_emit( int _id, QUObject* _o ) {
     return QMainWindow::qt_emit(_id,_o);
 }
 
 /* ------------------------------------------------------------------------- */
 
 #ifndef QT_NO_PROPERTIES
-bool qtautoclick::qt_property( int id, int f, QVariant* v)
-{
+bool qtautoclick::qt_property( int id, int f, QVariant* v) {
     return QMainWindow::qt_property( id, f, v);
 }
 
@@ -283,8 +272,7 @@ bool qtautoclick::qt_static_property( QObject* , int , int , QVariant* ){ return
 /* ------------------------------------------------------------------------- */
 
 qtautoclick::qtautoclick( QWidget* parent, const char* name, WFlags fl )
-    : QMainWindow( parent, name, fl )
-{
+    : QMainWindow( parent, name, fl ) {
     (void)statusBar();
     if (!name) setName( "qtautoclick" );
     setEnabled(TRUE);
@@ -348,15 +336,13 @@ qtautoclick::qtautoclick( QWidget* parent, const char* name, WFlags fl )
 
 /* ------------------------------------------------------------------------- */
 
-qtautoclick::~qtautoclick()
-{
+qtautoclick::~qtautoclick() {
     // Qt deletes all childs
 }
 
 /* ------------------------------------------------------------------------- */
 
-void qtautoclick::languageChange()
-{
+void qtautoclick::languageChange() {
     setCaption( tr( "qtAutoClick" ) );
     setIconText( tr( "qtautoclick" ) );
     textLabel3->setText( tr( "Random +/-" ) );
@@ -371,7 +357,6 @@ void qtautoclick::languageChange()
 /* ------------------------------------------------------------------------- */
 
 int init_gui(int argc, char **argv) {
-
     display = XOpenDisplay(NULL);
 
     if (!display) {
@@ -389,7 +374,6 @@ int init_gui(int argc, char **argv) {
 /* ------------------------------------------------------------------------- */
 
 void close_gui(void) {
-
     XCloseDisplay(display);
 }
 
