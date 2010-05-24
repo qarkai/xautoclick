@@ -44,6 +44,7 @@ OBJSqt3		= $(OBJScommon) \
 PRGqt4		= qt4autoclick
 OBJSqt4		= $(OBJScommon) \
 			  guiqt4.o \
+			  guiqt4-moc.o \
 
 PRGcmdl		= cautoclick
 OBJScmdl	= $(OBJScommon) \
@@ -121,6 +122,9 @@ $(PRGcmdl):		$(OBJScmdl)
 guigtk2.c:
 	ln -s guigtk1.c guigtk2.c
 
+guiqt4-moc.cpp:	guiqt4.h
+	moc-qt4 -oguiqt4-moc.cpp guiqt4.h
+
 #strip:	$(PRG)
 #	strip $(PRG)
 
@@ -166,6 +170,7 @@ SILENCE = @
 .PHONY:	clean
 clean:
 	rm -f *.o $(PRGgtk1) $(PRGgtk2) $(PRGqt3) $(PRGascii) $(PRGcmdl) guigtk2.c
+	rm -f guiqt4-moc.cpp
 	rm -rf .deps
 
 .PHONY:	distclean

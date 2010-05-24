@@ -19,13 +19,7 @@
  *
  */
 
-#include <QApplication>
-#include <QWidget>
-#include <QPushButton>
-#include <QSpinBox>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
+#include "guiqt4.h"
 
 extern "C" {
 #include "main.h"
@@ -34,13 +28,6 @@ extern "C" {
 
 #include <X11/Xlib.h>
 #include <X11/extensions/XTest.h>
-
-class MyWidget : public QWidget {
-    public:
-        MyWidget(QWidget *parent = 0);
-        QPushButton *buttons[3];
-        QSpinBox *spins[4];
-};
 
 static Display *display;
 static QApplication *app;
@@ -65,6 +52,18 @@ void set_spin_value(spin_t spin, int value) {
 
 void set_button_sensitive(button_t button, int state) {
     mywidget->buttons[button]->setEnabled(state);
+}
+
+void MyWidget::tap(void) {
+    common_tap_button();
+}
+
+void MyWidget::stop(void) {
+    common_stop_button();
+}
+
+void MyWidget::start(void) {
+    common_start_button();
 }
 
 MyWidget::MyWidget(QWidget *parent) : QWidget(parent) {
@@ -97,7 +96,10 @@ MyWidget::MyWidget(QWidget *parent) : QWidget(parent) {
     for (int c=0; c<3; c++)
         layout->addWidget(buttons[c] = new QPushButton(butnames[c]));
 
+    connect(buttons[0], SIGNAL(clicked()), this, SLOT(tap(void)));
+
     vbox->addLayout(layout);
+    setWindowTitle("Qt4AutoClick");
     setLayout(vbox);
 }
 
