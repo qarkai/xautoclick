@@ -170,7 +170,7 @@ SILENCE = @
 .PHONY:	clean
 clean:
 	rm -f *.o $(PRGgtk1) $(PRGgtk2) $(PRGqt3) $(PRGascii) $(PRGcmdl) guigtk2.c
-	rm -f guiqt4-moc.cpp
+	rm -f guiqt4-moc.cpp $(PRGqt4)
 	rm -rf .deps
 
 .PHONY:	distclean
