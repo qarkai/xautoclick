@@ -65,6 +65,15 @@ _qt3=no
 _inc_qt3=
 _ld_qt3=
 
+_qt4=no
+_inc_qt4=
+_ld_qt4=
+
+_fltk=no
+_inc_fltk=
+_ld_fltk=
+_fltk_config=
+
 _gtk2=no
 _pkg_config=
 _inc_gtk2=
@@ -648,6 +657,35 @@ fi
 
 
 
+echocheck "fltk-config"
+if test -z "$_fltk_config" ; then
+    if ( fltk-config --version ) >/dev/null 2>&1 ; then
+        _fltk_config="fltk-config"
+    else
+        _fltk_config="no"
+    fi
+fi
+echores "$_fltk_config"
+
+
+
+echocheck "FLTK"
+if test "$_fltk_config" != "no" ; then
+    echores "yes"
+    echocheck "FLTK cflags"
+    _inc_fltk=`$_fltk_config --cflags 2>>$TMPLOG`
+    echores "$_inc_fltk"
+    echocheck "FLTK libs"
+    _ld_fltk=`$_fltk_config --ldflags 2>>$TMPLOG`
+    echores "$_ld_fltk"
+    _fltk=yes
+else
+    echores "no"
+    echores "Not building fltkAutoClick"
+fi
+
+
+
 else
     echo "X11 found, but it does not seem to have the XTest extension"
     echo "No X11 dependant applications will be build"
@@ -707,6 +745,7 @@ INCLUDES_GTK1=$_inc_gtk1 $_inc_glib $_inc_x11
 INCLUDES_GTK2=$_inc_gtk2 $_inc_glib $_inc_x11
 INCLUDES_QT3=$_inc_qt3 $_inc_x11
 INCLUDES_QT4=$_inc_qt4 $_inc_x11
+INCLUDES_FLTK=$_inc_fltk $_inc_x11
 CCFORDEPS=$_ccfordeps
 CXXFORDEPS=$_cxxfordeps
 LD=$_cc
@@ -717,6 +756,7 @@ LDFLAGS_GTK1=$_ld_gtk1 $_ld_glib $_ld_x11
 LDFLAGS_GTK2=$_ld_gtk2 $_ld_glib $_ld_x11
 LDFLAGS_QT3=$_ld_qt3 $_ld_x11
 LDFLAGS_QT4=$_ld_qt4 $_ld_x11
+LDFLAGS_FLTK=$_ld_fltk $_ld_x11
 DEBUG=$_debug
 WARNINGS=$_warnings
 MAKE=$_make
@@ -727,6 +767,7 @@ HAVE_GTK1=$_gtk1
 HAVE_GTK2=$_gtk2
 HAVE_QT3=$_qt3
 HAVE_QT4=$_qt4
+HAVE_FLTK=$_fltk
 HAVE_COMMANDLINE=$_commandline
 EOF
 
@@ -743,8 +784,9 @@ gAutoClick    : $_gtk1
 gAutoClick2   : $_gtk2
 qtAutoClick   : $_qt3
 qt4AutoClick  : $_qt4
+fltkAutoClick : $_fltk
 
-Installation to $_prefix
+Installation prefix : $_prefix
 
 EOF
 
