@@ -1,9 +1,7 @@
-Core, ASCII, GTK1, GTK2, QT3, build system:
+Core, ASCII, GTK1, GTK2, QT3, QT4, FLTK, Command Line, build system:
 
-Ivo van Poorten <ivop@euronet.nl>
-
+Ivo van Poorten <ivop@euronet.nl> <ivop@free.fr>
 
 Patches:
 
 None yet
-
