@@ -1,9 +1,4 @@
-/* ------------------------------------------------------------------------- */
-
-/*
- * $Id$
- * 
- * xAutoClick
+/* xAutoClick
  *
  * Copyright (C) 2006 Ivo van Poorten
  *
@@ -23,13 +18,8 @@
  *
  */
 
-/* ------------------------------------------------------------------------- */
-
 #include "main.h"
-
 #include "osdep.h"
-
-/* ------------------------------------------------------------------------- */
 
 #ifndef _MSC_VER
 
@@ -50,6 +40,3 @@ unsigned int GetTimer(void) {
 #error "I suspended the MSVC port for now. Use cygwin to compile for Windows or send patches if you want."
 
 #endif
-
-/* ------------------------------------------------------------------------- */
-

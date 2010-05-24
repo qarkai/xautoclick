@@ -22,4 +22,3 @@ class MyWidget : public QWidget {
         void start(void);
         void timer_done(void);
 };
-

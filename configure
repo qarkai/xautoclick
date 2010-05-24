@@ -1,7 +1,5 @@
 #! /bin/sh
 #
-# $Id$
-# 
 # xAutoClick
 #
 # Copyright (C) 2006 Ivo van Poorten
@@ -22,7 +20,7 @@
 #
 
 #
-# Alternate configure
+# Alternative configure
 # Loosely based on MPlayer's configure
 #
 

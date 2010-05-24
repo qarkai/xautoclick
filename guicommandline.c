@@ -1,9 +1,4 @@
-/* ------------------------------------------------------------------------- */
-
-/*
- * $Id$
- * 
- * xAutoClick
+/* xAutoClick -- Command Line "GUI"
  *
  * Copyright (C) 2006 Ivo van Poorten
  *
@@ -23,8 +18,6 @@
  *
  */
 
-/* ------------------------------------------------------------------------- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,94 +27,48 @@
 #include "main.h"
 #include "osdep.h"
 
-/* ------------------------------------------------------------------------- */
-
 static Display *display;
-
-static int predelay, interval, randomfactor, numberofclicks;
-
-static int sleeptime;
-
-/* ------------------------------------------------------------------------- */
+static int predelay, interval, randomfactor, numberofclicks, sleeptime;
 
 void click_mouse_button(void) {
-
     XTestFakeButtonEvent(display, 1, True, CurrentTime);
     XTestFakeButtonEvent(display, 1, False, CurrentTime);
     XFlush(display);
 }
 
-/* ------------------------------------------------------------------------- */
-
 void set_alarm(int ms) {
     sleeptime = ms;
 }
 
-/* ------------------------------------------------------------------------- */
-
 int get_spin_value(spin_t spin) {
 
     switch(spin) {
-    case SPIN_PREDELAY:
-        return predelay;
-        break;
-    case SPIN_INTERVAL:
-        return interval;
-        break;
-    case SPIN_RANDOM:
-        return randomfactor;
-        break;
-    case SPIN_NUMBER:
-        return numberofclicks;
-        break;
+    case SPIN_PREDELAY:     return predelay;        break;
+    case SPIN_INTERVAL:     return interval;        break;
+    case SPIN_RANDOM:       return randomfactor;    break;
+    case SPIN_NUMBER:       return numberofclicks;  break;
     }
 
     return 0;
 }
 
-/* ------------------------------------------------------------------------- */
-
 void set_spin_value(spin_t spin, int value) {
 
     switch(spin) {
-    case SPIN_PREDELAY:
-        predelay = value;
-        break;
-    case SPIN_INTERVAL:
-        interval = value;
-        break;
-    case SPIN_RANDOM:
-        randomfactor = value;
-        break;
-    case SPIN_NUMBER:
-        numberofclicks = value;
-        break;
+    case SPIN_PREDELAY:     predelay       = value;     break;
+    case SPIN_INTERVAL:     interval       = value;     break;
+    case SPIN_RANDOM:       randomfactor   = value;     break;
+    case SPIN_NUMBER:       numberofclicks = value;     break;
     }
 }
-
-/* ------------------------------------------------------------------------- */
 
 void set_button_sensitive(button_t button, int state) {
-
-    switch(button) {
-    case BUTTON_TAP:
-        break;
-    case BUTTON_STOP:
-        break;
-    case BUTTON_START:
-        break;
-    }
 }
 
-/* ------------------------------------------------------------------------- */
-
 static void printhelp(char *myname) {
-
     printf("usage: %s [-h][-i value][-n value][-p value][-r value]\n", myname);
     exit(0);
 }
-
-/* ------------------------------------------------------------------------- */
 
 #define option_with_argument(v,m,c) \
             c++; \
@@ -134,17 +81,15 @@ static void printhelp(char *myname) {
 int init_gui(int argc, char **argv) {
     int c;
 
-    display = XOpenDisplay(NULL);
-
-    if (!display) {
+    if (!(display = XOpenDisplay(NULL))) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
     }
 
-    predelay = 2000;
-    interval = 1024;
-    randomfactor = 0;
-    numberofclicks = 32;
+    predelay        = 2000;
+    interval        = 1024;
+    randomfactor    = 0;
+    numberofclicks  = 32;
 
     /* parse command line */
 
@@ -177,14 +122,9 @@ int init_gui(int argc, char **argv) {
     return 1;
 }
 
-/* ------------------------------------------------------------------------- */
-
 void close_gui(void) {
-
     XCloseDisplay(display);
 }
-
-/* ------------------------------------------------------------------------- */
 
 void main_loop(void) {
 
@@ -198,6 +138,3 @@ void main_loop(void) {
 
     return;
 }
-
-/* ------------------------------------------------------------------------- */
-
