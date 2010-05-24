@@ -1,6 +1,7 @@
 ChangeLog
 =========
 
+v0.30
     * source code cleaned up
     * added Qt 4 GUI
     * added FLTK GUI
