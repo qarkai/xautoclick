@@ -3,6 +3,7 @@ ChangeLog
 
     * source code cleaned up
     * added Qt 4 GUI
+    * added FLTK GUI
 
 v0.20
     * various documentation and typo fixes
