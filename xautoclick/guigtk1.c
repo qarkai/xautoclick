@@ -1,9 +1,4 @@
-/* ------------------------------------------------------------------------- */
-
-/*
- * $Id$
- * 
- * xAutoClick
+/* xAutoClick -- GTK1 GUI
  *
  * Copyright (C) 2006 Ivo van Poorten
  *
@@ -23,8 +18,6 @@
  *
  */
 
-/* ------------------------------------------------------------------------- */
-
 #include <stdio.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/XTest.h>
@@ -32,39 +25,26 @@
 
 #include "main.h"
 
-/* ------------------------------------------------------------------------- */
-
 static Display *display;
 
 static GtkWidget *gAutoClick, *tap_button, *stop_button, *start_button;
 static GtkWidget *predelay_spin, *interval_spin, *random_spin;
 static GtkWidget *nrofclicks_spin;
 
-/* ------------------------------------------------------------------------- */
-
 void click_mouse_button(void) {
-
     XTestFakeButtonEvent(display, 1, True, CurrentTime);
     XTestFakeButtonEvent(display, 1, False, CurrentTime);
     XFlush(display);
 }
 
-/* ------------------------------------------------------------------------- */
-
 static gboolean myalarm(gpointer data) {
-
     common_alarm_callback();
-
     return FALSE;   /* call only once; FALSE destroys timer */
 }
-
-/* ------------------------------------------------------------------------- */
 
 void set_alarm(int ms) {
     g_timeout_add(ms, myalarm, NULL);
 }
-
-/* ------------------------------------------------------------------------- */
 
 int get_spin_value(spin_t spin) {
 
@@ -86,8 +66,6 @@ int get_spin_value(spin_t spin) {
     return 0;
 }
 
-/* ------------------------------------------------------------------------- */
-
 void set_spin_value(spin_t spin, int value) {
 
     switch(spin) {
@@ -104,8 +82,6 @@ void set_spin_value(spin_t spin, int value) {
     }
 }
 
-/* ------------------------------------------------------------------------- */
-
 void set_button_sensitive(button_t button, int state) {
 
     switch(button) {
@@ -121,34 +97,17 @@ void set_button_sensitive(button_t button, int state) {
     }
 }
 
-/* ------------------------------------------------------------------------- */
-
 static void on_tap_button_clicked(GtkButton *button, gpointer user_data) {
-
     common_tap_button();
-
-    return;
 }
-
-/* ------------------------------------------------------------------------- */
 
 static void on_stop_button_clicked(GtkButton *button, gpointer user_data) {
-
     common_stop_button();
-
-    return;
 }
-
-/* ------------------------------------------------------------------------- */
 
 static void on_start_button_clicked(GtkButton *button, gpointer user_data) {
-
     common_start_button();
-
-    return;
 }
-
-/* ------------------------------------------------------------------------- */
 
 static GtkWidget *create_gAutoClick(void) {
   GtkWidget *gAutoClick;
@@ -357,13 +316,9 @@ static GtkWidget *create_gAutoClick(void) {
   return gAutoClick;
 }
 
-/* ------------------------------------------------------------------------- */
-
 int init_gui(int argc, char **argv) {
 
-    display = XOpenDisplay(NULL);
-
-    if (!display) {
+    if (!(display = XOpenDisplay(NULL))) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
     }
@@ -377,21 +332,10 @@ int init_gui(int argc, char **argv) {
     return 1;
 }
 
-/* ------------------------------------------------------------------------- */
-
 void close_gui(void) {
-
     XCloseDisplay(display);
 }
 
-/* ------------------------------------------------------------------------- */
-
 void main_loop(void) {
-
     gtk_main();
-
-    return;
 }
-
-/* ------------------------------------------------------------------------- */
-

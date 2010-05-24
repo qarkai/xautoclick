@@ -1,9 +1,4 @@
-/* ------------------------------------------------------------------------- */
-
-/*
- * $Id$
- * 
- * xAutoClick
+/* xAutoClick -- Qt 3.x GUI
  *
  * Copyright (C) 2006 Ivo van Poorten
  *
@@ -22,8 +17,6 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-
-/* ------------------------------------------------------------------------- */
 
 extern "C" {
 #include "main.h"
@@ -55,13 +48,9 @@ extern "C" {
 //#error "(The moc has changed too much.)"
 //#endif
 
-/* ------------------------------------------------------------------------- */
-
 static Display *display;
 static qtautoclick *mainwindow;
 static QApplication *a;
-
-/* ------------------------------------------------------------------------- */
 
 void set_button_sensitive(button_t button, int state) {
 
@@ -78,56 +67,32 @@ void set_button_sensitive(button_t button, int state) {
     }
 }
 
-/* ------------------------------------------------------------------------- */
-
 void set_spin_value(spin_t spin, int value) {
 
     switch(spin) {
-    case SPIN_PREDELAY:
-        mainwindow->spinPredelay->setValue(value);
-        break;
-    case SPIN_INTERVAL:
-        mainwindow->spinInterval->setValue(value);
-        break;
-    case SPIN_RANDOM:
-        mainwindow->spinRandom->setValue(value);
-        break;
-    case SPIN_NUMBER:
-        mainwindow->spinNumber->setValue(value);
-        break;
+    case SPIN_PREDELAY:     mainwindow->spinPredelay->setValue(value);  break;
+    case SPIN_INTERVAL:     mainwindow->spinInterval->setValue(value);  break;
+    case SPIN_RANDOM:       mainwindow->spinRandom->setValue(value);    break;
+    case SPIN_NUMBER:       mainwindow->spinNumber->setValue(value);    break;
     }
 }
-
-/* ------------------------------------------------------------------------- */
 
 int get_spin_value(spin_t spin) {
 
     switch(spin) {
-    case SPIN_PREDELAY:
-        return mainwindow->spinPredelay->value();
-        break;
-    case SPIN_INTERVAL:
-        return mainwindow->spinInterval->value();
-        break;
-    case SPIN_RANDOM:
-        return mainwindow->spinRandom->value();
-        break;
-    case SPIN_NUMBER:
-        return mainwindow->spinNumber->value();
-        break;
+    case SPIN_PREDELAY:     return mainwindow->spinPredelay->value();   break;
+    case SPIN_INTERVAL:     return mainwindow->spinInterval->value();   break;
+    case SPIN_RANDOM:       return mainwindow->spinRandom->value();     break;
+    case SPIN_NUMBER:       return mainwindow->spinNumber->value();     break;
     }
 
     return 0;
 }
 
-/* ------------------------------------------------------------------------- */
-
 void qtautoclick::timerDone(void) {
 
     common_alarm_callback();
 }
-
-/* ------------------------------------------------------------------------- */
 
 void set_alarm(int ms) {
     static QTimer *timer = NULL;
@@ -140,45 +105,30 @@ void set_alarm(int ms) {
     timer->start(ms, TRUE);
 }
 
-/* ------------------------------------------------------------------------- */
-
 void click_mouse_button(void) {
-
     XTestFakeButtonEvent(display, 1, True, CurrentTime);
     XTestFakeButtonEvent(display, 1, False, CurrentTime);
     XFlush(display);
 }
 
-/* ------------------------------------------------------------------------- */
-
 void qtautoclick::tapButton_clicked() {
     common_tap_button();
 }
-
-/* ------------------------------------------------------------------------- */
 
 void qtautoclick::startButton_clicked() {
     common_start_button();
 }
 
-/* ------------------------------------------------------------------------- */
-
 void qtautoclick::stopButton_clicked() {
     common_stop_button();
 }
-
-/* ------------------------------------------------------------------------- */
 
 const char *qtautoclick::className() const {
     return "qtautoclick";
 }
 
-/* ------------------------------------------------------------------------- */
-
 QMetaObject *qtautoclick::metaObj = 0;
 static QMetaObjectCleanUp cleanUp_qtautoclick( "qtautoclick", &qtautoclick::staticMetaObject );
-
-/* ------------------------------------------------------------------------- */
 
 #ifndef QT_NO_TRANSLATION
 QString qtautoclick::tr( const char *s, const char *c ) {
@@ -197,8 +147,6 @@ QString qtautoclick::trUtf8( const char *s, const char *c ) {
 #endif // QT_NO_TRANSLATION_UTF8
 
 #endif // QT_NO_TRANSLATION
-
-/* ------------------------------------------------------------------------- */
 
 QMetaObject* qtautoclick::staticMetaObject() {
     if ( metaObj )
@@ -229,15 +177,11 @@ QMetaObject* qtautoclick::staticMetaObject() {
     return metaObj;
 }
 
-/* ------------------------------------------------------------------------- */
-
 void* qtautoclick::qt_cast( const char* clname ) {
     if ( !qstrcmp( clname, "qtautoclick" ) )
         return this;
     return QMainWindow::qt_cast( clname );
 }
-
-/* ------------------------------------------------------------------------- */
 
 bool qtautoclick::qt_invoke( int _id, QUObject* _o ) {
     switch ( _id - staticMetaObject()->slotOffset() ) {
@@ -252,13 +196,9 @@ bool qtautoclick::qt_invoke( int _id, QUObject* _o ) {
     return TRUE;
 }
 
-/* ------------------------------------------------------------------------- */
-
 bool qtautoclick::qt_emit( int _id, QUObject* _o ) {
     return QMainWindow::qt_emit(_id,_o);
 }
-
-/* ------------------------------------------------------------------------- */
 
 #ifndef QT_NO_PROPERTIES
 bool qtautoclick::qt_property( int id, int f, QVariant* v) {
@@ -268,8 +208,6 @@ bool qtautoclick::qt_property( int id, int f, QVariant* v) {
 bool qtautoclick::qt_static_property( QObject* , int , int , QVariant* ){ return FALSE; }
 #endif // QT_NO_PROPERTIES
 
-
-/* ------------------------------------------------------------------------- */
 
 qtautoclick::qtautoclick( QWidget* parent, const char* name, WFlags fl )
     : QMainWindow( parent, name, fl ) {
@@ -334,13 +272,8 @@ qtautoclick::qtautoclick( QWidget* parent, const char* name, WFlags fl )
     connect(startButton, SIGNAL(clicked()), this, SLOT(startButton_clicked()));
 }
 
-/* ------------------------------------------------------------------------- */
-
 qtautoclick::~qtautoclick() {
-    // Qt deletes all childs
 }
-
-/* ------------------------------------------------------------------------- */
 
 void qtautoclick::languageChange() {
     setCaption( tr( "qtAutoClick" ) );
@@ -354,12 +287,8 @@ void qtautoclick::languageChange() {
     textLabel1->setText( tr( "Pre-delay" ) );
 }
 
-/* ------------------------------------------------------------------------- */
-
 int init_gui(int argc, char **argv) {
-    display = XOpenDisplay(NULL);
-
-    if (!display) {
+    if (!(display = XOpenDisplay(NULL))) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
     }
@@ -371,17 +300,10 @@ int init_gui(int argc, char **argv) {
     return 1;
 }
 
-/* ------------------------------------------------------------------------- */
-
 void close_gui(void) {
     XCloseDisplay(display);
 }
 
-/* ------------------------------------------------------------------------- */
-
 void main_loop(void) {
     a->exec();
 }
-
-/* ------------------------------------------------------------------------- */
-

@@ -1,8 +1,4 @@
-/* ------------------------------------------------------------------------- */
-
 /*
- * $Id$
- * 
  * xAutoClick
  *
  * Copyright (C) 2006 Ivo van Poorten
@@ -23,19 +19,13 @@
  *
  */
 
-/* ------------------------------------------------------------------------- */
-
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "main.h"
 #include "osdep.h"
 
-/* ------------------------------------------------------------------------- */
-
 static int counter = 0;
-
-/* ------------------------------------------------------------------------- */
 
 void common_stop_button(void) {
 
@@ -45,8 +35,6 @@ void common_stop_button(void) {
 
     counter = 0;
 }
-
-/* ------------------------------------------------------------------------- */
 
 void common_start_button(void) {
 
@@ -59,13 +47,10 @@ void common_start_button(void) {
     set_alarm(get_spin_value(SPIN_PREDELAY));
 }
 
-/* ------------------------------------------------------------------------- */
-
 void common_alarm_callback(void) {
     int interval, randomfactor, sign, rv, alarmtime;
 
-    if (!counter)   /* counter is set to zero when stop is pressed */ 
-        return;
+    if (!counter) return;
 
 #ifdef DEBUG
     printf("alarm_callback\n");
@@ -73,10 +58,10 @@ void common_alarm_callback(void) {
 
     click_mouse_button();
 
-    interval = get_spin_value(SPIN_INTERVAL);
-
-    sign = rand() / (RAND_MAX >> 1);
+    interval     = get_spin_value(SPIN_INTERVAL);
+    sign         = rand() / (RAND_MAX >> 1);
     randomfactor = get_spin_value(SPIN_RANDOM);
+
     if (randomfactor > 0 )
         rv = (sign ? 1 : -1) * (rand() / (RAND_MAX / randomfactor));
     else
@@ -90,20 +75,15 @@ void common_alarm_callback(void) {
     if (alarmtime < 1) alarmtime = 1;
 
     counter--;
-    if (counter) {
-        set_alarm(alarmtime);
-    } else {
-        common_stop_button();
-    }
+    if (counter) set_alarm(alarmtime);
+    else         common_stop_button();
 }
-
-/* ------------------------------------------------------------------------- */
 
 static void calculate_average(int *buffer, int length, int *average, int *min,
                                                                 int *max) {
     int sum = 0, x, v;
     
-    *min = 65536;
+    *min =  65536;
     *max = -65536;
 
     for (x=0; x<length; x++) {
@@ -120,7 +100,6 @@ static void calculate_average(int *buffer, int length, int *average, int *min,
                                                 *average, *min, *max, length);
 #endif
 }
-/* ------------------------------------------------------------------------- */
 
 #define THRESHOLD 5 * 1000     /* 5 seconds */
 #define HISTORYSIZE 10
@@ -130,8 +109,7 @@ void common_tap_button(void) {
     static int prevtime = 0, x = 0, fill = 0, curtime, interval;
     int average, min, max;
 
-    curtime = GetTimer() / 1000;
-
+    curtime  = GetTimer() / 1000;
     interval = curtime - prevtime;
 
 #ifdef DEBUG
@@ -143,8 +121,7 @@ void common_tap_button(void) {
         printf("new tapping...\n");
 #endif
         prevtime = curtime;
-        x = 0;
-        fill = 0;
+        x = fill = 0;
         return;
     }
 
@@ -162,8 +139,6 @@ void common_tap_button(void) {
     prevtime = curtime;
 }
 
-/* ------------------------------------------------------------------------- */
-
 int main(int argc, char **argv) {
 
     if (!init_gui(argc, argv)) {
@@ -176,11 +151,6 @@ int main(int argc, char **argv) {
     set_button_sensitive(BUTTON_START, 1);
 
     main_loop();
-
     close_gui();
-
     return 0;
 }
-
-/* ------------------------------------------------------------------------- */
-

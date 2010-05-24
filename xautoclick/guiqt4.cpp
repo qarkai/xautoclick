@@ -1,5 +1,4 @@
-/*
- * xAutoClick, Qt 4 GUI
+/* xAutoClick, Qt 4 GUI
  *
  * Copyright (C) 2010 Ivo van Poorten
  *
