@@ -1,9 +1,7 @@
-#
-# $Id$
 # 
 # xAutoClick
 #
-# Copyright (C) 2006 Ivo van Poorten
+# Copyright (C) 2006, 2010 Ivo van Poorten
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
