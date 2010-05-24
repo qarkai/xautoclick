@@ -40,6 +40,7 @@ void click_mouse_button(void) {
 }
 
 void set_alarm(int ms) {
+    mywidget->timer->start(ms);
 }
 
 int get_spin_value(spin_t spin) {
@@ -64,6 +65,10 @@ void MyWidget::stop(void) {
 
 void MyWidget::start(void) {
     common_start_button();
+}
+
+void MyWidget::timer_done(void) {
+    common_alarm_callback();
 }
 
 MyWidget::MyWidget(QWidget *parent) : QWidget(parent) {
@@ -97,10 +102,16 @@ MyWidget::MyWidget(QWidget *parent) : QWidget(parent) {
         layout->addWidget(buttons[c] = new QPushButton(butnames[c]));
 
     connect(buttons[0], SIGNAL(clicked()), this, SLOT(tap(void)));
+    connect(buttons[1], SIGNAL(clicked()), this, SLOT(stop(void)));
+    connect(buttons[2], SIGNAL(clicked()), this, SLOT(start(void)));
 
     vbox->addLayout(layout);
     setWindowTitle("Qt4AutoClick");
     setLayout(vbox);
+
+    timer = new QTimer;
+    timer->setSingleShot(TRUE);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timer_done()));
 }
 
 int init_gui(int argc, char **argv) {
