@@ -246,7 +246,7 @@ if test -z "$_cc" ; then
     die "no compiler specified"
 fi
 cc_run=`( $_cc ) 2>&1`
-if test "$?" -gt 1; then
+if test "$?" -ge 126; then
     echores "no"
     die "can't find compiler"
 fi
@@ -261,7 +261,7 @@ if test -z "$_cxx" ; then
     _cxx="$_cc"
 fi
 cxx_run=`( $_cxx ) 2>&1`
-if test "$?" -gt 1; then
+if test "$?" -ge 126; then
     if test "$_cxx" = "$_cc" ; then
         echores "no"
         die "can't find compiler"
