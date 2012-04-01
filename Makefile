@@ -79,7 +79,7 @@ endif
 
 ifeq ($(__BUILD_FLTK__),yes)
 INCLUDES	+= $(INCLUDES_FLTK)
-LDFLAGS		+= $(LDFLAGS_FLTK)
+LDFLAGS		+= $(LDFLAGS_FLTK) -lstdc++
 endif
 
 ifeq ($(__BUILD_COMMANDLINE__),yes)
