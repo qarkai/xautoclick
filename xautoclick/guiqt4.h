@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QTimer>
+#include <stdio.h>
 
 class MyWidget : public QWidget {
     Q_OBJECT
