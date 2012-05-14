@@ -112,25 +112,25 @@ ifeq ($(HAVE_COMMANDLINE),yes)
 endif
 
 $(PRGgtk1):		$(OBJSgtk1)
-	$(LD) -o $@ $(OBJSgtk1) $(LDFLAGS)
+	$(CC) -o $@ $(OBJSgtk1) $(LDFLAGS)
 
 $(PRGgtk2):		$(OBJSgtk2)
-	$(LD) -o $@ $(OBJSgtk2) $(LDFLAGS)
+	$(CC) -o $@ $(OBJSgtk2) $(LDFLAGS)
 
 $(PRGascii):	$(OBJSascii)
-	$(LD) -o $@ $(OBJSascii) $(LDFLAGS)
+	$(CC) -o $@ $(OBJSascii) $(LDFLAGS)
 
 $(PRGqt3):		$(OBJSqt3)
-	$(LD) -o $@ $(OBJSqt3) $(LDFLAGS)
+	$(CXX) -o $@ $(OBJSqt3) $(LDFLAGS)
 
 $(PRGqt4):		$(OBJSqt4)
-	$(LD) -o $@ $(OBJSqt4) $(LDFLAGS)
+	$(CXX) -o $@ $(OBJSqt4) $(LDFLAGS)
 
 $(PRGfltk):		$(OBJSfltk)
-	$(LD) -o $@ $(OBJSfltk) $(LDFLAGS)
+	$(CXX) -o $@ $(OBJSfltk) $(LDFLAGS)
 
 $(PRGcmdl):		$(OBJScmdl)
-	$(LD) -o $@ $(OBJScmdl) $(LDFLAGS)
+	$(CC) -o $@ $(OBJScmdl) $(LDFLAGS)
 
 guigtk2.c:
 	ln -s guigtk1.c guigtk2.c
