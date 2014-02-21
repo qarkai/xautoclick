@@ -1,9 +1,15 @@
 Be sure you have the proper development packages for your distribution
-installed (i.e. something like xserver-xorg-dev, gtk2-dev, et cetera).
+installed. For example, on debian you need at least one of libqt4-dev,
+libgtk2.0-dev, libgtk1.2-dev or libfltk1.3-dev. Also, be sure to have
+the XTest extension and its development files. Again, on debian, you
+need libxtst and libxtst-dev.
 
 After that, run:
 
 ./configure
+
+and if all is fine (at least one GUI must be set to yes), run:
+
 make
 sudo make install
 
