@@ -2,7 +2,7 @@ Be sure you have the proper development packages for your distribution
 installed. For example, on debian you need at least one of libqt4-dev,
 libgtk2.0-dev, libgtk1.2-dev or libfltk1.3-dev. Also, be sure to have
 the XTest extension and its development files. Again, on debian, you
-need libxtst and libxtst-dev.
+need libxtst6 and libxtst-dev.
 
 After that, run:
 
