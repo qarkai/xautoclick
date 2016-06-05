@@ -102,9 +102,9 @@ fi
 
 # Functions
 
-case `echo -n` in
-    -n)     _echo_n=        _echo_c='\c'    ;; # SysV echo
-    *)      _echo_n='-n '   _echo_c=        ;; # BSD echo
+case $(echo -n) in
+    -n)     _echo_n=''      _echo_c='\c'    ;; # SysV echo
+    *)      _echo_n='-n '   _echo_c=''      ;; # BSD echo
 esac
 
 echocheck() {
@@ -113,17 +113,21 @@ echocheck() {
 }
 
 echores() {
-    echo "Result is: $@" >> "$TMPLOG"
-    echo "##########################################" >> "$TMPLOG"
-    echo "" >> "$TMPLOG"
+    {
+        echo "Result is: $@"
+        echo "##########################################"
+        echo ""
+    } >> "$TMPLOG"
     echo "$@"
 }
 
 cc_check() {
-    echo "" >> "$TMPLOG"
-    cat "$TMPC" >> "$TMPLOG"
-    echo "" >> "$TMPLOG"
-    echo "$_cc $CFLAGS $_inc_extra $_ld_extra $TMPC -o $TMPO $@" >> "$TMPLOG"
+    {
+        echo ""
+        cat "$TMPC"
+        echo ""
+        echo "$_cc $CFLAGS $_inc_extra $_ld_extra $TMPC -o $TMPO $@"
+    } >> "$TMPLOG"
     rm -f "$TMPO"
     ( $_cc $CFLAGS $_inc_extra $_ld_extra "$TMPC" -o "$TMPO" "$@" ) >> "$TMPLOG" 2>&1
     TMP="$?"
@@ -135,10 +139,12 @@ cc_check() {
 }
 
 cxx_check() {
-    echo "" >> "$TMPLOG"
-    cat "$TMPCXX" >> "$TMPLOG"
-    echo "" >> "$TMPLOG"
-    echo "$_cxx $CFLAGS $_inc_extra $_ld_extra $TMPCXX -o $TMPO $@" >> "$TMPLOG"
+    {
+        echo ""
+        cat "$TMPCXX"
+        echo ""
+        echo "$_cxx $CFLAGS $_inc_extra $_ld_extra $TMPCXX -o $TMPO $@"
+    } >> "$TMPLOG"
     rm -f "$TMPO"
     ( $_cxx $CFLAGS $_inc_extra $_ld_extra "$TMPCXX" -o "$TMPO" "$@" ) >> "$TMPLOG" 2>&1
     TMP="$?"
@@ -194,19 +200,19 @@ done
 for ac_option do
     case "$ac_option" in
     --prefix=*)
-        _prefix=`echo $ac_option | cut -d '=' -f 2`
+        _prefix=$(echo $ac_option | cut -d '=' -f 2)
         ;;
     --cc=*)
-        _cc=`echo $ac_option | cut -d '=' -f 2`
+        _cc=$(echo $ac_option | cut -d '=' -f 2)
         ;;
     --cxx=*)
-        _cxx=`echo $ac_option | cut -d '=' -f 2`
+        _cxx=$(echo $ac_option | cut -d '=' -f 2)
         ;;
     --with-extraincdir=*)
-        _inc_extra=-I`echo $ac_option | cut -d '=' -f 2 | sed 's,:, -I,g'`
+        _inc_extra=-I$(echo $ac_option | cut -d '=' -f 2 | sed 's,:, -I,g')
         ;;
     --with-extralibdir=*)
-        _ld_extra=-L`echo $ac_option | cut -d '=' -f 2 | sed 's,:, -L,g'`
+        _ld_extra=-L$(echo $ac_option | cut -d '=' -f 2 | sed 's,:, -L,g')
         ;;
     --disable-debug)
         _debug=""
@@ -222,10 +228,10 @@ for ac_option do
         _warnings="-Wall"
         ;;
     --with-make=*)
-        _make=`echo $ac_option | cut -d '=' -f 2`
+        _make=$(echo $ac_option | cut -d '=' -f 2)
         ;;
     --with-makedepend=*)
-        _makedepend=`echo $ac_option | cut -d '=' -f 2`
+        _makedepend=$(echo $ac_option | cut -d '=' -f 2)
         ;;
     *)
         echo "unknown option: $ac_option"
@@ -288,7 +294,7 @@ fi
 
 # Suppress stupid ICC remarks
 
-if test "`basename $_cc`" = "icc"; then
+if test "$(basename $_cc)" = "icc"; then
     if test "$_warnings" != ""; then
         _warnings="$_warnings -wd1418,810,869,279"
     fi
@@ -302,7 +308,7 @@ fi
 echocheck "GNU Make"
 if test "$_make" = "" ; then
     for _maket in make gmake nogmakepresent; do
-        _tmp=`$_maket --version 2>>"$TMPLOG" | head -n 1 | cut -d ' ' -f 1`
+        _tmp=$($_maket --version 2>>"$TMPLOG" | head -n 1 | cut -d ' ' -f 1)
         if test "$?" -eq 0 ; then
             if test "$_tmp" = "GNU" ; then
                 echores "yes, using $_maket"
@@ -482,7 +488,7 @@ cat > $TMPC << EOF
 #include <X11/Xlib.h>
 int main(void) { (void) XCreateWindow(0,0,0,0,0,0,0,0,0,0,0,0); return 0; }
 EOF
-for i in /usr/X11R6/lib /usr/lib/X11R6 /usr/X11/lib /usr/lib32 /usr/openwin/lib /usr/X11R6/lib64 /usr/lib ; do
+for i in /usr/X11R6/lib /usr/lib/X11R6 /usr/X11/lib /usr/lib /usr/lib32 /usr/openwin/lib /usr/X11R6/lib64 ; do
     _ld_x11="-L$i -lX11 -lXext"
     if test -d "$i" && cc_check $_inc_x11 $_ld_x11 ; then
         _x11=yes
@@ -538,10 +544,10 @@ echores "$_gtk_config"
 
 if test "$_gtk_config" != "no" ; then
     echocheck "GTK cflags"
-    _inc_gtk1=`$_gtk_config --cflags 2>&1`
+    _inc_gtk1=$($_gtk_config --cflags 2>&1)
     echores "$_inc_gtk1"
     echocheck "GTK libs"
-    _ld_gtk1=`$_gtk_config --libs 2>&1`
+    _ld_gtk1=$($_gtk_config --libs 2>&1)
     echores "$_ld_gtk1"
 
     echocheck "glib-config"
@@ -558,10 +564,10 @@ if test "$_gtk_config" != "no" ; then
 
     if test "$_glib_config" != "no" ; then
         echocheck "glib cflags"
-        _inc_glib=`$_glib_config --cflags 2>&1`
+        _inc_glib=$($_glib_config --cflags 2>&1)
         echores "$_inc_glib"
         echocheck "glib libs"
-        _ld_glib=`$_glib_config --libs 2>&1`
+        _ld_glib=$($_glib_config --libs 2>&1)
         echores "$_ld_glib"
 
         _gtk1=yes
@@ -597,17 +603,17 @@ if test "$_pkg_config" != "no" ; then
     if $_pkg_config gtk+-2.0 --exists 1>/dev/null 2>>$TMPLOG ; then
         echores "yes"
         echocheck "GTK+ 2.0 cflags"
-        _inc_gtk2=`$_pkg_config gtk+-2.0 --cflags 2>>$TMPLOG`
+        _inc_gtk2=$($_pkg_config gtk+-2.0 --cflags 2>>$TMPLOG)
         echores "$_inc_gtk2"
         echocheck "GTK+ 2.0 libs"
-        _ld_gtk2=`$_pkg_config gtk+-2.0 --libs 2>>$TMPLOG`
+        _ld_gtk2=$($_pkg_config gtk+-2.0 --libs 2>>$TMPLOG)
         echores "$_ld_gtk2"
 
         echocheck "glib 2.0 cflags"
-        _inc_glib2=`$_pkg_config glib-2.0 --cflags 2>>$TMPLOG`
+        _inc_glib2=$($_pkg_config glib-2.0 --cflags 2>>$TMPLOG)
         echores "$_inc_glib2"
         echocheck "glib 2.0 libs"
-        _ld_glib2=`$_pkg_config glib-2.0 --libs 2>>$TMPLOG`
+        _ld_glib2=$($_pkg_config glib-2.0 --libs 2>>$TMPLOG)
         echores "$_ld_glib2"
 
         _gtk2=yes
@@ -621,10 +627,10 @@ if test "$_pkg_config" != "no" ; then
     if $_pkg_config qt-mt --exists 1>/dev/null 2>>$TMPLOG ; then
         echores "yes"
         echocheck "Qt 3 cflags"
-        _inc_qt3=`$_pkg_config qt-mt --cflags 2>>$TMPLOG`
+        _inc_qt3=$($_pkg_config qt-mt --cflags 2>>$TMPLOG)
         echores "$_inc_qt3"
         echocheck "Qt 3 libs"
-        _ld_qt3=`$_pkg_config qt-mt --libs 2>>$TMPLOG`
+        _ld_qt3=$($_pkg_config qt-mt --libs 2>>$TMPLOG)
         echores "$_ld_qt3"
 
         _qt3=yes
@@ -638,10 +644,10 @@ if test "$_pkg_config" != "no" ; then
     if $_pkg_config QtCore QtGui --exists 1>/dev/null 2>>$TMPLOG ; then
         echores "yes"
         echocheck "Qt 4 cflags"
-        _inc_qt4=`$_pkg_config QtCore QtGui --cflags 2>>$TMPLOG`
+        _inc_qt4=$($_pkg_config QtCore QtGui --cflags 2>>$TMPLOG)
         echores "$_inc_qt4"
         echocheck "Qt 4 libs"
-        _ld_qt4=`$_pkg_config QtCore QtGui --libs 2>>$TMPLOG`
+        _ld_qt4=$($_pkg_config QtCore QtGui --libs 2>>$TMPLOG)
         echores "$_ld_qt4"
 
         _qt4=yes
@@ -673,10 +679,10 @@ echocheck "FLTK"
 if test "$_fltk_config" != "no" ; then
     echores "yes"
     echocheck "FLTK cflags"
-    _inc_fltk=`$_fltk_config --cflags 2>>$TMPLOG`
+    _inc_fltk=$($_fltk_config --cflags 2>>$TMPLOG)
     echores "$_inc_fltk"
     echocheck "FLTK libs"
-    _ld_fltk=`$_fltk_config --ldflags 2>>$TMPLOG`
+    _ld_fltk=$($_fltk_config --ldflags 2>>$TMPLOG)
     echores "$_ld_fltk"
     _fltk=yes
 else
