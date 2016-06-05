@@ -176,17 +176,17 @@ static void load_config(options_t *options)
     char *config_dir;
 
     env_config_dir = getenv("XDG_CONFIG_HOME");
-
     if (NULL == env_config_dir || '\0' == env_config_dir[0])
     {
-        char *tmp = getenv("HOME");
-
-        env_config_dir = calloc(strlen(tmp) + strlen("/.config") + 1, sizeof(char));
-        sprintf(env_config_dir, "%s/.config", tmp);
+        env_config_dir = getenv("HOME");
+        config_dir = calloc(strlen(env_config_dir) + strlen("/.config/xautoclick") + 1, sizeof(char));
+        sprintf(config_dir, "%s/.config/xautoclick", env_config_dir);
     }
-
-    config_dir = calloc(strlen(env_config_dir) + strlen("/xautoclick") + 1, sizeof(char));
-    sprintf(config_dir, "%s/xautoclick", env_config_dir);
+    else
+    {
+        config_dir = calloc(strlen(env_config_dir) + strlen("/xautoclick") + 1, sizeof(char));
+        sprintf(config_dir, "%s/xautoclick", env_config_dir);
+    }
 
     result = stat(config_dir, &config_dir_stat);
     if (result == -1)
@@ -197,6 +197,7 @@ static void load_config(options_t *options)
 
     options->config_file = calloc(strlen(config_dir) + strlen("/config") + 1, sizeof(char));
     sprintf(options->config_file, "%s/config", config_dir);
+    free(config_dir);
 
     config_file = fopen(options->config_file, "r");
     if (NULL == config_file)
