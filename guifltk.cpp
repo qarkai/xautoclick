@@ -27,6 +27,7 @@ extern "C" {
 #include "main.h"
 #include "osdep.h"
 #include <stdio.h>
+#include <limits.h>
 }
 
 #include <X11/Xlib.h>
@@ -42,8 +43,10 @@ static const struct foo {
     const char * const label;
     const int min, max, val;
 } bar[4] = {
-    { "Pre-delay",   1, 1<<30, 2000 }, { "Interval",    1, 1<<30, 1000 },
-    { "Random +/-",  1, 10240,   64 }, { "# of clicks", 1, 10240,   32 }
+    { "Pre-delay",   1, INT_MAX, 2000 },
+    { "Interval",    1, INT_MAX, 1000 },
+    { "Random +/-",  1, INT_MAX,   64 },
+    { "# of clicks", 1, INT_MAX,   32 }
 };
 static const char * const butnames[3] = { "Tap", "Stop", "Start" };
 

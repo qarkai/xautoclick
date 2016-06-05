@@ -21,6 +21,7 @@
 extern "C" {
 #include "main.h"
 #include <stdio.h>
+#include <limits.h>
 }
 
 #include "guiqt3.h"
@@ -220,7 +221,7 @@ qtautoclick::qtautoclick( QWidget* parent, const char* name, WFlags fl )
 
     spinInterval = new QSpinBox(centralWidget(), "spinInterval");
     spinInterval->setGeometry(QRect(85, 30, 55, 23));
-    spinInterval->setMaxValue(1<<30);
+    spinInterval->setMaxValue(INT_MAX);
     spinInterval->setMinValue(1);
     spinInterval->setValue(1000);
 
@@ -229,19 +230,19 @@ qtautoclick::qtautoclick( QWidget* parent, const char* name, WFlags fl )
 
     spinPredelay = new QSpinBox( centralWidget(), "spinPredelay" );
     spinPredelay->setGeometry( QRect( 85, 5, 55, 23 ) );
-    spinPredelay->setMaxValue( 1<<30 );
+    spinPredelay->setMaxValue(INT_MAX);
     spinPredelay->setMinValue( 1 );
     spinPredelay->setValue( 2000 );
 
     spinRandom = new QSpinBox( centralWidget(), "spinRandom" );
     spinRandom->setGeometry( QRect( 85, 55, 55, 23 ) );
-    spinRandom->setMaxValue( 10240 );
+    spinRandom->setMaxValue(INT_MAX);
     spinRandom->setMinValue( 1 );
     spinRandom->setValue( 64 );
 
     spinNumber = new QSpinBox( centralWidget(), "spinNumber" );
     spinNumber->setGeometry( QRect( 85, 80, 55, 23 ) );
-    spinNumber->setMaxValue( 10240 );
+    spinNumber->setMaxValue(INT_MAX);
     spinNumber->setMinValue( 1 );
     spinNumber->setValue( 32 );
 

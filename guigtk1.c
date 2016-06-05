@@ -19,6 +19,7 @@
  */
 
 #include <stdio.h>
+#include <limits.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/XTest.h>
 #include <gtk/gtk.h>
@@ -166,7 +167,7 @@ static GtkWidget *create_gAutoClick(void) {
   gtk_widget_show (label8);
   gtk_box_pack_start (GTK_BOX (hbox1), label8, TRUE, FALSE, 0);
 
-  predelay_spin_adj = gtk_adjustment_new (2000, 0, 1<<30, 1, 10, 0);
+  predelay_spin_adj = gtk_adjustment_new (2000, 0, INT_MAX, 1, 10, 0);
   predelay_spin = gtk_spin_button_new (GTK_ADJUSTMENT (predelay_spin_adj), 1, 0);
   gtk_widget_ref (predelay_spin);
   gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "predelay_spin", predelay_spin,
@@ -197,7 +198,7 @@ static GtkWidget *create_gAutoClick(void) {
   gtk_widget_show (label9);
   gtk_box_pack_start (GTK_BOX (hbox2), label9, TRUE, FALSE, 0);
 
-  interval_spin_adj = gtk_adjustment_new (1000, 0, 1<<30, 1, 10, 0);
+  interval_spin_adj = gtk_adjustment_new (1000, 0, INT_MAX, 1, 10, 0);
   interval_spin = gtk_spin_button_new (GTK_ADJUSTMENT (interval_spin_adj), 1, 0);
   gtk_widget_ref (interval_spin);
   gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "interval_spin", interval_spin,
@@ -228,7 +229,7 @@ static GtkWidget *create_gAutoClick(void) {
   gtk_widget_show (label10);
   gtk_box_pack_start (GTK_BOX (hbox3), label10, TRUE, FALSE, 0);
 
-  random_spin_adj = gtk_adjustment_new (250, 0, 10240, 1, 10, 0);
+  random_spin_adj = gtk_adjustment_new (250, 0, INT_MAX, 1, 10, 0);
   random_spin = gtk_spin_button_new (GTK_ADJUSTMENT (random_spin_adj), 1, 0);
   gtk_widget_ref (random_spin);
   gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "random_spin", random_spin,
@@ -259,7 +260,7 @@ static GtkWidget *create_gAutoClick(void) {
   gtk_widget_show (label11);
   gtk_box_pack_start (GTK_BOX (hbox5), label11, TRUE, FALSE, 0);
 
-  nrofclicks_spin_adj = gtk_adjustment_new (32, 1, 102400, 1, 10, 0);
+  nrofclicks_spin_adj = gtk_adjustment_new (32, 1, INT_MAX, 1, 10, 0);
   nrofclicks_spin = gtk_spin_button_new (GTK_ADJUSTMENT (nrofclicks_spin_adj), 1, 0);
   gtk_widget_ref (nrofclicks_spin);
   gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "nrofclicks_spin", nrofclicks_spin,

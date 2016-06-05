@@ -23,6 +23,7 @@
 extern "C" {
 #include "main.h"
 #include "osdep.h"
+#include <limits.h>
 }
 
 #include <X11/Xlib.h>
@@ -76,8 +77,10 @@ MyWidget::MyWidget(QWidget *parent) : QWidget(parent) {
         QString label;
         int min, max, val;
     } bar[4] = {
-        { "Pre-delay",   1, 1<<30, 2000 }, { "Interval",    1, 1<<30, 1000 },
-        { "Random +/-",  1, 10240,   64 }, { "# of clicks", 1, 10240,   32 }
+        { "Pre-delay",   1, INT_MAX, 2000 },
+        { "Interval",    1, INT_MAX, 1000 },
+        { "Random +/-",  1, INT_MAX,   64 },
+        { "# of clicks", 1, INT_MAX,   32 }
     };
     QString butnames[3] = { "Tap", "Stop", "Start" };
 
@@ -126,6 +129,7 @@ int init_gui(int argc, char **argv) {
 }
 
 void close_gui(void) {
+    return;
 }
 
 void main_loop(void) {
