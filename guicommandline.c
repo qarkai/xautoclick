@@ -81,15 +81,13 @@ static void printhelp(char *myname) {
 int init_gui(int argc, char **argv) {
     int c;
 
-    if (!(display = XOpenDisplay(NULL))) {
+    display = XOpenDisplay(NULL);
+    if (!display) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
     }
 
-    predelay        = 2000;
-    interval        = 1024;
-    randomfactor    = 0;
-    numberofclicks  = 32;
+    get_options();
 
     /* parse command line */
 
@@ -123,6 +121,7 @@ int init_gui(int argc, char **argv) {
 }
 
 void close_gui(void) {
+    /* don't set options from command line */
     XCloseDisplay(display);
 }
 

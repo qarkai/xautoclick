@@ -73,15 +73,7 @@ void MyWidget::timer_done(void) {
 
 MyWidget::MyWidget(QWidget *parent) : QWidget(parent) {
 
-    struct foo {
-        QString label;
-        int min, max, val;
-    } bar[4] = {
-        { "Pre-delay",   1, INT_MAX, 2000 },
-        { "Interval",    1, INT_MAX, 1000 },
-        { "Random +/-",  1, INT_MAX,   64 },
-        { "# of clicks", 1, INT_MAX,   32 }
-    };
+    QString label[4] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
     QString butnames[3] = { "Tap", "Stop", "Start" };
 
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -89,11 +81,10 @@ MyWidget::MyWidget(QWidget *parent) : QWidget(parent) {
     for (int c=0; c<4; c++) {
         QHBoxLayout *layout = new QHBoxLayout;
         spins[c] = new QSpinBox;
-        spins[c]->setMaximum(bar[c].max);
-        spins[c]->setMinimum(bar[c].min);
-        spins[c]->setValue(bar[c].val);
+        spins[c]->setMinimum(1);
+        spins[c]->setMaximum(INT_MAX);
 
-        layout->addWidget(new QLabel(bar[c].label));
+        layout->addWidget(new QLabel(label[c]));
         layout->addWidget(spins[c]);
         vbox->addLayout(layout);
     }
@@ -101,7 +92,9 @@ MyWidget::MyWidget(QWidget *parent) : QWidget(parent) {
     QHBoxLayout *layout = new QHBoxLayout;
 
     for (int c=0; c<3; c++)
+    {
         layout->addWidget(buttons[c] = new QPushButton(butnames[c]));
+    }
 
     connect(buttons[0], SIGNAL(clicked()), this, SLOT(tap(void)));
     connect(buttons[1], SIGNAL(clicked()), this, SLOT(stop(void)));
@@ -117,7 +110,8 @@ MyWidget::MyWidget(QWidget *parent) : QWidget(parent) {
 }
 
 int init_gui(int argc, char **argv) {
-    if (!(display = XOpenDisplay(NULL))) {
+    display = XOpenDisplay(NULL);
+    if (!display) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
     }
@@ -125,10 +119,14 @@ int init_gui(int argc, char **argv) {
     app = new QApplication(display);
     mywidget = new MyWidget;
 
+    get_options();
+
     return 1;
 }
 
 void close_gui(void) {
+    set_options();
+    XCloseDisplay(display);
     return;
 }
 

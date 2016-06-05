@@ -72,16 +72,11 @@ void set_button_sensitive(button_t button, int state) {
 }
 
 int init_gui(int argc, char **argv) {
-
-    if (!(display = XOpenDisplay(NULL))) {
+    display = XOpenDisplay(NULL);
+    if (!display) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
     }
-
-    predelay       = 2000;
-    interval       = 1024;
-    randomfactor   = 64;
-    numberofclicks = 32;
 
     printf("aautoclick\n\n");
     printf("p - set pre-delay\n");
@@ -93,10 +88,13 @@ int init_gui(int argc, char **argv) {
     printf("q - quit\n");
     printf("\n");
 
+    get_options();
+
     return 1;
 }
 
 void close_gui(void) {
+    set_options();
     XCloseDisplay(display);
 }
 

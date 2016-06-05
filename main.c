@@ -21,9 +21,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <error.h>
+#include <sys/stat.h>
 
 #include "main.h"
 #include "osdep.h"
+
+static options_t options = {
+    .config_file = NULL,
+    .predelay = 2000,
+    .interval = 1000,
+    .random_factor = 250,
+    .clicks_number = 100
+};
 
 static int counter = 0;
 
@@ -74,20 +86,20 @@ void common_alarm_callback(void) {
     alarmtime = interval + rv;
     if (alarmtime < 1) alarmtime = 1;
 
-    counter--;
+    --counter;
     if (counter) set_alarm(alarmtime);
     else         common_stop_button();
 }
 
 static void calculate_average(int *buffer, int length, int *average, int *min,
                                                                 int *max) {
-    int sum = 0, x, v;
-    
+    int sum = 0, x;
+
     *min =  65536;
     *max = -65536;
 
     for (x=0; x<length; x++) {
-        v = buffer[x];
+        int v = buffer[x];
         sum += v;
         if (v<*min) *min=v;
         if (v>*max) *max=v;
@@ -139,7 +151,107 @@ void common_tap_button(void) {
     prevtime = curtime;
 }
 
+void get_options(void)
+{
+    set_spin_value(SPIN_PREDELAY, options.predelay);
+    set_spin_value(SPIN_INTERVAL, options.interval);
+    set_spin_value(SPIN_RANDOM, options.random_factor);
+    set_spin_value(SPIN_NUMBER, options.clicks_number);
+}
+
+void set_options(void)
+{
+    options.predelay = get_spin_value(SPIN_PREDELAY);
+    options.interval = get_spin_value(SPIN_INTERVAL);
+    options.random_factor = get_spin_value(SPIN_RANDOM);
+    options.clicks_number = get_spin_value(SPIN_NUMBER);
+}
+
+static void load_config(options_t *options)
+{
+    struct stat config_dir_stat = {0};
+    FILE *config_file = NULL;
+    int result;
+    char *env_config_dir;
+    char *config_dir;
+
+    env_config_dir = getenv("XDG_CONFIG_HOME");
+
+    if (NULL == env_config_dir || '\0' == env_config_dir[0])
+    {
+        char *tmp = getenv("HOME");
+
+        env_config_dir = calloc(strlen(tmp) + strlen("/.config") + 1, sizeof(char));
+        sprintf(env_config_dir, "%s/.config", tmp);
+    }
+
+    config_dir = calloc(strlen(env_config_dir) + strlen("/xautoclick") + 1, sizeof(char));
+    sprintf(config_dir, "%s/xautoclick", env_config_dir);
+
+    result = stat(config_dir, &config_dir_stat);
+    if (result == -1)
+    {
+        /* create xautoclick config dir */
+        mkdir(config_dir, 0700);
+    }
+
+    options->config_file = calloc(strlen(config_dir) + strlen("/config") + 1, sizeof(char));
+    sprintf(options->config_file, "%s/config", config_dir);
+
+    config_file = fopen(options->config_file, "r");
+    if (NULL == config_file)
+    {
+        error(0, errno, "Can't open config file %s", options->config_file);
+        return;
+    }
+
+    result = fscanf(config_file, "predelay=%d\n", &options->predelay);
+    if (result != 1)
+    {
+        error(0, errno, "Can't parse config file %s", options->config_file);
+    }
+
+    result = fscanf(config_file, "interval=%d\n", &options->interval);
+    if (result != 1)
+    {
+        error(0, errno, "Can't parse config file %s", options->config_file);
+    }
+
+    result = fscanf(config_file, "random_factor=%d\n", &options->random_factor);
+    if (result != 1)
+    {
+        error(0, errno, "Can't parse config file %s", options->config_file);
+    }
+
+    result = fscanf(config_file, "clicks_number=%d\n", &options->clicks_number);
+    if (result != 1)
+    {
+        error(0, errno, "Can't parse config file %s", options->config_file);
+    }
+
+#if DEBUG || 1
+    printf("%d, %d, %d, %d\n", options->predelay, options->interval, options->random_factor, options->clicks_number);
+#endif
+
+    fclose(config_file);
+
+    return;
+}
+
+static void save_config(options_t *options)
+{
+    FILE *config_file = NULL;
+
+    config_file = fopen(options->config_file, "w+");
+    fprintf(config_file, "predelay=%d\n", options->predelay);
+    fprintf(config_file, "interval=%d\n", options->interval);
+    fprintf(config_file, "random_factor=%d\n", options->random_factor);
+    fprintf(config_file, "clicks_number=%d\n", options->clicks_number);
+    fclose(config_file);
+}
+
 int main(int argc, char **argv) {
+    load_config(&options);
 
     if (!init_gui(argc, argv)) {
         fprintf(stderr, "Unable to initialize GUI\n");
@@ -152,5 +264,8 @@ int main(int argc, char **argv) {
 
     main_loop();
     close_gui();
+
+    save_config(&options);
+
     return 0;
 }

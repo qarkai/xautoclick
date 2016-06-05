@@ -289,19 +289,24 @@ void qtautoclick::languageChange() {
 }
 
 int init_gui(int argc, char **argv) {
-    if (!(display = XOpenDisplay(NULL))) {
+    display = XOpenDisplay(NULL);
+    if (!display) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
     }
 
     a = new QApplication (argc, argv);
     mainwindow = new qtautoclick;
+
+    get_options();
+
     mainwindow->show();
     a->connect( a, SIGNAL( lastWindowClosed() ), a, SLOT( quit() ) );
     return 1;
 }
 
 void close_gui(void) {
+    set_options();
     XCloseDisplay(display);
 }
 

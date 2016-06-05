@@ -28,9 +28,9 @@
 
 static Display *display;
 
-static GtkWidget *gAutoClick, *tap_button, *stop_button, *start_button;
-static GtkWidget *predelay_spin, *interval_spin, *random_spin;
-static GtkWidget *nrofclicks_spin;
+static GtkWidget *gAutoClick;
+static GtkWidget *tap_button, *stop_button, *start_button;
+static GtkWidget *predelay_spin, *interval_spin, *random_spin, *nrofclicks_spin;
 
 void click_mouse_button(void) {
     XTestFakeButtonEvent(display, 1, True, CurrentTime);
@@ -71,6 +71,7 @@ void set_spin_value(spin_t spin, int value) {
 
     switch(spin) {
     case SPIN_PREDELAY:
+        gtk_spin_button_set_value(GTK_SPIN_BUTTON(predelay_spin), value);
         break;
     case SPIN_INTERVAL:
         gtk_spin_button_set_value(GTK_SPIN_BUTTON(interval_spin), value);
@@ -79,6 +80,7 @@ void set_spin_value(spin_t spin, int value) {
         gtk_spin_button_set_value(GTK_SPIN_BUTTON(random_spin), value);
         break;
     case SPIN_NUMBER:
+        gtk_spin_button_set_value(GTK_SPIN_BUTTON(nrofclicks_spin), value);
         break;
     }
 }
@@ -125,7 +127,7 @@ static GtkWidget *create_labeled_spin(GtkObject *root,
                                       GtkWidget *vbox,
                                       gchar *spin_type,
                                       const gchar *label_text,
-                                      gdouble spin_value, gdouble spin_min_value)
+                                      gdouble spin_min_value)
 {
     GtkObject *adj;
     GtkWidget *hbox;
@@ -146,7 +148,7 @@ static GtkWidget *create_labeled_spin(GtkObject *root,
     add_widget(root, spin_type, "empty_label", label);
     gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, FALSE, 0);
 
-    adj = gtk_adjustment_new (spin_value, spin_min_value, INT_MAX, 1, 10, 0);
+    adj = gtk_adjustment_new (spin_min_value, spin_min_value, INT_MAX, 1, 10, 0);
 
     spin = gtk_spin_button_new (GTK_ADJUSTMENT (adj), 1, 0);
     add_widget(root, spin_type, "spin", spin);
@@ -196,10 +198,10 @@ static GtkWidget *create_gAutoClick(void) {
   add_widget(gAutoClick_obj, "", "vbox", vbox);
   gtk_container_add (GTK_CONTAINER (gAutoClick), vbox);
 
-  predelay_spin = create_labeled_spin(gAutoClick_obj, vbox, "predelay", "Pre-delay  ", 2000, 0);
-  interval_spin = create_labeled_spin(gAutoClick_obj, vbox, "interval", "Interval  ", 1000, 0);
-  random_spin = create_labeled_spin(gAutoClick_obj, vbox, "random", "Random +/-  ", 250, 0);
-  nrofclicks_spin = create_labeled_spin(gAutoClick_obj, vbox, "nrofclicks", "# of clicks  ", 32, 1);
+  predelay_spin = create_labeled_spin(gAutoClick_obj, vbox, "predelay", "Pre-delay  ", 0);
+  interval_spin = create_labeled_spin(gAutoClick_obj, vbox, "interval", "Interval  ", 0);
+  random_spin = create_labeled_spin(gAutoClick_obj, vbox, "random", "Random +/-  ", 0);
+  nrofclicks_spin = create_labeled_spin(gAutoClick_obj, vbox, "nrofclicks", "# of clicks  ", 1);
 
   hbox = gtk_hbox_new (FALSE, 0);
   add_widget(gAutoClick_obj, "", "hbox", hbox);
@@ -216,8 +218,8 @@ static GtkWidget *create_gAutoClick(void) {
 }
 
 int init_gui(int argc, char **argv) {
-
-    if (!(display = XOpenDisplay(NULL))) {
+    display = XOpenDisplay(NULL);
+    if (!display) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
     }
@@ -226,12 +228,16 @@ int init_gui(int argc, char **argv) {
     gtk_init(NULL, NULL);
 
     gAutoClick = create_gAutoClick();
+
+    get_options();
+
     gtk_widget_show(gAutoClick);
 
     return 1;
 }
 
 void close_gui(void) {
+    set_options();
     XCloseDisplay(display);
 }
 

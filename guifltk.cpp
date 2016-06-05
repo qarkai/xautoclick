@@ -39,15 +39,7 @@ static Fl_Button *buttons[3];
 static Fl_Spinner *spins[4];
 static int repeated = 0;
 
-static const struct foo {
-    const char * const label;
-    const int min, max, val;
-} bar[4] = {
-    { "Pre-delay",   1, INT_MAX, 2000 },
-    { "Interval",    1, INT_MAX, 1000 },
-    { "Random +/-",  1, INT_MAX,   64 },
-    { "# of clicks", 1, INT_MAX,   32 }
-};
+static const char * const label[4] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
 static const char * const butnames[3] = { "Tap", "Stop", "Start" };
 
 void click_mouse_button(void) {
@@ -96,7 +88,8 @@ static void start_callback(Fl_Widget *w, void *v) {
 }
 
 int init_gui(int argc, char **argv) {
-    if (!(display = XOpenDisplay(NULL))) {
+    display = XOpenDisplay(NULL);
+    if (!display) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
     }
@@ -107,20 +100,24 @@ int init_gui(int argc, char **argv) {
     for (int c=0; c<3; c++)
         buttons[c] = new Fl_Button(5+55*c, 125, 55, 25, butnames[c]);
     for (int c=0; c<4; c++) {
-        spins[c] = new Fl_Spinner(95, 5+c*30, 75, 25, bar[c].label);
-        spins[c]->minimum(bar[c].min);
-        spins[c]->maximum(bar[c].max);
-        spins[c]->value  (bar[c].val);
+        spins[c] = new Fl_Spinner(95, 5+c*30, 75, 25, label[c]);
+        spins[c]->minimum(1);
+        spins[c]->maximum(INT_MAX);
     }
+
     buttons[0]->callback(tap_callback);
     buttons[1]->callback(stop_callback);
     buttons[2]->callback(start_callback);
     w->end();
 
+    get_options();
+
     return 1;
 }
 
 void close_gui(void) {
+    set_options();
+    XCloseDisplay(display);
 }
 
 void main_loop(void) {
