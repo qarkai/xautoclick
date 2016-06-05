@@ -133,7 +133,6 @@ static GtkWidget *create_labeled_spin(GtkObject *root,
     GtkWidget *hbox;
     GtkWidget *label;
     GtkWidget *spin;
-    const gchar *key;
 
     hbox = gtk_hbox_new (FALSE, 0);
     add_widget(root, spin_type, "hbox", hbox);
