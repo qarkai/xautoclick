@@ -110,210 +110,108 @@ static void on_start_button_clicked(GtkButton *button, gpointer user_data) {
     common_start_button();
 }
 
+static void add_widget(GtkObject *root, gchar *name, gchar *type, GtkWidget *widget)
+{
+    gchar *key = g_strdup_printf("%s_%s", name, type);
+
+    gtk_widget_ref(widget);
+    gtk_object_set_data_full(root, key, widget,
+                             (GtkDestroyNotify) gtk_widget_unref);
+    g_free(key);
+    gtk_widget_show(widget);
+}
+
+static GtkWidget *create_labeled_spin(GtkObject *root,
+                                      GtkWidget *vbox,
+                                      gchar *spin_type,
+                                      const gchar *label_text,
+                                      gdouble spin_value, gdouble spin_min_value)
+{
+    GtkObject *adj;
+    GtkWidget *hbox;
+    GtkWidget *label;
+    GtkWidget *spin;
+    const gchar *key;
+
+    hbox = gtk_hbox_new (FALSE, 0);
+    add_widget(root, spin_type, "hbox", hbox);
+    gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
+
+    label = gtk_label_new (label_text);
+    add_widget(root, spin_type, "label", label);
+    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+    /*gtk_label_set_justify (GTK_LABEL (predelay_label), GTK_JUSTIFY_FILL);*/
+
+    label = gtk_label_new ("");
+    add_widget(root, spin_type, "empty_label", label);
+    gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, FALSE, 0);
+
+    adj = gtk_adjustment_new (spin_value, spin_min_value, INT_MAX, 1, 10, 0);
+
+    spin = gtk_spin_button_new (GTK_ADJUSTMENT (adj), 1, 0);
+    add_widget(root, spin_type, "spin", spin);
+    gtk_box_pack_start (GTK_BOX (hbox), spin, FALSE, FALSE, 0);
+
+    gtk_widget_set_usize (spin, 64, -2);
+    gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (spin), TRUE);
+
+    return spin;
+}
+
+static GtkWidget *create_labeled_button(GtkObject *root,
+                                        GtkWidget *hbox,
+                                        gchar *button_type,
+                                        const gchar *button_text,
+                                        void *on_button_clicked_func)
+{
+    GtkWidget *button;
+
+    button = gtk_button_new_with_label (button_text);
+    add_widget(root, button_type, "button", button);
+    gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
+    gtk_container_set_border_width (GTK_CONTAINER (button), 2);
+    gtk_signal_connect (GTK_OBJECT (button), "clicked",
+                        GTK_SIGNAL_FUNC (on_button_clicked_func),
+                        NULL);
+
+    return button;
+}
+
 static GtkWidget *create_gAutoClick(void) {
+  GtkObject *gAutoClick_obj;
   GtkWidget *gAutoClick;
-  GtkWidget *vbox1;
-  GtkWidget *hbox1;
-  GtkWidget *predelay_label;
-  GtkWidget *label8;
-  GtkObject *predelay_spin_adj;
-  GtkWidget *hbox2;
-  GtkWidget *interval_label;
-  GtkWidget *label9;
-  GtkObject *interval_spin_adj;
-  GtkWidget *hbox3;
-  GtkWidget *random_label;
-  GtkWidget *label10;
-  GtkObject *random_spin_adj;
-  GtkWidget *hbox5;
-  GtkWidget *nrofclicks_label;
-  GtkWidget *label11;
-  GtkObject *nrofclicks_spin_adj;
-  GtkWidget *hbox4;
+  GtkWidget *vbox;
+  GtkWidget *hbox;
 
   gAutoClick = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_object_set_data (GTK_OBJECT (gAutoClick), "gAutoClick", gAutoClick);
+  gAutoClick_obj = GTK_OBJECT (gAutoClick);
+  gtk_object_set_data (gAutoClick_obj, "gAutoClick", gAutoClick);
+
   gtk_container_set_border_width (GTK_CONTAINER (gAutoClick), 4);
   gtk_window_set_title (GTK_WINDOW (gAutoClick), "gAutoClick");
 /*  gtk_window_set_position (GTK_WINDOW (gAutoClick), GTK_WIN_POS_CENTER); */
   gtk_window_set_policy (GTK_WINDOW (gAutoClick), FALSE, FALSE, FALSE);
 
-  vbox1 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_ref (vbox1);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "vbox1", vbox1,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (vbox1);
-  gtk_container_add (GTK_CONTAINER (gAutoClick), vbox1);
+  vbox = gtk_vbox_new (FALSE, 0);
+  add_widget(gAutoClick_obj, "", "vbox", vbox);
+  gtk_container_add (GTK_CONTAINER (gAutoClick), vbox);
 
-  hbox1 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_ref (hbox1);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "hbox1", hbox1,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (hbox1);
-  gtk_box_pack_start (GTK_BOX (vbox1), hbox1, TRUE, TRUE, 0);
+  predelay_spin = create_labeled_spin(gAutoClick_obj, vbox, "predelay", "Pre-delay  ", 2000, 0);
+  interval_spin = create_labeled_spin(gAutoClick_obj, vbox, "interval", "Interval  ", 1000, 0);
+  random_spin = create_labeled_spin(gAutoClick_obj, vbox, "random", "Random +/-  ", 250, 0);
+  nrofclicks_spin = create_labeled_spin(gAutoClick_obj, vbox, "nrofclicks", "# of clicks  ", 32, 1);
 
-  predelay_label = gtk_label_new ("Pre-delay  ");
-  gtk_widget_ref (predelay_label);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "predelay_label", predelay_label,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (predelay_label);
-  gtk_box_pack_start (GTK_BOX (hbox1), predelay_label, FALSE, FALSE, 0);
-  gtk_label_set_justify (GTK_LABEL (predelay_label), GTK_JUSTIFY_FILL);
+  hbox = gtk_hbox_new (FALSE, 0);
+  add_widget(gAutoClick_obj, "", "hbox", hbox);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
-  label8 = gtk_label_new ("");
-  gtk_widget_ref (label8);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "label8", label8,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (label8);
-  gtk_box_pack_start (GTK_BOX (hbox1), label8, TRUE, FALSE, 0);
+  tap_button = create_labeled_button(gAutoClick_obj, hbox, "tap", "Tap", on_tap_button_clicked);
+  stop_button = create_labeled_button(gAutoClick_obj, hbox, "stop", "Stop", on_stop_button_clicked);
+  start_button = create_labeled_button(gAutoClick_obj, hbox, "start", "Start", on_start_button_clicked);
 
-  predelay_spin_adj = gtk_adjustment_new (2000, 0, INT_MAX, 1, 10, 0);
-  predelay_spin = gtk_spin_button_new (GTK_ADJUSTMENT (predelay_spin_adj), 1, 0);
-  gtk_widget_ref (predelay_spin);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "predelay_spin", predelay_spin,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (predelay_spin);
-  gtk_box_pack_start (GTK_BOX (hbox1), predelay_spin, FALSE, FALSE, 0);
-  gtk_widget_set_usize (predelay_spin, 64, -2);
-  gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (predelay_spin), TRUE);
-
-  hbox2 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_ref (hbox2);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "hbox2", hbox2,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (hbox2);
-  gtk_box_pack_start (GTK_BOX (vbox1), hbox2, TRUE, TRUE, 0);
-
-  interval_label = gtk_label_new ("Interval  ");
-  gtk_widget_ref (interval_label);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "interval_label", interval_label,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (interval_label);
-  gtk_box_pack_start (GTK_BOX (hbox2), interval_label, FALSE, FALSE, 0);
-
-  label9 = gtk_label_new ("");
-  gtk_widget_ref (label9);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "label9", label9,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (label9);
-  gtk_box_pack_start (GTK_BOX (hbox2), label9, TRUE, FALSE, 0);
-
-  interval_spin_adj = gtk_adjustment_new (1000, 0, INT_MAX, 1, 10, 0);
-  interval_spin = gtk_spin_button_new (GTK_ADJUSTMENT (interval_spin_adj), 1, 0);
-  gtk_widget_ref (interval_spin);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "interval_spin", interval_spin,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (interval_spin);
-  gtk_box_pack_start (GTK_BOX (hbox2), interval_spin, FALSE, FALSE, 0);
-  gtk_widget_set_usize (interval_spin, 64, -2);
-  gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (interval_spin), TRUE);
-
-  hbox3 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_ref (hbox3);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "hbox3", hbox3,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (hbox3);
-  gtk_box_pack_start (GTK_BOX (vbox1), hbox3, TRUE, TRUE, 0);
-
-  random_label = gtk_label_new ("Random +/-  ");
-  gtk_widget_ref (random_label);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "random_label", random_label,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (random_label);
-  gtk_box_pack_start (GTK_BOX (hbox3), random_label, FALSE, FALSE, 0);
-
-  label10 = gtk_label_new ("");
-  gtk_widget_ref (label10);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "label10", label10,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (label10);
-  gtk_box_pack_start (GTK_BOX (hbox3), label10, TRUE, FALSE, 0);
-
-  random_spin_adj = gtk_adjustment_new (250, 0, INT_MAX, 1, 10, 0);
-  random_spin = gtk_spin_button_new (GTK_ADJUSTMENT (random_spin_adj), 1, 0);
-  gtk_widget_ref (random_spin);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "random_spin", random_spin,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (random_spin);
-  gtk_box_pack_start (GTK_BOX (hbox3), random_spin, FALSE, FALSE, 0);
-  gtk_widget_set_usize (random_spin, 64, -2);
-  gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (random_spin), TRUE);
-
-  hbox5 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_ref (hbox5);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "hbox5", hbox5,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (hbox5);
-  gtk_box_pack_start (GTK_BOX (vbox1), hbox5, TRUE, TRUE, 0);
-
-  nrofclicks_label = gtk_label_new ("# of clicks  ");
-  gtk_widget_ref (nrofclicks_label);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "nrofclicks_label", nrofclicks_label,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (nrofclicks_label);
-  gtk_box_pack_start (GTK_BOX (hbox5), nrofclicks_label, FALSE, FALSE, 0);
-
-  label11 = gtk_label_new ("");
-  gtk_widget_ref (label11);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "label11", label11,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (label11);
-  gtk_box_pack_start (GTK_BOX (hbox5), label11, TRUE, FALSE, 0);
-
-  nrofclicks_spin_adj = gtk_adjustment_new (32, 1, INT_MAX, 1, 10, 0);
-  nrofclicks_spin = gtk_spin_button_new (GTK_ADJUSTMENT (nrofclicks_spin_adj), 1, 0);
-  gtk_widget_ref (nrofclicks_spin);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "nrofclicks_spin", nrofclicks_spin,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (nrofclicks_spin);
-  gtk_box_pack_start (GTK_BOX (hbox5), nrofclicks_spin, FALSE, FALSE, 0);
-  gtk_widget_set_usize (nrofclicks_spin, 64, -2);
-  gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (nrofclicks_spin), TRUE);
-
-  hbox4 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_ref (hbox4);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "hbox4", hbox4,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (hbox4);
-  gtk_box_pack_start (GTK_BOX (vbox1), hbox4, TRUE, TRUE, 0);
-
-  tap_button = gtk_button_new_with_label ("Tap");
-  gtk_widget_ref (tap_button);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "tap_button", tap_button,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (tap_button);
-  gtk_box_pack_start (GTK_BOX (hbox4), tap_button, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (tap_button), 2);
-
-  stop_button = gtk_button_new_with_label ("Stop");
-  gtk_widget_ref (stop_button);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "stop_button", stop_button,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (stop_button);
-  gtk_box_pack_start (GTK_BOX (hbox4), stop_button, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (stop_button), 2);
-
-  start_button = gtk_button_new_with_label ("Start");
-  gtk_widget_ref (start_button);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "start_button", start_button,
-                            (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (start_button);
-  gtk_box_pack_start (GTK_BOX (hbox4), start_button, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (start_button), 2);
-
-  gtk_signal_connect (GTK_OBJECT (gAutoClick), "delete_event",
+  gtk_signal_connect (gAutoClick_obj, "delete_event",
                       GTK_SIGNAL_FUNC (gtk_main_quit),
                       NULL);
-  gtk_signal_connect (GTK_OBJECT (tap_button), "clicked",
-                      GTK_SIGNAL_FUNC (on_tap_button_clicked),
-                      NULL);
-  gtk_signal_connect (GTK_OBJECT (stop_button), "clicked",
-                      GTK_SIGNAL_FUNC (on_stop_button_clicked),
-                      NULL);
-  gtk_signal_connect (GTK_OBJECT (start_button), "clicked",
-                      GTK_SIGNAL_FUNC (on_start_button_clicked),
-                      NULL);
-
   return gAutoClick;
 }
 
