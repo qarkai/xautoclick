@@ -229,7 +229,7 @@ static void load_config(options_t *options)
         error(0, errno, "Can't parse config file %s", options->config_file);
     }
 
-#if DEBUG || 1
+#ifdef DEBUG
     printf("%d, %d, %d, %d\n", options->predelay, options->interval, options->random_factor, options->clicks_number);
 #endif
 

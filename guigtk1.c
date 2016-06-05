@@ -179,42 +179,48 @@ static GtkWidget *create_labeled_button(GtkObject *root,
     return button;
 }
 
+static void gautoclick_exit(void)
+{
+    set_options();
+    gtk_main_quit();
+}
+
 static GtkWidget *create_gAutoClick(void) {
-  GtkObject *gAutoClick_obj;
-  GtkWidget *gAutoClick;
-  GtkWidget *vbox;
-  GtkWidget *hbox;
+    GtkObject *gAutoClick_obj;
+    GtkWidget *gAutoClick;
+    GtkWidget *vbox;
+    GtkWidget *hbox;
 
-  gAutoClick = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gAutoClick_obj = GTK_OBJECT (gAutoClick);
-  gtk_object_set_data (gAutoClick_obj, "gAutoClick", gAutoClick);
+    gAutoClick = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    gAutoClick_obj = GTK_OBJECT (gAutoClick);
+    gtk_object_set_data (gAutoClick_obj, "gAutoClick", gAutoClick);
 
-  gtk_container_set_border_width (GTK_CONTAINER (gAutoClick), 4);
-  gtk_window_set_title (GTK_WINDOW (gAutoClick), "gAutoClick");
-/*  gtk_window_set_position (GTK_WINDOW (gAutoClick), GTK_WIN_POS_CENTER); */
-  gtk_window_set_policy (GTK_WINDOW (gAutoClick), FALSE, FALSE, FALSE);
+    gtk_container_set_border_width (GTK_CONTAINER (gAutoClick), 4);
+    gtk_window_set_title (GTK_WINDOW (gAutoClick), "gAutoClick");
+    /*  gtk_window_set_position (GTK_WINDOW (gAutoClick), GTK_WIN_POS_CENTER); */
+    gtk_window_set_policy (GTK_WINDOW (gAutoClick), FALSE, FALSE, FALSE);
 
-  vbox = gtk_vbox_new (FALSE, 0);
-  add_widget(gAutoClick_obj, "", "vbox", vbox);
-  gtk_container_add (GTK_CONTAINER (gAutoClick), vbox);
+    vbox = gtk_vbox_new (FALSE, 0);
+    add_widget(gAutoClick_obj, "", "vbox", vbox);
+    gtk_container_add (GTK_CONTAINER (gAutoClick), vbox);
 
-  predelay_spin = create_labeled_spin(gAutoClick_obj, vbox, "predelay", "Pre-delay  ", 0);
-  interval_spin = create_labeled_spin(gAutoClick_obj, vbox, "interval", "Interval  ", 0);
-  random_spin = create_labeled_spin(gAutoClick_obj, vbox, "random", "Random +/-  ", 0);
-  nrofclicks_spin = create_labeled_spin(gAutoClick_obj, vbox, "nrofclicks", "# of clicks  ", 1);
+    predelay_spin = create_labeled_spin(gAutoClick_obj, vbox, "predelay", "Pre-delay  ", 0);
+    interval_spin = create_labeled_spin(gAutoClick_obj, vbox, "interval", "Interval  ", 0);
+    random_spin = create_labeled_spin(gAutoClick_obj, vbox, "random", "Random +/-  ", 0);
+    nrofclicks_spin = create_labeled_spin(gAutoClick_obj, vbox, "nrofclicks", "# of clicks  ", 1);
 
-  hbox = gtk_hbox_new (FALSE, 0);
-  add_widget(gAutoClick_obj, "", "hbox", hbox);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
+    hbox = gtk_hbox_new (FALSE, 0);
+    add_widget(gAutoClick_obj, "", "hbox", hbox);
+    gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
-  tap_button = create_labeled_button(gAutoClick_obj, hbox, "tap", "Tap", on_tap_button_clicked);
-  stop_button = create_labeled_button(gAutoClick_obj, hbox, "stop", "Stop", on_stop_button_clicked);
-  start_button = create_labeled_button(gAutoClick_obj, hbox, "start", "Start", on_start_button_clicked);
+    tap_button = create_labeled_button(gAutoClick_obj, hbox, "tap", "Tap", on_tap_button_clicked);
+    stop_button = create_labeled_button(gAutoClick_obj, hbox, "stop", "Stop", on_stop_button_clicked);
+    start_button = create_labeled_button(gAutoClick_obj, hbox, "start", "Start", on_start_button_clicked);
 
-  gtk_signal_connect (gAutoClick_obj, "delete_event",
-                      GTK_SIGNAL_FUNC (gtk_main_quit),
-                      NULL);
-  return gAutoClick;
+    gtk_signal_connect (gAutoClick_obj, "delete_event",
+                        GTK_SIGNAL_FUNC (gautoclick_exit),
+                        NULL);
+    return gAutoClick;
 }
 
 int init_gui(int argc, char **argv) {
@@ -237,7 +243,6 @@ int init_gui(int argc, char **argv) {
 }
 
 void close_gui(void) {
-    set_options();
     XCloseDisplay(display);
 }
 
