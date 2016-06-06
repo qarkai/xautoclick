@@ -19,6 +19,9 @@
  */
 
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
+
 #include <X11/Xlib.h>
 #include <X11/extensions/XTest.h>
 
@@ -115,8 +118,27 @@ static void flush_to_eol(int c) {
 }
 
 static void read_int(int *ptr) {
+    int result;
     printf("new value: ");
-    fscanf(stdin, "%i", ptr);
+    result = fscanf(stdin, "%i", ptr);
+    if (result != 1)
+    {
+        fprintf(stderr, "Input value must be integer");
+        if (EOF == result)
+        {
+            int stdin_err = ferror(stdin);
+
+            if (stdin_err != 0)
+            {
+                fprintf(stderr, ", error: %d (%s)", errno, strerror(errno));
+            }
+            else
+            {
+                fprintf(stderr, ", result: %d (Reached end of input)", result);
+            }
+        }
+        fprintf(stderr, "\n");
+    }
     flush_to_eol(0);
 }
 
