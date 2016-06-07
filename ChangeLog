@@ -1,6 +1,11 @@
 ChangeLog
 =========
 
+v0.32
+    * increase maximum limit of values
+    * fix searching of X11 libs in configure
+    * add config file
+
 v0.31
     * fix compiler check
     * fix missing include (qt4 gui)
