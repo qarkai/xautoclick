@@ -182,11 +182,53 @@ void set_options(void)
     options.clicks_number = get_spin_value(SPIN_NUMBER);
 }
 
+static int read_option(FILE *cfg_file, char *name, int *value)
+{
+    int result;
+    char scan_format[20] = {0};
+
+    sprintf(scan_format, "%s=%%d\n", name);
+
+    result = fscanf(cfg_file, scan_format, value);
+    if (result != 1)
+    {
+        fprintf(stderr, "Can't read %s value", name);
+
+        if (EOF == result)
+        {
+            int stream_err = ferror(cfg_file);
+
+            if (stream_err != 0)
+            {
+                fprintf(stderr, ", error: %d (%s)", errno, strerror(errno));
+            }
+            else
+            {
+                fprintf(stderr, ", result: %d (Reached end of input)", result);
+            }
+        }
+
+        fprintf(stderr, "\n");
+    }
+
+    return result;
+}
+
 static void load_config(options_t *options)
 {
+    struct config_options_struct {
+        char *name;
+        int *value;
+    } config_options[4] = {
+        { .name = "predelay", .value = &options->predelay},
+        { .name = "interval", .value = &options->interval},
+        { .name = "random_factor", .value = &options->random_factor},
+        { .name = "clicks_number", .value = &options->clicks_number}
+    };
     struct stat config_dir_stat = {0};
     FILE *config_file = NULL;
     int result;
+    int i;
     char *env_config_dir;
     char *config_dir;
 
@@ -221,28 +263,13 @@ static void load_config(options_t *options)
         return;
     }
 
-    result = fscanf(config_file, "predelay=%d\n", &options->predelay);
-    if (result != 1)
+    for (i = 0; i < 4; ++i)
     {
-        error(0, errno, "Can't parse config file %s", options->config_file);
-    }
-
-    result = fscanf(config_file, "interval=%d\n", &options->interval);
-    if (result != 1)
-    {
-        error(0, errno, "Can't parse config file %s", options->config_file);
-    }
-
-    result = fscanf(config_file, "random_factor=%d\n", &options->random_factor);
-    if (result != 1)
-    {
-        error(0, errno, "Can't parse config file %s", options->config_file);
-    }
-
-    result = fscanf(config_file, "clicks_number=%d\n", &options->clicks_number);
-    if (result != 1)
-    {
-        error(0, errno, "Can't parse config file %s", options->config_file);
+        result = read_option(config_file, config_options[i].name, config_options[i].value);
+        if (result != 1)
+        {
+            fprintf(stderr, "Can't parse config file %s", options->config_file);
+        }
     }
 
 #ifdef DEBUG
