@@ -60,7 +60,8 @@ void common_start_button(void) {
 }
 
 void common_alarm_callback(void) {
-    int interval, randomfactor, sign, rv, alarmtime;
+    int interval, randomfactor, alarmtime;
+    int rv = 0;
 
     if (!counter) return;
 
@@ -71,13 +72,14 @@ void common_alarm_callback(void) {
     click_mouse_button();
 
     interval     = get_spin_value(SPIN_INTERVAL);
-    sign         = rand() / (RAND_MAX >> 1);
     randomfactor = get_spin_value(SPIN_RANDOM);
 
-    if (randomfactor > 0 )
+    if (randomfactor > 0)
+    {
+        int sign = rand() / (RAND_MAX >> 1);
+
         rv = (sign ? 1 : -1) * (rand() / (RAND_MAX / randomfactor));
-    else
-        rv = 0;
+    }
 
 #ifdef DEBUG
     printf("rv = %i\n", rv);
@@ -91,26 +93,34 @@ void common_alarm_callback(void) {
     else         common_stop_button();
 }
 
-static void calculate_average(int *buffer, int length, int *average, int *min,
-                                                                int *max) {
+static int calculate_average(int *buffer, int length, int *min, int *max) {
     int sum = 0, x;
+    int average;
 
     *min =  65536;
     *max = -65536;
 
-    for (x=0; x<length; x++) {
+    for (x = 0; x < length; ++x) {
         int v = buffer[x];
         sum += v;
-        if (v<*min) *min=v;
-        if (v>*max) *max=v;
+
+        if (v < *min) {
+            *min = v;
+        }
+
+        if (v > *max) {
+            *max = v;
+        }
     }
 
-    *average = sum/length;
+    average = sum/length;
 
 #ifdef DEBUG
-    printf("average = %i // min = %i // max = %i  (of %i samples)\n",
-                                                *average, *min, *max, length);
+    printf("average = %i // min = %i // max = %i (of %i samples)\n",
+           average, *min, *max, length);
 #endif
+
+    return average;
 }
 
 #define THRESHOLD 5 * 1000     /* 5 seconds */
@@ -138,16 +148,21 @@ void common_tap_button(void) {
     }
 
     history[x] = interval;
-    x++;
-    fill++;
+    ++x;
+    ++fill;
 
-    if (x == HISTORYSIZE)       x = 0;
-    if (fill > HISTORYSIZE)     fill = HISTORYSIZE;
+    if (x == HISTORYSIZE) {
+        x = 0;
+    }
 
-    calculate_average(history, fill, &average, &min, &max);
+    if (fill > HISTORYSIZE) {
+        fill = HISTORYSIZE;
+    }
+
+    average = calculate_average(history, fill, &min, &max);
 
     set_spin_value(SPIN_INTERVAL, average);
-    set_spin_value(SPIN_RANDOM, (max-min)>>1);
+    set_spin_value(SPIN_RANDOM, (max - min) >> 1);
     prevtime = curtime;
 }
 
