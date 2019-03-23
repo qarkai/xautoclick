@@ -203,7 +203,9 @@ distclean:		clean
 install:		all
 	@echo Installing to $(PREFIX)
 	if test ! -d $(PREFIX)/bin ; then mkdir -p $(PREFIX)/bin ; fi
-	if test ! -d $(PREFIX)/man/man1 ; then mkdir -p $(PREFIX)/man/man1 ; fi
+	if test ! -d $(PREFIX)/share/applications ; then mkdir -p $(PREFIX)/share/applications ; fi
+	if test ! -d $(PREFIX)/share/icons/hicolor/scalable/apps ; then mkdir -p $(PREFIX)/share/icons/hicolor/scalable/apps ; fi
+	if test ! -d $(PREFIX)/share/man/man1 ; then mkdir -p $(PREFIX)/share/man/man1 ; fi
 ifeq ($(HAVE_GTK1),yes)
 	cp $(PRGgtk1) $(PREFIX)/bin
 endif
@@ -225,7 +227,9 @@ endif
 ifeq ($(HAVE_COMMANDLINE),yes)
 	cp $(PRGcmdl) $(PREFIX)/bin
 endif
-	cp xautoclick.1 $(PREFIX)/man/man1
+	cp xautoclick.desktop $(PREFIX)/share/applications
+	cp xautoclick.svg $(PREFIX)/share/icons/hicolor/scalable/apps
+	cp xautoclick.1 $(PREFIX)/share/man/man1
 
 .PHONY: uninstall
 uninstall:
@@ -237,5 +241,6 @@ uninstall:
 	rm -f $(PREFIX)/bin/$(PRGfltk)
 	rm -f $(PREFIX)/bin/$(PRGascii)
 	rm -f $(PREFIX)/bin/$(PRGcmdl)
-	rm -f $(PREFIX)/man/man1/xautoclick.1
-
+	rm -f $(PREFIX)/share/applications/xautoclick.desktop
+	rm -f $(PREFIX)/share/icons/hicolor/scalable/apps/xautoclick.svg
+	rm -f $(PREFIX)/share/man/man1/xautoclick.1
