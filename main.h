@@ -1,5 +1,5 @@
 #ifndef __MAIN_H__
-#define __MAIN_H_
+#define __MAIN_H__
 
 typedef enum button_e {
     BUTTON_TAP = 0,

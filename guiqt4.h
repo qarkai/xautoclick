@@ -1,3 +1,6 @@
+#ifndef __GUIQT4_H__
+#define __GUIQT4_H__
+
 #include <QApplication>
 #include <QWidget>
 #include <QPushButton>
@@ -23,3 +26,5 @@ class MyWidget : public QWidget {
         void start(void);
         void timer_done(void);
 };
+
+#endif
