@@ -22,11 +22,13 @@ add_executable(aautoclick
     ${SOURCE_COMMON}
     guiascii.c
 )
+install(TARGETS aautoclick DESTINATION bin)
 
 add_executable(cautoclick
     ${SOURCE_COMMON}
     guicommandline.c
 )
+install(TARGETS cautoclick DESTINATION bin)
 
 set(FLTK_SKIP_OPENGL ON)
 find_package(FLTK)
@@ -36,6 +38,7 @@ if(FLTK_FOUND)
         guifltk.cpp
     )
     target_link_libraries(fltkautoclick ${FLTK_LIBRARIES})
+    install(TARGETS fltkautoclick DESTINATION bin)
 endif()
 
 find_package(GTK2 COMPONENTS gtk)
@@ -46,6 +49,7 @@ if(GTK2_FOUND)
     )
     target_include_directories(gautoclick2 PRIVATE ${GTK2_INCLUDE_DIRS})
     target_link_libraries(gautoclick2 ${GTK2_LIBRARIES})
+    install(TARGETS gautoclick2 DESTINATION bin)
 endif()
 
 find_package(Qt4 COMPONENTS QtCore QtGui)
@@ -57,4 +61,9 @@ if(QT4_FOUND)
         guiqt4.h
     )
     target_link_libraries(qt4autoclick Qt4::QtCore Qt4::QtGui)
+    install(TARGETS qt4autoclick DESTINATION bin)
 endif()
+
+install(FILES xautoclick.1 DESTINATION share/man/man1)
+install(FILES xautoclick.desktop DESTINATION share/applications)
+install(FILES xautoclick.svg DESTINATION share/icons/hicolor/scalable/apps)
