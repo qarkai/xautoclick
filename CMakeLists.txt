@@ -47,3 +47,14 @@ if(GTK2_FOUND)
     target_include_directories(gautoclick2 PRIVATE ${GTK2_INCLUDE_DIRS})
     target_link_libraries(gautoclick2 ${GTK2_LIBRARIES})
 endif()
+
+find_package(Qt4 COMPONENTS QtCore QtGui)
+if(QT4_FOUND)
+    set(CMAKE_AUTOMOC ON)
+    add_executable(qt4autoclick
+        ${SOURCE_COMMON}
+        guiqt4.cpp
+        guiqt4.h
+    )
+    target_link_libraries(qt4autoclick Qt4::QtCore Qt4::QtGui)
+endif()
