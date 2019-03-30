@@ -45,7 +45,7 @@ find_package(GTK2 COMPONENTS gtk)
 if(GTK2_FOUND)
     add_executable(gautoclick2
         ${SOURCE_COMMON}
-        guigtk1.c
+        guigtk2.c
     )
     target_include_directories(gautoclick2 PRIVATE ${GTK2_INCLUDE_DIRS})
     target_link_libraries(gautoclick2 ${GTK2_LIBRARIES})

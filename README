@@ -2,9 +2,8 @@ This autoclicker application enables you to automatically click the left mousebu
 
 Possible fields of use are (obviously) programs that require a lot of repetitive clicking, but it can also be used to click restart every ten minutes in a presentation program.
 
-Currently, xAutoClick has GUI front-ends for X11/console, X11/GTK+ 1.2, X11/GTK+ 2.0, X11/Qt 3.x, X11/Qt 4.x and X11/FLTK and has been tested on Linux/x86.
+Currently, xAutoClick has GUI front-ends for X11/console, X11/GTK+ 2.0, X11/Qt 3.x, X11/Qt 4.x and X11/FLTK and has been tested on Linux/x86.
 
 For compilation/installation instructions, see INSTALL.
 
 Website: http://xautoclick.sourceforge.net/
-

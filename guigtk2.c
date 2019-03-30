@@ -1,4 +1,4 @@
-/* xAutoClick -- GTK1 GUI
+/* xAutoClick -- GTK2 GUI
  *
  * Copyright (C) 2006 Ivo van Poorten
  *
