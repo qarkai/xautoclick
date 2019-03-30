@@ -63,7 +63,8 @@ void common_alarm_callback(void) {
     int interval, randomfactor, alarmtime;
     int rv = 0;
 
-    if (!counter) return;
+    if (!counter)
+        return;
 
 #ifdef DEBUG
     printf("alarm_callback\n");
@@ -86,14 +87,17 @@ void common_alarm_callback(void) {
 #endif
 
     alarmtime = interval + rv;
-    if (alarmtime < 1) alarmtime = 1;
+    if (alarmtime < 1)
+        alarmtime = 1;
 
     --counter;
-    if (counter) set_alarm(alarmtime);
-    else         common_stop_button();
+    if (counter)
+        set_alarm(alarmtime);
+    else
+        common_stop_button();
 }
 
-static int calculate_average(int *buffer, int length, int *min, int *max) {
+static int calculate_average(const int *buffer, int length, int *min, int *max) {
     int sum = 0, x;
     int average;
 
@@ -123,7 +127,7 @@ static int calculate_average(int *buffer, int length, int *min, int *max) {
     return average;
 }
 
-#define THRESHOLD 5 * 1000     /* 5 seconds */
+#define THRESHOLD (5 * 1000)   /* 5 seconds */
 #define HISTORYSIZE 10
 
 void common_tap_button(void) {

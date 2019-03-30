@@ -71,12 +71,12 @@ static void printhelp(char *myname) {
 }
 
 #define option_with_argument(v,m,c) \
-            c++; \
-            if (c == argc) { \
-                fprintf(stderr, "option %s needs an argument\n", m); \
+            (c)++; \
+            if ((c) == argc) { \
+                fprintf(stderr, "option %s needs an argument\n", (m)); \
                 return 0; \
             } \
-            v = atoi(argv[c]);
+            (v) = atoi(argv[(c)]);
 
 int init_gui(int argc, char **argv) {
     int c;

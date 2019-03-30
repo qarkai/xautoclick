@@ -109,11 +109,12 @@ static void print_variables(void) {
     printf("\n");
 }
 
-#define is_space(x) (x==' ' || x=='\t')
-#define is_eol(x) (x=='\n')
+#define is_space(x) ((x)==' ' || (x)=='\t')
+#define is_eol(x) ((x)=='\n')
 
 static void flush_to_eol(int c) {
-    if (is_eol(c)) return;
+    if (is_eol(c))
+        return;
     while(!is_eol(c)) { c = fgetc(stdin); }
 }
 
