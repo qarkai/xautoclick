@@ -54,6 +54,20 @@ if(GTK2_FOUND)
     install(FILES xautoclick.svg DESTINATION share/icons/hicolor/scalable/apps)
 endif()
 
+find_package(PkgConfig)
+if(PkgConfig_FOUND)
+    PKG_CHECK_MODULES(GTK3 gtk+-3.0)
+    if(GTK3_FOUND)
+        add_executable(gautoclick3
+            ${SOURCE_COMMON}
+            guigtk3.c
+        )
+        target_include_directories(gautoclick3 PRIVATE ${GTK3_INCLUDE_DIRS})
+        target_link_libraries(gautoclick3 ${GTK3_LIBRARIES})
+        install(TARGETS gautoclick3 DESTINATION bin)
+    endif()
+endif()
+
 find_package(Qt4 COMPONENTS QtCore QtGui)
 if(QT4_FOUND)
     set(CMAKE_AUTOMOC ON)

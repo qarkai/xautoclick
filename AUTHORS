@@ -2,6 +2,10 @@ Core, ASCII, GTK1, GTK2, QT3, QT4, FLTK, Command Line, build system:
 
 Ivo van Poorten <ivop@euronet.nl> <ivop@free.fr>
 
+GTK3, CMake build system:
+
+Arkadiy Illarionov <qarkai@gmail.com>
+
 Patches:
 
 None yet
