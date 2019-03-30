@@ -6,10 +6,11 @@ need libxtst6 and libxtst-dev.
 
 After that, run:
 
-./configure
+mkdir build
+cd build
+cmake ..
 
 and if all is fine (at least one GUI must be set to yes), run:
 
 make
 sudo make install
-
