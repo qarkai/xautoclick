@@ -18,20 +18,20 @@
  *
  */
 
-#include "guiqt4.h"
+#include "clickwidget.h"
 
 extern "C" {
 #include "main.h"
-#include "osdep.h"
-#include <limits.h>
 }
+
+#include <QApplication>
 
 #include <X11/Xlib.h>
 #include <X11/extensions/XTest.h>
 
 static Display *display;
 static QApplication *app;
-static MyWidget *mywidget;
+static ClickWidget *clickWidget;
 
 void click_mouse_button(void) {
     XTestFakeButtonEvent(display, 1, True, CurrentTime);
@@ -40,76 +40,22 @@ void click_mouse_button(void) {
 }
 
 void set_alarm(int ms) {
-    mywidget->timer->start(ms);
+    clickWidget->timer->start(ms);
 }
 
 int get_spin_value(spin_t spin) {
-    return mywidget->spins[spin]->value();
+    return clickWidget->spins[spin]->value();
 }
 
 void set_spin_value(spin_t spin, int value) {
-    mywidget->spins[spin]->setValue(value);
+    clickWidget->spins[spin]->setValue(value);
 }
 
 void set_button_sensitive(button_t button, int state) {
-    mywidget->buttons[button]->setEnabled(state);
+    clickWidget->buttons[button]->setEnabled(state);
 }
 
-void MyWidget::tap(void) {
-    common_tap_button();
-}
-
-void MyWidget::stop(void) {
-    common_stop_button();
-}
-
-void MyWidget::start(void) {
-    common_start_button();
-}
-
-void MyWidget::timer_done(void) {
-    common_alarm_callback();
-}
-
-MyWidget::MyWidget(QWidget *parent) : QWidget(parent) {
-
-    QString label[4] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
-    QString butnames[3] = { "Tap", "Stop", "Start" };
-
-    QVBoxLayout *vbox = new QVBoxLayout;
-
-    for (int c=0; c<4; c++) {
-        QHBoxLayout *layout = new QHBoxLayout;
-        spins[c] = new QSpinBox;
-        spins[c]->setMinimum(1);
-        spins[c]->setMaximum(INT_MAX);
-
-        layout->addWidget(new QLabel(label[c]));
-        layout->addWidget(spins[c]);
-        vbox->addLayout(layout);
-    }
-
-    QHBoxLayout *layout = new QHBoxLayout;
-
-    for (int c=0; c<3; c++)
-    {
-        layout->addWidget(buttons[c] = new QPushButton(butnames[c]));
-    }
-
-    connect(buttons[0], SIGNAL(clicked()), this, SLOT(tap(void)));
-    connect(buttons[1], SIGNAL(clicked()), this, SLOT(stop(void)));
-    connect(buttons[2], SIGNAL(clicked()), this, SLOT(start(void)));
-
-    vbox->addLayout(layout);
-    setWindowTitle("Qt4AutoClick");
-    setLayout(vbox);
-
-    timer = new QTimer;
-    timer->setSingleShot(TRUE);
-    connect(timer, SIGNAL(timeout()), this, SLOT(timer_done()));
-}
-
-int init_gui(int argc, char **argv) {
+int init_gui(int /*argc*/, char **/*argv*/) {
     display = XOpenDisplay(NULL);
     if (!display) {
         fprintf(stderr, "Unable to open X display\n");
@@ -117,7 +63,7 @@ int init_gui(int argc, char **argv) {
     }
 
     app = new QApplication(display);
-    mywidget = new MyWidget;
+    clickWidget = new ClickWidget;
 
     get_options();
 
@@ -131,6 +77,6 @@ void close_gui(void) {
 }
 
 void main_loop(void) {
-    mywidget->show();
+    clickWidget->show();
     app->exec();
 }

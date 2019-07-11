@@ -1,21 +1,16 @@
-#ifndef __GUIQT4_H__
-#define __GUIQT4_H__
+#ifndef __CLICKWIDGET_H__
+#define __CLICKWIDGET_H__
 
-#include <QApplication>
-#include <QWidget>
 #include <QPushButton>
 #include <QSpinBox>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
 #include <QTimer>
-#include <stdio.h>
+#include <QWidget>
 
-class MyWidget : public QWidget {
+class ClickWidget : public QWidget {
     Q_OBJECT
 
     public:
-        MyWidget(QWidget *parent = 0);
+        ClickWidget(QWidget *parent = 0);
         QPushButton *buttons[3];
         QSpinBox *spins[4];
         QTimer *timer;
@@ -27,4 +22,4 @@ class MyWidget : public QWidget {
         void timer_done(void);
 };
 
-#endif
+#endif /* __CLICKWIDGET_H__ */

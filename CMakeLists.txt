@@ -73,8 +73,9 @@ if(QT4_FOUND)
     set(CMAKE_AUTOMOC ON)
     add_executable(qt4autoclick
         ${SOURCE_COMMON}
+        clickwidget.cpp
+        clickwidget.h
         guiqt4.cpp
-        guiqt4.h
     )
     target_link_libraries(qt4autoclick Qt4::QtCore Qt4::QtGui)
     install(TARGETS qt4autoclick DESTINATION bin)
