@@ -290,6 +290,8 @@ static void save_config(options_t *options)
     FILE *config_file = NULL;
 
     config_file = fopen(options->config_file, "w+");
+    if (!config_file)
+      return;
     fprintf(config_file, "predelay=%d\n", options->predelay);
     fprintf(config_file, "interval=%d\n", options->interval);
     fprintf(config_file, "random_factor=%d\n", options->random_factor);
