@@ -66,6 +66,22 @@ ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
     connect(timer, SIGNAL(timeout()), this, SLOT(timer_done()));
 }
 
+void ClickWidget::startTimer(int ms) {
+    timer->start(ms);
+}
+
+int ClickWidget::getSpinValue(int spin) {
+    return spins[spin]->value();
+}
+
+void ClickWidget::setSpinValue(int spin, int value) {
+    spins[spin]->setValue(value);
+}
+
+void ClickWidget::setButtonSensitive(int button, int state) {
+    buttons[button]->setEnabled(state);
+}
+
 void ClickWidget::tap(void) {
     common_tap_button();
 }

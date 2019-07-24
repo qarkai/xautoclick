@@ -40,19 +40,19 @@ void click_mouse_button(void) {
 }
 
 void set_alarm(int ms) {
-    clickWidget->timer->start(ms);
+    clickWidget->startTimer(ms);
 }
 
 int get_spin_value(spin_t spin) {
-    return clickWidget->spins[spin]->value();
+    return clickWidget->getSpinValue(spin);
 }
 
 void set_spin_value(spin_t spin, int value) {
-    clickWidget->spins[spin]->setValue(value);
+    clickWidget->setSpinValue(spin, value);
 }
 
 void set_button_sensitive(button_t button, int state) {
-    clickWidget->buttons[button]->setEnabled(state);
+    clickWidget->setButtonSensitive(button, state);
 }
 
 int init_gui(int /*argc*/, char **/*argv*/) {
