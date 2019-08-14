@@ -10,6 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: configure
-      run: cmake -GNinja .
+      run: cmake .
     - name: make
-      run: ninja
+      run: make
