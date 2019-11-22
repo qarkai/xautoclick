@@ -218,16 +218,16 @@ static int read_option(FILE *cfg_file, char *name, int *value)
     return result;
 }
 
-static void load_config(options_t *options)
+static void load_config(options_t *opts)
 {
     struct config_options_struct {
         char *name;
         int *value;
     } config_options[4] = {
-        { .name = "predelay", .value = &options->predelay},
-        { .name = "interval", .value = &options->interval},
-        { .name = "random_factor", .value = &options->random_factor},
-        { .name = "clicks_number", .value = &options->clicks_number}
+        { .name = "predelay", .value = &opts->predelay},
+        { .name = "interval", .value = &opts->interval},
+        { .name = "random_factor", .value = &opts->random_factor},
+        { .name = "clicks_number", .value = &opts->clicks_number}
     };
     struct stat config_dir_stat = {0};
     FILE *config_file = NULL;
@@ -256,14 +256,14 @@ static void load_config(options_t *options)
         mkdir(config_dir, 0700);
     }
 
-    options->config_file = calloc(strlen(config_dir) + strlen("/config") + 1, sizeof(char));
-    sprintf(options->config_file, "%s/config", config_dir);
+    opts->config_file = calloc(strlen(config_dir) + strlen("/config") + 1, sizeof(char));
+    sprintf(opts->config_file, "%s/config", config_dir);
     free(config_dir);
 
-    config_file = fopen(options->config_file, "r");
+    config_file = fopen(opts->config_file, "r");
     if (NULL == config_file)
     {
-        error(0, errno, "Can't open config file %s", options->config_file);
+        error(0, errno, "Can't open config file %s", opts->config_file);
         return;
     }
 
@@ -272,7 +272,7 @@ static void load_config(options_t *options)
         result = read_option(config_file, config_options[i].name, config_options[i].value);
         if (result != 1)
         {
-            fprintf(stderr, "Can't parse config file %s", options->config_file);
+            fprintf(stderr, "Can't parse config file %s", opts->config_file);
         }
     }
 
@@ -285,17 +285,17 @@ static void load_config(options_t *options)
     return;
 }
 
-static void save_config(options_t *options)
+static void save_config(options_t *opts)
 {
     FILE *config_file = NULL;
 
-    config_file = fopen(options->config_file, "w+");
+    config_file = fopen(opts->config_file, "w+");
     if (!config_file)
       return;
-    fprintf(config_file, "predelay=%d\n", options->predelay);
-    fprintf(config_file, "interval=%d\n", options->interval);
-    fprintf(config_file, "random_factor=%d\n", options->random_factor);
-    fprintf(config_file, "clicks_number=%d\n", options->clicks_number);
+    fprintf(config_file, "predelay=%d\n", opts->predelay);
+    fprintf(config_file, "interval=%d\n", opts->interval);
+    fprintf(config_file, "random_factor=%d\n", opts->random_factor);
+    fprintf(config_file, "clicks_number=%d\n", opts->clicks_number);
     fclose(config_file);
 }
 

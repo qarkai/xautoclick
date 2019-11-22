@@ -34,7 +34,7 @@ extern "C" {
 #include <X11/extensions/XTest.h>
 
 static Display *display;
-static Fl_Double_Window *w;
+static Fl_Double_Window *win;
 static Fl_Button *buttons[3];
 static Fl_Spinner *spins[4];
 static int repeated = 0;
@@ -94,9 +94,9 @@ int init_gui(int argc, char **argv) {
         return 0;
     }
 
-    w = new Fl_Double_Window(175, 155, "fltkAutoClick");
-    w->begin();
-    w->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
+    win = new Fl_Double_Window(175, 155, "fltkAutoClick");
+    win->begin();
+    win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
     for (int c=0; c<3; c++)
         buttons[c] = new Fl_Button(5+55*c, 125, 55, 25, butnames[c]);
     for (int c=0; c<4; c++) {
@@ -108,7 +108,7 @@ int init_gui(int argc, char **argv) {
     buttons[0]->callback(tap_callback);
     buttons[1]->callback(stop_callback);
     buttons[2]->callback(start_callback);
-    w->end();
+    win->end();
 
     get_options();
 
@@ -121,6 +121,6 @@ void close_gui(void) {
 }
 
 void main_loop(void) {
-    w->show();
+    win->show();
     Fl::run();
 }
