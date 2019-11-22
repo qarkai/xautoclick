@@ -29,6 +29,14 @@
 #include "main.h"
 #include "osdep.h"
 
+typedef struct options {
+    char *config_file;
+    int predelay;
+    int interval;
+    int random_factor;
+    int clicks_number;
+} options_t;
+
 static options_t options = {
     .config_file = NULL,
     .predelay = 2000,

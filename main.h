@@ -14,14 +14,6 @@ typedef enum spin_e {
     SPIN_NUMBER
 } spin_t;
 
-typedef struct {
-    char *config_file;
-    int predelay;
-    int interval;
-    int random_factor;
-    int clicks_number;
-} options_t;
-
 /* Common functions. GUI's should call back to these */
 
 void common_tap_button(void);
