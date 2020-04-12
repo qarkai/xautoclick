@@ -18,7 +18,6 @@
  *
  */
 
-#include "main.h"
 #include "osdep.h"
 
 #ifndef _MSC_VER
