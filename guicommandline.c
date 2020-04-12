@@ -22,6 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <getopt.h>
+
 #include "main.h"
 #include "osdep.h"
 #include "x11clicker.h"
@@ -53,14 +55,6 @@ static void printhelp(char *myname) {
     exit(0);
 }
 
-#define option_with_argument(v,m,c) \
-            (c)++; \
-            if ((c) == argc) { \
-                fprintf(stderr, "option %s needs an argument\n", (m)); \
-                return 0; \
-            } \
-            (v) = atoi(argv[(c)]);
-
 int init_gui(int argc, char **argv) {
     int c;
 
@@ -73,31 +67,16 @@ int init_gui(int argc, char **argv) {
     get_options();
 
     /* parse command line */
-
-    c=1;
-
-    while (c<argc) {
-
-        if (!strcmp(argv[c], "--help")) {
-            printhelp(argv[0]);
-        } else if (!strcmp(argv[c], "-help")) {
-            printhelp(argv[0]);
-        } else if (!strcmp(argv[c], "-h")) {
-            printhelp(argv[0]);
-        } else if (!strcmp(argv[c], "-i")) {
-            option_with_argument(spins[SPIN_INTERVAL], "-i", c);
-        } else if (!strcmp(argv[c], "-n")) {
-            option_with_argument(spins[SPIN_NUMBER], "-n", c);
-        } else if (!strcmp(argv[c], "-p")) {
-            option_with_argument(spins[SPIN_PREDELAY], "-p", c);
-        } else if (!strcmp(argv[c], "-r")) {
-            option_with_argument(spins[SPIN_RANDOM], "-r", c);
-        } else {
-            fprintf(stderr, "unknown command line option: %s\n", argv[c]);
-            return 0;
+    while ((c = getopt(argc, argv, "hi:n:p:r:")) != - 1) {
+        switch (c) {
+        case 'h': printhelp(argv[0]); break;
+        case 'i': spins[SPIN_INTERVAL] = atoi(optarg); break;
+        case 'n': spins[SPIN_NUMBER] = atoi(optarg); break;
+        case 'p': spins[SPIN_PREDELAY] = atoi(optarg); break;
+        case 'r': spins[SPIN_RANDOM] = atoi(optarg); break;
+        case '?': return 0;
+        default: fprintf(stderr, "unknown command line option: %s\n", argv[optind]); return 0;
         }
-
-        c++;
     }
 
     return 1;
@@ -109,7 +88,6 @@ void close_gui(void) {
 }
 
 void main_loop(void) {
-
     common_start_button();
 
     while (sleeptime) {
