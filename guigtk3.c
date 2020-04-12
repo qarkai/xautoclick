@@ -68,20 +68,19 @@ static void on_start_button_clicked(GtkButton *button, gpointer user_data) {
     common_start_button();
 }
 
-static void add_widget(GObject *root, gchar *name, gchar *type, GtkWidget *widget)
+static void add_widget(GObject *root, GtkWidget *widget)
 {
-    gchar *key = g_strdup_printf("%s_%s", name, type);
+    static guint n = 0;
+    gchar *key = g_strdup_printf("widget_%u", n++);
 
     g_object_ref(widget);
-    g_object_set_data_full(root, key, widget,
-                           (GDestroyNotify) g_object_unref);
+    g_object_set_data_full(root, key, widget, g_object_unref);
     g_free(key);
     gtk_widget_show(widget);
 }
 
 static GtkWidget *create_labeled_spin(GObject *root,
                                       GtkWidget *vbox,
-                                      gchar *spin_type,
                                       const gchar *label_text,
                                       gdouble spin_min_value)
 {
@@ -91,22 +90,22 @@ static GtkWidget *create_labeled_spin(GObject *root,
     GtkWidget *spin;
 
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-    add_widget(root, spin_type, "hbox", hbox);
+    add_widget(root, hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
     label = gtk_label_new (label_text);
-    add_widget(root, spin_type, "label", label);
+    add_widget(root, label);
     gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
     /*gtk_label_set_justify (GTK_LABEL (predelay_label), GTK_JUSTIFY_FILL);*/
 
     label = gtk_label_new ("");
-    add_widget(root, spin_type, "empty_label", label);
+    add_widget(root, label);
     gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, FALSE, 0);
 
     adj = gtk_adjustment_new (spin_min_value, spin_min_value, INT_MAX, 1, 10, 0);
 
     spin = gtk_spin_button_new (adj, 1, 0);
-    add_widget(root, spin_type, "spin", spin);
+    add_widget(root, spin);
     gtk_box_pack_start (GTK_BOX (hbox), spin, FALSE, FALSE, 0);
 
     gtk_widget_set_size_request (spin, 64, 0);
@@ -115,22 +114,50 @@ static GtkWidget *create_labeled_spin(GObject *root,
     return spin;
 }
 
+static void create_spins(GObject *root, GtkWidget *box) {
+    struct spin_param {
+        const char* text;
+        int min_value;
+    } spin_params[SPINS_COUNT] = {
+        {"Pre-delay  ", 0},
+        {"Interval  ", 0},
+        {"Random +/-  ", 0},
+        {"# of clicks  ", 1}
+    };
+
+    for (int c = 0; c < SPINS_COUNT; ++c)
+        spins[c] = create_labeled_spin(root, box, spin_params[c].text, spin_params[c].min_value);
+}
+
 static GtkWidget *create_labeled_button(GObject *root,
                                         GtkWidget *hbox,
-                                        gchar *button_type,
                                         const gchar *button_text,
                                         GCallback on_button_clicked_func)
 {
     GtkWidget *button;
 
     button = gtk_button_new_with_label (button_text);
-    add_widget(root, button_type, "button", button);
+    add_widget(root, button);
     gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
     gtk_container_set_border_width (GTK_CONTAINER (button), 2);
     g_signal_connect (G_OBJECT (button), "clicked",
                       on_button_clicked_func, NULL);
 
     return button;
+}
+
+static void create_buttons(GObject *root, GtkWidget *box) {
+    struct btn_param {
+        const char* text;
+        GCallback callback;
+    } btn_params[BUTTONS_COUNT] = {
+        {"Tap", G_CALLBACK (on_tap_button_clicked)},
+        {"Stop", G_CALLBACK (on_stop_button_clicked)},
+        {"Start", G_CALLBACK (on_start_button_clicked)}
+    };
+
+    for (int c = 0; c < BUTTONS_COUNT; ++c)
+        buttons[c] = create_labeled_button(root, box, btn_params[c].text, btn_params[c].callback);
 }
 
 static void gautoclick_exit(void)
@@ -155,21 +182,16 @@ static GtkWidget *create_gAutoClick(void) {
     gtk_window_set_resizable(GTK_WINDOW (gAutoClick_win), FALSE);
 
     vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-    add_widget(gAutoClick_obj, "", "vbox", vbox);
+    add_widget(gAutoClick_obj, vbox);
     gtk_container_add (GTK_CONTAINER (gAutoClick_win), vbox);
 
-    spins[SPIN_PREDELAY] = create_labeled_spin(gAutoClick_obj, vbox, "predelay", "Pre-delay  ", 0);
-    spins[SPIN_INTERVAL] = create_labeled_spin(gAutoClick_obj, vbox, "interval", "Interval  ", 0);
-    spins[SPIN_RANDOM] = create_labeled_spin(gAutoClick_obj, vbox, "random", "Random +/-  ", 0);
-    spins[SPIN_NUMBER] = create_labeled_spin(gAutoClick_obj, vbox, "nrofclicks", "# of clicks  ", 1);
+    create_spins(gAutoClick_obj, vbox);
 
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-    add_widget(gAutoClick_obj, "", "hbox", hbox);
+    add_widget(gAutoClick_obj, hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
-    buttons[BUTTON_TAP] = create_labeled_button(gAutoClick_obj, hbox, "tap", "Tap", G_CALLBACK (on_tap_button_clicked));
-    buttons[BUTTON_STOP] = create_labeled_button(gAutoClick_obj, hbox, "stop", "Stop", G_CALLBACK (on_stop_button_clicked));
-    buttons[BUTTON_START] = create_labeled_button(gAutoClick_obj, hbox, "start", "Start", G_CALLBACK (on_start_button_clicked));
+    create_buttons(gAutoClick_obj, hbox);
 
     g_signal_connect (gAutoClick_obj, "delete_event",
                       G_CALLBACK (gautoclick_exit), NULL);
