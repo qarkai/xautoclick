@@ -28,8 +28,8 @@
 static Display *display;
 
 static GtkWidget *gAutoClick;
-static GtkWidget *tap_button, *stop_button, *start_button;
-static GtkWidget *predelay_spin, *interval_spin, *random_spin, *nrofclicks_spin;
+static GtkWidget *buttons[BUTTONS_COUNT];
+static GtkWidget *spins[SPINS_COUNT];
 
 void click_mouse_button(void) {
     x11_clicker_click_mouse_button(display);
@@ -45,52 +45,15 @@ void set_alarm(int ms) {
 }
 
 int get_spin_value(spin_t spin) {
-
-    switch(spin) {
-    case SPIN_PREDELAY:
-        return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(predelay_spin));
-    case SPIN_INTERVAL:
-        return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(interval_spin));
-    case SPIN_RANDOM:
-        return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(random_spin));
-    case SPIN_NUMBER:
-        return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(nrofclicks_spin));
-    }
-
-    return 0;
+    return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spins[spin]));
 }
 
 void set_spin_value(spin_t spin, int value) {
-
-    switch(spin) {
-    case SPIN_PREDELAY:
-        gtk_spin_button_set_value(GTK_SPIN_BUTTON(predelay_spin), value);
-        break;
-    case SPIN_INTERVAL:
-        gtk_spin_button_set_value(GTK_SPIN_BUTTON(interval_spin), value);
-        break;
-    case SPIN_RANDOM:
-        gtk_spin_button_set_value(GTK_SPIN_BUTTON(random_spin), value);
-        break;
-    case SPIN_NUMBER:
-        gtk_spin_button_set_value(GTK_SPIN_BUTTON(nrofclicks_spin), value);
-        break;
-    }
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(spins[spin]), value);
 }
 
 void set_button_sensitive(button_t button, bool state) {
-
-    switch(button) {
-    case BUTTON_TAP:
-        gtk_widget_set_sensitive(tap_button, state);
-        break;
-    case BUTTON_STOP:
-        gtk_widget_set_sensitive(stop_button, state);
-        break;
-    case BUTTON_START:
-        gtk_widget_set_sensitive(start_button, state);
-        break;
-    }
+    gtk_widget_set_sensitive(buttons[button], state);
 }
 
 static void on_tap_button_clicked(GtkButton *button, gpointer user_data) {
@@ -195,18 +158,18 @@ static GtkWidget *create_gAutoClick(void) {
     add_widget(gAutoClick_obj, "", "vbox", vbox);
     gtk_container_add (GTK_CONTAINER (gAutoClick_win), vbox);
 
-    predelay_spin = create_labeled_spin(gAutoClick_obj, vbox, "predelay", "Pre-delay  ", 0);
-    interval_spin = create_labeled_spin(gAutoClick_obj, vbox, "interval", "Interval  ", 0);
-    random_spin = create_labeled_spin(gAutoClick_obj, vbox, "random", "Random +/-  ", 0);
-    nrofclicks_spin = create_labeled_spin(gAutoClick_obj, vbox, "nrofclicks", "# of clicks  ", 1);
+    spins[SPIN_PREDELAY] = create_labeled_spin(gAutoClick_obj, vbox, "predelay", "Pre-delay  ", 0);
+    spins[SPIN_INTERVAL] = create_labeled_spin(gAutoClick_obj, vbox, "interval", "Interval  ", 0);
+    spins[SPIN_RANDOM] = create_labeled_spin(gAutoClick_obj, vbox, "random", "Random +/-  ", 0);
+    spins[SPIN_NUMBER] = create_labeled_spin(gAutoClick_obj, vbox, "nrofclicks", "# of clicks  ", 1);
 
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     add_widget(gAutoClick_obj, "", "hbox", hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
-    tap_button = create_labeled_button(gAutoClick_obj, hbox, "tap", "Tap", on_tap_button_clicked);
-    stop_button = create_labeled_button(gAutoClick_obj, hbox, "stop", "Stop", on_stop_button_clicked);
-    start_button = create_labeled_button(gAutoClick_obj, hbox, "start", "Start", on_start_button_clicked);
+    buttons[BUTTON_TAP] = create_labeled_button(gAutoClick_obj, hbox, "tap", "Tap", on_tap_button_clicked);
+    buttons[BUTTON_STOP] = create_labeled_button(gAutoClick_obj, hbox, "stop", "Stop", on_stop_button_clicked);
+    buttons[BUTTON_START] = create_labeled_button(gAutoClick_obj, hbox, "start", "Start", on_start_button_clicked);
 
     g_signal_connect (gAutoClick_obj, "delete_event",
                       G_CALLBACK (gautoclick_exit), NULL);

@@ -28,7 +28,7 @@
 #include "x11clicker.h"
 
 static Display *display;
-static int predelay, interval, randomfactor, numberofclicks, sleeptime;
+static int spins[SPINS_COUNT], sleeptime;
 
 void click_mouse_button(void) {
     x11_clicker_click_mouse_button(display);
@@ -39,33 +39,11 @@ void set_alarm(int ms) {
 }
 
 int get_spin_value(spin_t spin) {
-
-    switch(spin) {
-    case SPIN_PREDELAY:
-        return predelay;
-        break;
-    case SPIN_INTERVAL:
-        return interval;
-        break;
-    case SPIN_RANDOM:
-        return randomfactor;
-        break;
-    case SPIN_NUMBER:
-        return numberofclicks;
-        break;
-    }
-
-    return 0;
+    return spins[spin];
 }
 
 void set_spin_value(spin_t spin, int value) {
-
-    switch(spin) {
-    case SPIN_PREDELAY:     predelay       = value;     break;
-    case SPIN_INTERVAL:     interval       = value;     break;
-    case SPIN_RANDOM:       randomfactor   = value;     break;
-    case SPIN_NUMBER:       numberofclicks = value;     break;
-    }
+    spins[spin] = value;
 }
 
 void set_button_sensitive(button_t button, bool state) {
@@ -99,10 +77,10 @@ void close_gui(void) {
 }
 
 static void print_variables(void) {
-    printf("pre-delay:          %i\n", predelay);
-    printf("interval:           %i\n", interval);
-    printf("random +/-:         %i\n", randomfactor);
-    printf("number of clicks:   %i\n", numberofclicks);
+    printf("pre-delay:          %i\n", spins[SPIN_PREDELAY]);
+    printf("interval:           %i\n", spins[SPIN_INTERVAL]);
+    printf("random +/-:         %i\n", spins[SPIN_RANDOM]);
+    printf("number of clicks:   %i\n", spins[SPIN_NUMBER]);
     printf("\n");
 }
 
@@ -168,14 +146,14 @@ void main_loop(void) {
         flush_to_eol(c);
 
         switch (c) {
-        case 'p':   read_int(&predelay);            break;
-        case 'i':   read_int(&interval);            break;
-        case 'r':   read_int(&randomfactor);        break;
-        case 'n':   read_int(&numberofclicks);      break;
-        case 't':   common_tap_button();            break;
-        case 's':   run();                          return;
-        case 'q':                                   return;
-        default:    printf("unknown command\n");    break;
+        case 'p': read_int(&spins[SPIN_PREDELAY]); break;
+        case 'i': read_int(&spins[SPIN_INTERVAL]); break;
+        case 'r': read_int(&spins[SPIN_RANDOM]);   break;
+        case 'n': read_int(&spins[SPIN_NUMBER]);   break;
+        case 't': common_tap_button();             break;
+        case 's': run();                           return;
+        case 'q':                                  return;
+        default:  printf("unknown command\n");     break;
         }
 
         print_variables();

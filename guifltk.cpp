@@ -33,8 +33,8 @@ extern "C" {
 
 static Display *display;
 static Fl_Double_Window *win;
-static Fl_Button *buttons[3];
-static Fl_Spinner *spins[4];
+static Fl_Button *buttons[BUTTONS_COUNT];
+static Fl_Spinner *spins[SPINS_COUNT];
 static bool repeated = false;
 
 void click_mouse_button(void) {
@@ -91,20 +91,20 @@ int init_gui(int argc, char **argv) {
     win->begin();
     win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
-    const char * const butnames[3] = { "Tap", "Stop", "Start" };
-    for (int c=0; c<3; c++)
+    const char * const butnames[BUTTONS_COUNT] = { "Tap", "Stop", "Start" };
+    for (int c = 0; c < BUTTONS_COUNT; c++)
         buttons[c] = new Fl_Button(5+55*c, 125, 55, 25, butnames[c]);
 
-    const char * const label[4] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
-    for (int c=0; c<4; c++) {
+    const char * const label[SPINS_COUNT] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
+    for (int c = 0; c < SPINS_COUNT; c++) {
         spins[c] = new Fl_Spinner(95, 5+c*30, 75, 25, label[c]);
         spins[c]->minimum(1);
         spins[c]->maximum(INT_MAX);
     }
 
-    buttons[0]->callback(tap_callback);
-    buttons[1]->callback(stop_callback);
-    buttons[2]->callback(start_callback);
+    buttons[BUTTON_TAP]->callback(tap_callback);
+    buttons[BUTTON_STOP]->callback(stop_callback);
+    buttons[BUTTON_START]->callback(start_callback);
     win->end();
 
     get_options();

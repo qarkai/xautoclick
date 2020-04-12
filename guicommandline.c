@@ -27,7 +27,7 @@
 #include "x11clicker.h"
 
 static Display *display;
-static int predelay, interval, randomfactor, numberofclicks, sleeptime;
+static int spins[SPINS_COUNT], sleeptime;
 
 void click_mouse_button(void) {
     x11_clicker_click_mouse_button(display);
@@ -38,25 +38,11 @@ void set_alarm(int ms) {
 }
 
 int get_spin_value(spin_t spin) {
-
-    switch(spin) {
-    case SPIN_PREDELAY:     return predelay;        break;
-    case SPIN_INTERVAL:     return interval;        break;
-    case SPIN_RANDOM:       return randomfactor;    break;
-    case SPIN_NUMBER:       return numberofclicks;  break;
-    }
-
-    return 0;
+    return spins[spin];
 }
 
 void set_spin_value(spin_t spin, int value) {
-
-    switch(spin) {
-    case SPIN_PREDELAY:     predelay       = value;     break;
-    case SPIN_INTERVAL:     interval       = value;     break;
-    case SPIN_RANDOM:       randomfactor   = value;     break;
-    case SPIN_NUMBER:       numberofclicks = value;     break;
-    }
+    spins[spin] = value;
 }
 
 void set_button_sensitive(button_t button, bool state) {
@@ -99,13 +85,13 @@ int init_gui(int argc, char **argv) {
         } else if (!strcmp(argv[c], "-h")) {
             printhelp(argv[0]);
         } else if (!strcmp(argv[c], "-i")) {
-            option_with_argument(interval, "-i", c);
+            option_with_argument(spins[SPIN_INTERVAL], "-i", c);
         } else if (!strcmp(argv[c], "-n")) {
-            option_with_argument(numberofclicks, "-n", c);
+            option_with_argument(spins[SPIN_NUMBER], "-n", c);
         } else if (!strcmp(argv[c], "-p")) {
-            option_with_argument(predelay, "-p", c);
+            option_with_argument(spins[SPIN_PREDELAY], "-p", c);
         } else if (!strcmp(argv[c], "-r")) {
-            option_with_argument(randomfactor, "-r", c);
+            option_with_argument(spins[SPIN_RANDOM], "-r", c);
         } else {
             fprintf(stderr, "unknown command line option: %s\n", argv[c]);
             return 0;

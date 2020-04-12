@@ -30,12 +30,12 @@ extern "C" {
 #include <QVBoxLayout>
 
 ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
-    QString label[4] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
-    QString butnames[3] = { "Tap", "Stop", "Start" };
+    QString label[SPINS_COUNT] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
+    QString butnames[BUTTONS_COUNT] = { "Tap", "Stop", "Start" };
 
     QVBoxLayout *vbox = new QVBoxLayout;
 
-    for (int c=0; c<4; c++) {
+    for (int c = 0; c < SPINS_COUNT; c++) {
         QHBoxLayout *layout = new QHBoxLayout;
         spins[c] = new QSpinBox;
         spins[c]->setMinimum(1);
@@ -48,14 +48,14 @@ ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
 
     QHBoxLayout *layout = new QHBoxLayout;
 
-    for (int c=0; c<3; c++)
+    for (int c = 0; c < BUTTONS_COUNT; c++)
     {
         layout->addWidget(buttons[c] = new QPushButton(butnames[c]));
     }
 
-    connect(buttons[0], SIGNAL(clicked()), this, SLOT(tap(void)));
-    connect(buttons[1], SIGNAL(clicked()), this, SLOT(stop(void)));
-    connect(buttons[2], SIGNAL(clicked()), this, SLOT(start(void)));
+    connect(buttons[BUTTON_TAP], SIGNAL(clicked()), this, SLOT(tap(void)));
+    connect(buttons[BUTTON_STOP], SIGNAL(clicked()), this, SLOT(stop(void)));
+    connect(buttons[BUTTON_START], SIGNAL(clicked()), this, SLOT(start(void)));
 
     vbox->addLayout(layout);
     setWindowTitle("Qt4AutoClick");

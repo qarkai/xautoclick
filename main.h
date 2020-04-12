@@ -6,14 +6,16 @@
 typedef enum button_e {
     BUTTON_TAP = 0,
     BUTTON_STOP,
-    BUTTON_START
+    BUTTON_START,
+    BUTTONS_COUNT
 } button_t;
 
 typedef enum spin_e {
     SPIN_PREDELAY = 0,
     SPIN_INTERVAL,
     SPIN_RANDOM,
-    SPIN_NUMBER
+    SPIN_NUMBER,
+    SPINS_COUNT
 } spin_t;
 
 /* Common functions. GUI's should call back to these */
