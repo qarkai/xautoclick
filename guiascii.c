@@ -139,6 +139,16 @@ static void read_int(int *ptr) {
     flush_to_eol(0);
 }
 
+static void run(void) {
+    common_start_button();
+
+    while (sleeptime) {
+        usleep(sleeptime * 1000);
+        sleeptime = 0;
+        common_alarm_callback();
+    }
+}
+
 void main_loop(void) {
     int c;
 
@@ -147,8 +157,8 @@ void main_loop(void) {
     c = fgetc(stdin);
 
     while (c) {
-
         while(isblank(c)) { c = fgetc(stdin); }
+
         if (is_eol(c)) {
             printf("> ");
             c = fgetc(stdin);
@@ -163,8 +173,8 @@ void main_loop(void) {
         case 'r':   read_int(&randomfactor);        break;
         case 'n':   read_int(&numberofclicks);      break;
         case 't':   common_tap_button();            break;
-        case 's':   goto run;                       break;
-        case 'q':   goto quit_out;                  break;
+        case 's':   run();                          return;
+        case 'q':                                   return;
         default:    printf("unknown command\n");    break;
         }
 
@@ -175,15 +185,5 @@ void main_loop(void) {
         c = fgetc(stdin);
     }
 
-run:
-    common_start_button();
-
-    while (sleeptime) {
-        usleep(sleeptime * 1000);
-        sleeptime = 0;
-        common_alarm_callback();
-    }
-
-quit_out:
-    return;
+    run();
 }
