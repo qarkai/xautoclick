@@ -14,7 +14,7 @@ class ClickWidget : public QWidget {
         void startTimer(int ms);
         int getSpinValue(int spin);
         void setSpinValue(int spin, int value);
-        void setButtonSensitive(int button, int state);
+        void setButtonSensitive(int button, bool state);
 
     public slots:
         void tap(void);

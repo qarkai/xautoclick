@@ -71,7 +71,7 @@ void set_spin_value(spin_t spin, int value) {
     }
 }
 
-void set_button_sensitive(button_t button, int state) {
+void set_button_sensitive(button_t button, bool state) {
 }
 
 int init_gui(int argc, char **argv) {

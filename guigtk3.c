@@ -81,17 +81,17 @@ void set_spin_value(spin_t spin, int value) {
     }
 }
 
-void set_button_sensitive(button_t button, int state) {
+void set_button_sensitive(button_t button, bool state) {
 
     switch(button) {
     case BUTTON_TAP:
-        gtk_widget_set_sensitive(tap_button, state ? TRUE : FALSE);
+        gtk_widget_set_sensitive(tap_button, state);
         break;
     case BUTTON_STOP:
-        gtk_widget_set_sensitive(stop_button, state ? TRUE : FALSE);
+        gtk_widget_set_sensitive(stop_button, state);
         break;
     case BUTTON_START:
-        gtk_widget_set_sensitive(start_button, state ? TRUE : FALSE);
+        gtk_widget_set_sensitive(start_button, state);
         break;
     }
 }

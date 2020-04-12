@@ -78,7 +78,7 @@ void ClickWidget::setSpinValue(int spin, int value) {
     spins[spin]->setValue(value);
 }
 
-void ClickWidget::setButtonSensitive(int button, int state) {
+void ClickWidget::setButtonSensitive(int button, bool state) {
     buttons[button]->setEnabled(state);
 }
 

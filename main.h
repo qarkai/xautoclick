@@ -1,6 +1,8 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <stdbool.h>
+
 typedef enum button_e {
     BUTTON_TAP = 0,
     BUTTON_STOP,
@@ -27,7 +29,7 @@ void common_alarm_callback(void);
 int init_gui(int argc, char **argv);
 void main_loop(void);
 void close_gui(void);
-void set_button_sensitive(button_t button, int state);
+void set_button_sensitive(button_t button, bool state);
 void set_spin_value(spin_t spin, int value);
 int get_spin_value(spin_t spin);
 void get_options(void);

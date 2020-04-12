@@ -69,7 +69,7 @@ void set_spin_value(spin_t spin, int value) {
     spins[spin]->value(value);
 }
 
-void set_button_sensitive(button_t button, int state) {
+void set_button_sensitive(button_t button, bool state) {
     if (state) buttons[button]->activate();
     else       buttons[button]->deactivate();
 }

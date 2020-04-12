@@ -49,18 +49,18 @@ static int counter = 0;
 
 void common_stop_button(void) {
 
-    set_button_sensitive(BUTTON_TAP, 1);
-    set_button_sensitive(BUTTON_STOP, 0);
-    set_button_sensitive(BUTTON_START, 1);
+    set_button_sensitive(BUTTON_TAP, true);
+    set_button_sensitive(BUTTON_STOP, false);
+    set_button_sensitive(BUTTON_START, true);
 
     counter = 0;
 }
 
 void common_start_button(void) {
 
-    set_button_sensitive(BUTTON_TAP, 0);
-    set_button_sensitive(BUTTON_STOP, 1);
-    set_button_sensitive(BUTTON_START, 0);
+    set_button_sensitive(BUTTON_TAP, false);
+    set_button_sensitive(BUTTON_STOP, true);
+    set_button_sensitive(BUTTON_START, false);
 
     counter = get_spin_value(SPIN_NUMBER);
 
@@ -315,9 +315,9 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    set_button_sensitive(BUTTON_TAP, 1);
-    set_button_sensitive(BUTTON_STOP, 0);
-    set_button_sensitive(BUTTON_START, 1);
+    set_button_sensitive(BUTTON_TAP, true);
+    set_button_sensitive(BUTTON_STOP, false);
+    set_button_sensitive(BUTTON_START, true);
 
     main_loop();
     close_gui();

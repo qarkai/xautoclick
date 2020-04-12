@@ -51,7 +51,7 @@ void set_spin_value(spin_t spin, int value) {
     clickWidget->setSpinValue(spin, value);
 }
 
-void set_button_sensitive(button_t button, int state) {
+void set_button_sensitive(button_t button, bool state) {
     clickWidget->setButtonSensitive(button, state);
 }
 
