@@ -55,7 +55,7 @@ void set_alarm(int ms) {
 }
 
 int get_spin_value(spin_t spin) {
-    return spins[spin]->value();
+    return static_cast<int>(spins[spin]->value());
 }
 
 void set_spin_value(spin_t spin, int value) {
