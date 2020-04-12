@@ -37,9 +37,6 @@ static Fl_Button *buttons[3];
 static Fl_Spinner *spins[4];
 static int repeated = 0;
 
-static const char * const label[4] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
-static const char * const butnames[3] = { "Tap", "Stop", "Start" };
-
 void click_mouse_button(void) {
     x11_clicker_click_mouse_button(display);
 }
@@ -93,8 +90,12 @@ int init_gui(int argc, char **argv) {
     win = new Fl_Double_Window(175, 155, "fltkAutoClick");
     win->begin();
     win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
+
+    const char * const butnames[3] = { "Tap", "Stop", "Start" };
     for (int c=0; c<3; c++)
         buttons[c] = new Fl_Button(5+55*c, 125, 55, 25, butnames[c]);
+
+    const char * const label[4] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
     for (int c=0; c<4; c++) {
         spins[c] = new Fl_Spinner(95, 5+c*30, 75, 25, label[c]);
         spins[c]->minimum(1);
