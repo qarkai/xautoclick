@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=xAutoClick
 Comment=autoclicker for linux
-Exec=gautoclick2
+Exec=gautoclick3
 Icon=xautoclick
 Terminal=false
 Type=Application
