@@ -119,7 +119,7 @@ static GtkWidget *create_labeled_button(GObject *root,
                                         GtkWidget *hbox,
                                         gchar *button_type,
                                         const gchar *button_text,
-                                        void *on_button_clicked_func)
+                                        GCallback on_button_clicked_func)
 {
     GtkWidget *button;
 
@@ -128,7 +128,7 @@ static GtkWidget *create_labeled_button(GObject *root,
     gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
     gtk_container_set_border_width (GTK_CONTAINER (button), 2);
     g_signal_connect (G_OBJECT (button), "clicked",
-                      G_CALLBACK (on_button_clicked_func), NULL);
+                      on_button_clicked_func, NULL);
 
     return button;
 }
@@ -167,9 +167,9 @@ static GtkWidget *create_gAutoClick(void) {
     add_widget(gAutoClick_obj, "", "hbox", hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
-    buttons[BUTTON_TAP] = create_labeled_button(gAutoClick_obj, hbox, "tap", "Tap", on_tap_button_clicked);
-    buttons[BUTTON_STOP] = create_labeled_button(gAutoClick_obj, hbox, "stop", "Stop", on_stop_button_clicked);
-    buttons[BUTTON_START] = create_labeled_button(gAutoClick_obj, hbox, "start", "Start", on_start_button_clicked);
+    buttons[BUTTON_TAP] = create_labeled_button(gAutoClick_obj, hbox, "tap", "Tap", G_CALLBACK (on_tap_button_clicked));
+    buttons[BUTTON_STOP] = create_labeled_button(gAutoClick_obj, hbox, "stop", "Stop", G_CALLBACK (on_stop_button_clicked));
+    buttons[BUTTON_START] = create_labeled_button(gAutoClick_obj, hbox, "start", "Start", G_CALLBACK (on_start_button_clicked));
 
     g_signal_connect (gAutoClick_obj, "delete_event",
                       G_CALLBACK (gautoclick_exit), NULL);
