@@ -1,8 +1,7 @@
 Be sure you have the proper development packages for your distribution
-installed. For example, on debian you need at least one of libqt4-dev,
-libgtk2.0-dev, libgtk-3-dev or libfltk1.3-dev. Also, be sure to have
-the XTest extension and its development files. Again, on debian, you
-need libxtst6 and libxtst-dev.
+installed. For example, on Debian you need at least one of libqt4-dev,
+libgtk-3-dev or libfltk1.3-dev. Also, be sure to have the XTest extension
+and its development files. Again, on Debian, you need libxtst6 and libxtst-dev.
 
 After that, run:
 
@@ -12,5 +11,5 @@ cmake ..
 
 and if all is fine (at least one GUI must be set to yes), run:
 
-make
+cmake --build .
 sudo make install
