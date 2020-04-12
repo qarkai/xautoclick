@@ -26,12 +26,10 @@
 extern "C" {
 #include "main.h"
 #include "osdep.h"
+#include "x11clicker.h"
 #include <stdio.h>
 #include <limits.h>
 }
-
-#include <X11/Xlib.h>
-#include <X11/extensions/XTest.h>
 
 static Display *display;
 static Fl_Double_Window *win;
@@ -43,9 +41,7 @@ static const char * const label[4] = { "Pre-delay", "Interval", "Random +/-", "#
 static const char * const butnames[3] = { "Tap", "Stop", "Start" };
 
 void click_mouse_button(void) {
-    XTestFakeButtonEvent(display, 1, True, CurrentTime);
-    XTestFakeButtonEvent(display, 1, False, CurrentTime);
-    XFlush(display);
+    x11_clicker_click_mouse_button(display);
 }
 
 static void alarm_callback(void *v) {
@@ -88,7 +84,7 @@ static void start_callback(Fl_Widget *w, void *v) {
 }
 
 int init_gui(int argc, char **argv) {
-    display = XOpenDisplay(NULL);
+    display = x11_clicker_open_display();
     if (!display) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
@@ -117,7 +113,7 @@ int init_gui(int argc, char **argv) {
 
 void close_gui(void) {
     set_options();
-    XCloseDisplay(display);
+    x11_clicker_close_display(display);
 }
 
 void main_loop(void) {

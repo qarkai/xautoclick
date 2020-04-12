@@ -20,11 +20,10 @@
 
 #include <stdio.h>
 #include <limits.h>
-#include <X11/Xlib.h>
-#include <X11/extensions/XTest.h>
 #include <gtk/gtk.h>
 
 #include "main.h"
+#include "x11clicker.h"
 
 static Display *display;
 
@@ -33,9 +32,7 @@ static GtkWidget *tap_button, *stop_button, *start_button;
 static GtkWidget *predelay_spin, *interval_spin, *random_spin, *nrofclicks_spin;
 
 void click_mouse_button(void) {
-    XTestFakeButtonEvent(display, 1, True, CurrentTime);
-    XTestFakeButtonEvent(display, 1, False, CurrentTime);
-    XFlush(display);
+    x11_clicker_click_mouse_button(display);
 }
 
 static gboolean myalarm(gpointer data) {
@@ -217,7 +214,7 @@ static GtkWidget *create_gAutoClick(void) {
 }
 
 int init_gui(int argc, char **argv) {
-    display = XOpenDisplay(NULL);
+    display = x11_clicker_open_display();
     if (!display) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
@@ -235,7 +232,7 @@ int init_gui(int argc, char **argv) {
 }
 
 void close_gui(void) {
-    XCloseDisplay(display);
+    x11_clicker_close_display(display);
 }
 
 void main_loop(void) {

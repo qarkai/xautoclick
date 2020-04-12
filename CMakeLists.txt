@@ -3,13 +3,18 @@ cmake_minimum_required(VERSION 3.2)
 project(xautoclick)
 
 find_package(X11 REQUIRED)
-link_libraries(${X11_LIBRARIES} ${X11_XTest_LIB})
 
 include(CheckIncludeFile)
 CHECK_INCLUDE_FILE("unistd.h" HAVE_UNISTD)
 if(${HAVE_UNISTD})
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHAVE_UNISTD_H")
 endif()
+
+add_library(x11clicker STATIC
+    x11clicker.c
+    x11clicker.h
+)
+target_link_libraries(x11clicker ${X11_LIBRARIES} ${X11_XTest_LIB})
 
 set(SOURCE_COMMON
     main.c
@@ -22,12 +27,14 @@ add_executable(aautoclick
     ${SOURCE_COMMON}
     guiascii.c
 )
+target_link_libraries(aautoclick x11clicker)
 install(TARGETS aautoclick DESTINATION bin)
 
 add_executable(cautoclick
     ${SOURCE_COMMON}
     guicommandline.c
 )
+target_link_libraries(cautoclick x11clicker)
 install(TARGETS cautoclick DESTINATION bin)
 
 set(FLTK_SKIP_OPENGL ON)
@@ -37,7 +44,7 @@ if(FLTK_FOUND)
         ${SOURCE_COMMON}
         guifltk.cpp
     )
-    target_link_libraries(fltkautoclick ${FLTK_LIBRARIES})
+    target_link_libraries(fltkautoclick x11clicker ${FLTK_LIBRARIES})
     install(TARGETS fltkautoclick DESTINATION bin)
 endif()
 
@@ -50,7 +57,7 @@ if(PkgConfig_FOUND)
             guigtk3.c
         )
         target_include_directories(gautoclick3 PRIVATE ${GTK3_INCLUDE_DIRS})
-        target_link_libraries(gautoclick3 ${GTK3_LIBRARIES})
+        target_link_libraries(gautoclick3 x11clicker ${GTK3_LIBRARIES})
         install(TARGETS gautoclick3 DESTINATION bin)
         install(FILES xautoclick.desktop DESTINATION share/applications)
         install(FILES xautoclick.svg DESTINATION share/icons/hicolor/scalable/apps)
@@ -66,7 +73,7 @@ if(QT4_FOUND)
         clickwidget.h
         guiqt4.cpp
     )
-    target_link_libraries(qt4autoclick Qt4::QtCore Qt4::QtGui)
+    target_link_libraries(qt4autoclick x11clicker Qt4::QtCore Qt4::QtGui)
     install(TARGETS qt4autoclick DESTINATION bin)
 endif()
 

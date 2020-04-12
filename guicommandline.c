@@ -21,19 +21,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <X11/Xlib.h>
-#include <X11/extensions/XTest.h>
 
 #include "main.h"
 #include "osdep.h"
+#include "x11clicker.h"
 
 static Display *display;
 static int predelay, interval, randomfactor, numberofclicks, sleeptime;
 
 void click_mouse_button(void) {
-    XTestFakeButtonEvent(display, 1, True, CurrentTime);
-    XTestFakeButtonEvent(display, 1, False, CurrentTime);
-    XFlush(display);
+    x11_clicker_click_mouse_button(display);
 }
 
 void set_alarm(int ms) {
@@ -81,7 +78,7 @@ static void printhelp(char *myname) {
 int init_gui(int argc, char **argv) {
     int c;
 
-    display = XOpenDisplay(NULL);
+    display = x11_clicker_open_display();
     if (!display) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
@@ -122,7 +119,7 @@ int init_gui(int argc, char **argv) {
 
 void close_gui(void) {
     /* don't set options from command line */
-    XCloseDisplay(display);
+    x11_clicker_close_display(display);
 }
 
 void main_loop(void) {

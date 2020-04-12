@@ -18,25 +18,21 @@
  *
  */
 
+#include <QApplication>
+
 #include "clickwidget.h"
 
 extern "C" {
 #include "main.h"
+#include "x11clicker.h"
 }
-
-#include <QApplication>
-
-#include <X11/Xlib.h>
-#include <X11/extensions/XTest.h>
 
 static Display *display;
 static QApplication *app;
 static ClickWidget *clickWidget;
 
 void click_mouse_button(void) {
-    XTestFakeButtonEvent(display, 1, True, CurrentTime);
-    XTestFakeButtonEvent(display, 1, False, CurrentTime);
-    XFlush(display);
+    x11_clicker_click_mouse_button(display);
 }
 
 void set_alarm(int ms) {
@@ -56,7 +52,7 @@ void set_button_sensitive(button_t button, bool state) {
 }
 
 int init_gui(int /*argc*/, char **/*argv*/) {
-    display = XOpenDisplay(NULL);
+    display = x11_clicker_open_display();
     if (!display) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
@@ -72,8 +68,7 @@ int init_gui(int /*argc*/, char **/*argv*/) {
 
 void close_gui(void) {
     set_options();
-    XCloseDisplay(display);
-    return;
+    x11_clicker_close_display(display);
 }
 
 void main_loop(void) {
