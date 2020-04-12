@@ -35,7 +35,7 @@ static Display *display;
 static Fl_Double_Window *win;
 static Fl_Button *buttons[3];
 static Fl_Spinner *spins[4];
-static int repeated = 0;
+static bool repeated = false;
 
 void click_mouse_button(void) {
     x11_clicker_click_mouse_button(display);
@@ -48,7 +48,7 @@ static void alarm_callback(void *v) {
 void set_alarm(int ms) {
     if (!repeated) {
         Fl::add_timeout(0.001*ms, alarm_callback);
-        repeated = 1;
+        repeated = true;
     } else {
         Fl::repeat_timeout(0.001*ms, alarm_callback);
     }
@@ -72,7 +72,7 @@ static void tap_callback(Fl_Widget *w, void *v) {
 }
 
 static void stop_callback(Fl_Widget *w, void *v) {
-    repeated = 0;
+    repeated = false;
     common_stop_button();
 }
 
