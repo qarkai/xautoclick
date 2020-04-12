@@ -52,6 +52,8 @@ if(PkgConfig_FOUND)
         target_include_directories(gautoclick3 PRIVATE ${GTK3_INCLUDE_DIRS})
         target_link_libraries(gautoclick3 ${GTK3_LIBRARIES})
         install(TARGETS gautoclick3 DESTINATION bin)
+        install(FILES xautoclick.desktop DESTINATION share/applications)
+        install(FILES xautoclick.svg DESTINATION share/icons/hicolor/scalable/apps)
     endif()
 endif()
 
