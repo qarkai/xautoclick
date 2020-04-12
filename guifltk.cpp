@@ -80,6 +80,23 @@ static void start_callback(Fl_Widget *w, void *v) {
     common_start_button();
 }
 
+static Fl_Button* create_button(const char* name, Fl_Callback *callback) {
+    static int n = 0;
+    auto button = new Fl_Button(5+55*n, 125, 55, 25, name);
+    button->callback(callback);
+    ++n;
+    return button;
+}
+
+static Fl_Spinner* create_spin(const char* name) {
+    static int n = 0;
+    auto spin = new Fl_Spinner(95, 5+n*30, 75, 25, name);
+    spin->minimum(1);
+    spin->maximum(INT_MAX);
+    ++n;
+    return spin;
+}
+
 int init_gui(int argc, char **argv) {
     display = x11_clicker_open_display();
     if (!display) {
@@ -91,20 +108,14 @@ int init_gui(int argc, char **argv) {
     win->begin();
     win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
-    const char * const butnames[BUTTONS_COUNT] = { "Tap", "Stop", "Start" };
-    for (int c = 0; c < BUTTONS_COUNT; c++)
-        buttons[c] = new Fl_Button(5+55*c, 125, 55, 25, butnames[c]);
+    buttons[BUTTON_TAP] = create_button("Tap", tap_callback);
+    buttons[BUTTON_STOP] = create_button("Stop", stop_callback);
+    buttons[BUTTON_START] = create_button("Start", start_callback);
 
     const char * const label[SPINS_COUNT] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
-    for (int c = 0; c < SPINS_COUNT; c++) {
-        spins[c] = new Fl_Spinner(95, 5+c*30, 75, 25, label[c]);
-        spins[c]->minimum(1);
-        spins[c]->maximum(INT_MAX);
-    }
+    for (int c = 0; c < SPINS_COUNT; c++)
+        spins[c] = create_spin(label[c]);
 
-    buttons[BUTTON_TAP]->callback(tap_callback);
-    buttons[BUTTON_STOP]->callback(stop_callback);
-    buttons[BUTTON_START]->callback(start_callback);
     win->end();
 
     get_options();
