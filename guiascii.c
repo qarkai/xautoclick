@@ -18,6 +18,7 @@
  *
  */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -105,7 +106,6 @@ static void print_variables(void) {
     printf("\n");
 }
 
-#define is_space(x) ((x)==' ' || (x)=='\t')
 #define is_eol(x) ((x)=='\n')
 
 static void flush_to_eol(int c) {
@@ -148,7 +148,7 @@ void main_loop(void) {
 
     while (c) {
 
-        while(is_space(c)) { c = fgetc(stdin); }
+        while(isblank(c)) { c = fgetc(stdin); }
         if (is_eol(c)) {
             printf("> ");
             c = fgetc(stdin);
