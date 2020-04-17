@@ -51,14 +51,15 @@ void set_button_sensitive(button_t button, bool state) {
     clickWidget->setButtonSensitive(button, state);
 }
 
-int init_gui(int /*argc*/, char **/*argv*/) {
+int init_gui(int argc, char **argv) {
     display = x11_clicker_open_display();
     if (!display) {
         fprintf(stderr, "Unable to open X display\n");
         return 0;
     }
 
-    app = new QApplication(display);
+    static int argn = argc; // QApplication reference to argc workaround
+    app = new QApplication(argn, argv);
     clickWidget = new ClickWidget;
 
     get_options();
