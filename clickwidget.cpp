@@ -58,7 +58,7 @@ ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
     connect(buttons[BUTTON_START], SIGNAL(clicked()), this, SLOT(start(void)));
 
     vbox->addLayout(layout);
-    setWindowTitle("Qt4AutoClick");
+    setWindowTitle("qAutoClick");
     setLayout(vbox);
 
     timer = new QTimer;
