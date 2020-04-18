@@ -43,7 +43,7 @@ add_executable(cautoclick
     ${SOURCE_COMMON}
     guicommandline.c
 )
-target_link_libraries(cautoclick udevclicker)
+target_link_libraries(cautoclick x11clicker)
 install(TARGETS cautoclick DESTINATION bin)
 
 set(FLTK_SKIP_OPENGL ON)
