@@ -62,7 +62,7 @@ ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
     setLayout(vbox);
 
     timer = new QTimer;
-    timer->setSingleShot(TRUE);
+    timer->setSingleShot(true);
     connect(timer, SIGNAL(timeout()), this, SLOT(timer_done()));
 }
 

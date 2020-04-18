@@ -77,4 +77,17 @@ if(QT4_FOUND)
     install(TARGETS qt4autoclick DESTINATION bin)
 endif()
 
+find_package(Qt5 COMPONENTS Widgets)
+if(Qt5_FOUND)
+    set(CMAKE_AUTOMOC ON)
+    add_executable(qt5autoclick
+        ${SOURCE_COMMON}
+        clickwidget.cpp
+        clickwidget.h
+        guiqt4.cpp
+    )
+    target_link_libraries(qt5autoclick x11clicker Qt5::Widgets)
+    install(TARGETS qt5autoclick DESTINATION bin)
+endif()
+
 install(FILES xautoclick.1 DESTINATION share/man/man1)
