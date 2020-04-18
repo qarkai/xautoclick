@@ -12,4 +12,4 @@ cmake ..
 and if all is fine (at least one GUI must be set to yes), run:
 
 cmake --build .
-sudo make install
+sudo cmake --build . --target install
