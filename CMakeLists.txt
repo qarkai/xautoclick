@@ -71,7 +71,7 @@ if(QT4_FOUND)
         ${SOURCE_COMMON}
         clickwidget.cpp
         clickwidget.h
-        guiqt4.cpp
+        guiqt.cpp
     )
     target_link_libraries(qt4autoclick x11clicker Qt4::QtCore Qt4::QtGui)
     install(TARGETS qt4autoclick DESTINATION bin)
@@ -84,7 +84,7 @@ if(Qt5_FOUND)
         ${SOURCE_COMMON}
         clickwidget.cpp
         clickwidget.h
-        guiqt4.cpp
+        guiqt.cpp
     )
     target_link_libraries(qt5autoclick x11clicker Qt5::Widgets)
     install(TARGETS qt5autoclick DESTINATION bin)
