@@ -1,5 +1,5 @@
 Be sure you have the proper development packages for your distribution
-installed. For example, on Debian you need at least one of libqt4-dev, qtbase5-dev,
+installed. For example, on Debian you need at least one of qtbase5-dev,
 libgtk-3-dev or libfltk1.3-dev. Also, be sure to have the XTest extension
 and its development files. Again, on Debian, you need libxtst6 and libxtst-dev.
 

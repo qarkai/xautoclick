@@ -64,19 +64,6 @@ if(PkgConfig_FOUND)
     endif()
 endif()
 
-find_package(Qt4 COMPONENTS QtCore QtGui)
-if(QT4_FOUND)
-    set(CMAKE_AUTOMOC ON)
-    add_executable(qt4autoclick
-        ${SOURCE_COMMON}
-        clickwidget.cpp
-        clickwidget.h
-        guiqt.cpp
-    )
-    target_link_libraries(qt4autoclick x11clicker Qt4::QtCore Qt4::QtGui)
-    install(TARGETS qt4autoclick DESTINATION bin)
-endif()
-
 find_package(Qt5 COMPONENTS Widgets)
 if(Qt5_FOUND)
     set(CMAKE_AUTOMOC ON)
