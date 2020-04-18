@@ -1,6 +1,12 @@
 ChangeLog
 =========
 
+v0.33
+    * port to CMake
+    * add .desktop file and icon (thanks to @freddii)
+    * add GTK+ 3, Qt5 support
+    * drop GTK+ 1.2, GTK+ 2, Qt3, Qt4 support
+
 v0.32
     * increase maximum limit of values
     * fix searching of X11 libs in configure
@@ -35,4 +41,3 @@ v0.13	Improved build system and added Qt detection to configure
 v0.12	Qt 3.x GUI
 v0.11   ASCII GUI
 v0.10   Basic build system, core and GTK1 GUI
-
