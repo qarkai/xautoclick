@@ -16,6 +16,15 @@ add_library(x11clicker STATIC
 )
 target_link_libraries(x11clicker ${X11_LIBRARIES} ${X11_XTest_LIB})
 
+find_package(ECM CONFIG)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
+find_package(UDev)
+add_library(udevclicker STATIC
+    udevclicker.c
+    udevclicker.h
+)
+target_link_libraries(udevclicker ${UDev_LIBRARIES})
+
 set(SOURCE_COMMON
     main.c
     main.h
@@ -34,7 +43,7 @@ add_executable(cautoclick
     ${SOURCE_COMMON}
     guicommandline.c
 )
-target_link_libraries(cautoclick x11clicker)
+target_link_libraries(cautoclick udevclicker)
 install(TARGETS cautoclick DESTINATION bin)
 
 set(FLTK_SKIP_OPENGL ON)
@@ -73,8 +82,13 @@ if(Qt5_FOUND)
         clickwidget.h
         guiqt.cpp
     )
-    target_link_libraries(qt5autoclick x11clicker Qt5::Widgets)
+    target_link_libraries(qt5autoclick udevclicker Qt5::Widgets)
     install(TARGETS qt5autoclick DESTINATION bin)
 endif()
 
 install(FILES xautoclick.1 DESTINATION share/man/man1)
+
+set(CPACK_GENERATOR "DEB")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "none")
+
+include(CPack)
