@@ -89,7 +89,7 @@ static GtkWidget *create_labeled_spin(GObject *root,
     GtkWidget *label;
     GtkWidget *spin;
 
-    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
     add_widget(root, hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
@@ -121,8 +121,8 @@ static void create_spins(GObject *root, GtkWidget *box) {
     } spin_params[SPINS_COUNT] = {
         {"Pre-delay, ms", 0},
         {"Interval, ms", 0},
-        {"Random +/-, ms  ", 0},
-        {"# of clicks  ", 1}
+        {"Random +/-, ms", 0},
+        {"# of clicks", 1}
     };
 
     for (int c = 0; c < SPINS_COUNT; ++c)
