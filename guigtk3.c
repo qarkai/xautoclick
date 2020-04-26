@@ -177,6 +177,7 @@ static GtkWidget *create_gAutoClick(void) {
     g_object_set_data (gAutoClick_obj, "gAutoClick", gAutoClick_win);
 
     gtk_container_set_border_width (GTK_CONTAINER (gAutoClick_win), 4);
+    gtk_window_set_icon_name (GTK_WINDOW (gAutoClick_win), "xautoclick");
     gtk_window_set_title (GTK_WINDOW (gAutoClick_win), "gAutoClick");
     /*  gtk_window_set_position (GTK_WINDOW (gAutoClick), GTK_WIN_POS_CENTER); */
     gtk_window_set_resizable(GTK_WINDOW (gAutoClick_win), FALSE);

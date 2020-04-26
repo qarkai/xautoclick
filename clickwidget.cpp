@@ -58,6 +58,7 @@ ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
     connect(buttons[BUTTON_START], SIGNAL(clicked()), this, SLOT(start(void)));
 
     vbox->addLayout(layout);
+    setWindowIcon(QIcon::fromTheme("xautoclick"));
     setWindowTitle("qAutoClick");
     setLayout(vbox);
 
