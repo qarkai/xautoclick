@@ -82,7 +82,8 @@ static void start_callback(Fl_Widget *w, void *v) {
 
 static Fl_Button* create_button(const char* name, Fl_Callback *callback) {
     static int n = 0;
-    auto button = new Fl_Button(5+55*n, 125, 55, 25, name);
+    const int width = 65;
+    auto button = new Fl_Button(5 + width*n, 125, width, 25, name);
     button->callback(callback);
     ++n;
     return button;
@@ -90,7 +91,7 @@ static Fl_Button* create_button(const char* name, Fl_Callback *callback) {
 
 static Fl_Spinner* create_spin(const char* name) {
     static int n = 0;
-    auto spin = new Fl_Spinner(95, 5+n*30, 75, 25, name);
+    auto spin = new Fl_Spinner(125, 5+n*30, 75, 25, name);
     spin->minimum(1);
     spin->maximum(INT_MAX);
     ++n;
@@ -104,7 +105,7 @@ int init_gui(int argc, char **argv) {
         return 0;
     }
 
-    win = new Fl_Double_Window(175, 155, "fltkAutoClick");
+    win = new Fl_Double_Window(205, 155, "fltkAutoClick");
     win->begin();
     win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
@@ -112,7 +113,7 @@ int init_gui(int argc, char **argv) {
     buttons[BUTTON_STOP] = create_button("Stop", stop_callback);
     buttons[BUTTON_START] = create_button("Start", start_callback);
 
-    const char * const label[SPINS_COUNT] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
+    const char * const label[SPINS_COUNT] = { "Pre-delay, ms", "Interval, ms", "Random +/-, ms", "# of clicks" };
     for (int c = 0; c < SPINS_COUNT; c++)
         spins[c] = create_spin(label[c]);
 

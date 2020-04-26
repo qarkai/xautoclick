@@ -119,9 +119,9 @@ static void create_spins(GObject *root, GtkWidget *box) {
         const char* text;
         int min_value;
     } spin_params[SPINS_COUNT] = {
-        {"Pre-delay  ", 0},
-        {"Interval  ", 0},
-        {"Random +/-  ", 0},
+        {"Pre-delay, ms", 0},
+        {"Interval, ms", 0},
+        {"Random +/-, ms  ", 0},
         {"# of clicks  ", 1}
     };
 

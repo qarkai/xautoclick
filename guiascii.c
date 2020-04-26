@@ -57,9 +57,9 @@ int init_gui(int argc, char **argv) {
     }
 
     printf("aautoclick\n\n");
-    printf("p - set pre-delay\n");
-    printf("i - set interval\n");
-    printf("r - set random +/-\n");
+    printf("p - set pre-delay, ms\n");
+    printf("i - set interval, ms\n");
+    printf("r - set random +/-, ms\n");
     printf("n - set number of clicks\n");
     printf("t - tap\n");
     printf("s - start\n");
@@ -77,9 +77,9 @@ void close_gui(void) {
 }
 
 static void print_variables(void) {
-    printf("pre-delay:          %i\n", spins[SPIN_PREDELAY]);
-    printf("interval:           %i\n", spins[SPIN_INTERVAL]);
-    printf("random +/-:         %i\n", spins[SPIN_RANDOM]);
+    printf("pre-delay:          %i ms\n", spins[SPIN_PREDELAY]);
+    printf("interval:           %i ms\n", spins[SPIN_INTERVAL]);
+    printf("random +/-:         %i ms\n", spins[SPIN_RANDOM]);
     printf("number of clicks:   %i\n", spins[SPIN_NUMBER]);
     printf("\n");
 }

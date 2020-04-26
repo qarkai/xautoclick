@@ -30,7 +30,7 @@ extern "C" {
 #include <QVBoxLayout>
 
 ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
-    QString label[SPINS_COUNT] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
+    QString label[SPINS_COUNT] = { "Pre-delay, ms", "Interval, ms", "Random +/-, ms", "# of clicks" };
     QString butnames[BUTTONS_COUNT] = { "Tap", "Stop", "Start" };
 
     QVBoxLayout *vbox = new QVBoxLayout;
