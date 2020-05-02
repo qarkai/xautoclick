@@ -23,15 +23,15 @@
 #include <string.h>
 #include <errno.h>
 
+#include "clicker.h"
 #include "main.h"
 #include "osdep.h"
-#include "x11clicker.h"
 
-static Display *display;
+static clicker_t *clicker;
 static int spins[SPINS_COUNT], sleeptime;
 
 void click_mouse_button(void) {
-    x11_clicker_click_mouse_button(display);
+    clicker_click(clicker);
 }
 
 void set_alarm(int ms) {
@@ -50,9 +50,9 @@ void set_button_sensitive(button_t button, bool state) {
 }
 
 int init_gui(int argc, char **argv) {
-    display = x11_clicker_open_display();
-    if (!display) {
-        fprintf(stderr, "Unable to open X display\n");
+    clicker = clicker_create(CLICKER_X11);
+    if (!clicker) {
+        fprintf(stderr, "Unable to create X11 clicker\n");
         return 0;
     }
 
@@ -73,7 +73,7 @@ int init_gui(int argc, char **argv) {
 
 void close_gui(void) {
     set_options();
-    x11_clicker_close_display(display);
+    clicker_close(clicker);
 }
 
 static void print_variables(void) {

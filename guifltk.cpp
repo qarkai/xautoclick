@@ -24,21 +24,21 @@
 #include <FL/Fl_Button.H>
 
 extern "C" {
+#include "clicker.h"
 #include "main.h"
 #include "osdep.h"
-#include "x11clicker.h"
 #include <stdio.h>
 #include <limits.h>
 }
 
-static Display *display;
+static clicker_t *clicker;
 static Fl_Double_Window *win;
 static Fl_Button *buttons[BUTTONS_COUNT];
 static Fl_Spinner *spins[SPINS_COUNT];
 static bool repeated = false;
 
 void click_mouse_button(void) {
-    x11_clicker_click_mouse_button(display);
+    clicker_click(clicker);
 }
 
 static void alarm_callback(void *v) {
@@ -98,9 +98,9 @@ static Fl_Spinner* create_spin(const char* name) {
 }
 
 int init_gui(int argc, char **argv) {
-    display = x11_clicker_open_display();
-    if (!display) {
-        fprintf(stderr, "Unable to open X display\n");
+    clicker = clicker_create(CLICKER_X11);
+    if (!clicker) {
+        fprintf(stderr, "Unable to create X11 clicker\n");
         return 0;
     }
 
@@ -125,7 +125,7 @@ int init_gui(int argc, char **argv) {
 
 void close_gui(void) {
     set_options();
-    x11_clicker_close_display(display);
+    clicker_close(clicker);
 }
 
 void main_loop(void) {

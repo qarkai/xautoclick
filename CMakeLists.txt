@@ -27,6 +27,12 @@ add_library(udevclicker STATIC
 target_include_directories(udevclicker PRIVATE ${LIBEVDEV_INCLUDE_DIRS})
 target_link_libraries(udevclicker ${LIBEVDEV_LIBRARIES})
 
+add_library(clicker STATIC
+    clicker.c
+    clicker.h
+)
+target_link_libraries(clicker udevclicker x11clicker)
+
 set(SOURCE_COMMON
     main.c
     main.h
@@ -38,14 +44,14 @@ add_executable(aautoclick
     ${SOURCE_COMMON}
     guiascii.c
 )
-target_link_libraries(aautoclick x11clicker)
+target_link_libraries(aautoclick clicker)
 install(TARGETS aautoclick DESTINATION bin)
 
 add_executable(cautoclick
     ${SOURCE_COMMON}
     guicommandline.c
 )
-target_link_libraries(cautoclick x11clicker)
+target_link_libraries(cautoclick clicker)
 install(TARGETS cautoclick DESTINATION bin)
 
 set(FLTK_SKIP_OPENGL ON)
@@ -55,7 +61,7 @@ if(FLTK_FOUND)
         ${SOURCE_COMMON}
         guifltk.cpp
     )
-    target_link_libraries(fltkautoclick x11clicker ${FLTK_LIBRARIES})
+    target_link_libraries(fltkautoclick clicker ${FLTK_LIBRARIES})
     install(TARGETS fltkautoclick DESTINATION bin)
 endif()
 
@@ -68,7 +74,7 @@ if(PkgConfig_FOUND)
             guigtk3.c
         )
         target_include_directories(gautoclick3 PRIVATE ${GTK3_INCLUDE_DIRS})
-        target_link_libraries(gautoclick3 x11clicker ${GTK3_LIBRARIES})
+        target_link_libraries(gautoclick3 clicker ${GTK3_LIBRARIES})
         install(TARGETS gautoclick3 DESTINATION bin)
         install(FILES xautoclick.desktop DESTINATION share/applications)
         install(FILES xautoclick.svg DESTINATION share/icons/hicolor/scalable/apps)
@@ -84,7 +90,7 @@ if(Qt5_FOUND)
         clickwidget.h
         guiqt.cpp
     )
-    target_link_libraries(qt5autoclick udevclicker Qt5::Widgets)
+    target_link_libraries(qt5autoclick clicker Qt5::Widgets)
     install(TARGETS qt5autoclick DESTINATION bin)
 endif()
 

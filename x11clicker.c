@@ -22,8 +22,17 @@
 
 #include <X11/extensions/XTest.h>
 
-Display* x11_clicker_open_display(void) {
-    return XOpenDisplay(NULL);
+#include <stdio.h>
+
+void x11_clicker_init(clicker_t* clicker) {
+    clicker->ctx = XOpenDisplay(NULL);
+    if (!clicker->ctx) {
+        fprintf(stderr, "Can't open X display\n");
+        return;
+    }
+
+    clicker->click = (clicker_click_t)x11_clicker_click_mouse_button;
+    clicker->close = (clicker_close_t)x11_clicker_close_display;
 }
 
 void x11_clicker_click_mouse_button(Display* display) {

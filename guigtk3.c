@@ -22,17 +22,17 @@
 #include <limits.h>
 #include <gtk/gtk.h>
 
+#include "clicker.h"
 #include "main.h"
-#include "x11clicker.h"
 
-static Display *display;
+static clicker_t *clicker;
 
 static GtkWidget *gAutoClick;
 static GtkWidget *buttons[BUTTONS_COUNT];
 static GtkWidget *spins[SPINS_COUNT];
 
 void click_mouse_button(void) {
-    x11_clicker_click_mouse_button(display);
+    clicker_click(clicker);
 }
 
 static gboolean myalarm(gpointer data) {
@@ -199,9 +199,9 @@ static GtkWidget *create_gAutoClick(void) {
 }
 
 int init_gui(int argc, char **argv) {
-    display = x11_clicker_open_display();
-    if (!display) {
-        fprintf(stderr, "Unable to open X display\n");
+    clicker = clicker_create(CLICKER_X11);
+    if (!clicker) {
+        fprintf(stderr, "Unable to create X11 clicker\n");
         return 0;
     }
 
@@ -217,7 +217,7 @@ int init_gui(int argc, char **argv) {
 }
 
 void close_gui(void) {
-    x11_clicker_close_display(display);
+    clicker_close(clicker);
 }
 
 void main_loop(void) {

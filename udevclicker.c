@@ -22,20 +22,32 @@
 
 #include <libevdev/libevdev-uinput.h>
 
-#include <stdlib.h>
+#include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 struct udev_clicker_ctx {
     struct libevdev *dev;
     struct libevdev_uinput *uidev;
 };
 
-udev_clicker_t* udev_clicker_init(void) {
+void udev_clicker_init(clicker_t* clicker) {
     udev_clicker_t* ctx;
 
     ctx = malloc(sizeof(udev_clicker_t));
+    if (!ctx) {
+        fprintf(stderr, "Can't allocate memory for udev clicker\n");
+        return;
+    }
 
     ctx->dev = libevdev_new();
+    if (!ctx->dev) {
+        fprintf(stderr, "Can't create new libevdev device\n");
+        free(ctx);
+        return;
+    }
+
     libevdev_set_name(ctx->dev, "xautoclick");
     libevdev_enable_event_type(ctx->dev, EV_KEY);
     libevdev_enable_event_code(ctx->dev, EV_KEY, BTN_LEFT, NULL);
@@ -46,12 +58,15 @@ udev_clicker_t* udev_clicker_init(void) {
 #endif
 
     if (libevdev_uinput_create_from_device(ctx->dev, LIBEVDEV_UINPUT_OPEN_MANAGED, &ctx->uidev) != 0) {
+        fprintf(stderr, "Can't create uinput device: %s\n", strerror(errno));
         libevdev_free(ctx->dev);
         free(ctx);
-        return NULL;
+        return;
     }
 
-    return ctx;
+    clicker->ctx = ctx;
+    clicker->click = (clicker_click_t)udev_clicker_click_mouse_button;
+    clicker->close = (clicker_close_t)udev_clicker_destroy;
 }
 
 void udev_clicker_click_mouse_button(udev_clicker_t* ctx) {

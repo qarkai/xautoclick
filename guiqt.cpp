@@ -25,19 +25,16 @@
 #include "clickwidget.h"
 
 extern "C" {
+#include "clicker.h"
 #include "main.h"
-//#include "x11clicker.h"
-#include "udevclicker.h"
 }
 
-//static Display *display;
-static udev_clicker_t *ctx;
+static clicker_t *clicker;
 static QApplication *app;
 static ClickWidget *clickWidget;
 
 void click_mouse_button(void) {
-//    x11_clicker_click_mouse_button(display);
-    udev_clicker_click_mouse_button(ctx);
+    clicker_click(clicker);
 }
 
 void set_alarm(int ms) {
@@ -57,11 +54,9 @@ void set_button_sensitive(button_t button, bool state) {
 }
 
 int init_gui(int argc, char **argv) {
-//    display = x11_clicker_open_display();
-    ctx = udev_clicker_init();
-    if (/*!display*/!ctx) {
-        std::cerr << "udev_clicker_init failed: " << errno << " (" << strerror(errno) << ")\n";
-        fprintf(stderr, "Unable to open X display\n");
+    clicker = clicker_create(CLICKER_UDEV);
+    if (!clicker) {
+        std::cerr << "Unable to create udev clicker\n";
         return 0;
     }
 
@@ -76,8 +71,7 @@ int init_gui(int argc, char **argv) {
 
 void close_gui(void) {
     set_options();
-//    x11_clicker_close_display(display);
-    udev_clicker_destroy(ctx);
+    clicker_close(clicker);
 }
 
 void main_loop(void) {
