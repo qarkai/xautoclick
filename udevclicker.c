@@ -39,10 +39,12 @@ udev_clicker_t* udev_clicker_init(void) {
     libevdev_set_name(ctx->dev, "xautoclick");
     libevdev_enable_event_type(ctx->dev, EV_KEY);
     libevdev_enable_event_code(ctx->dev, EV_KEY, BTN_LEFT, NULL);
+    libevdev_enable_event_type(ctx->dev, EV_SYN);
 #if 0
     /* enable repeat property on key event, just like on a real keyboard */
     ioctl(uinput_fd, UI_SET_EVBIT, EV_REP);
 #endif
+
     if (libevdev_uinput_create_from_device(ctx->dev, LIBEVDEV_UINPUT_OPEN_MANAGED, &ctx->uidev) != 0) {
         libevdev_free(ctx->dev);
         free(ctx);
@@ -53,25 +55,10 @@ udev_clicker_t* udev_clicker_init(void) {
 }
 
 void udev_clicker_click_mouse_button(udev_clicker_t* ctx) {
-    if (libevdev_uinput_write_event(ctx->uidev, EV_KEY, BTN_LEFT, 1) != 0) {
-        fprintf(stderr, "EV_KEY/BTN_LEFT/1 failed\n");
-        return;
-    }
-
-    if (libevdev_uinput_write_event(ctx->uidev, EV_SYN, SYN_REPORT, 0) != 0) {
-        fprintf(stderr, "EV_SYN/SYN_REPORT/0 failed\n");
-        return;
-    }
-
-    if (libevdev_uinput_write_event(ctx->uidev, EV_KEY, BTN_LEFT, 0) != 0) {
-        fprintf(stderr, "EV_KEY/BTN_LEFT/0 failed\n");
-        return;
-    }
-
-    if (libevdev_uinput_write_event(ctx->uidev, EV_SYN, SYN_REPORT, 0) != 0) {
-        fprintf(stderr, "EV_SYN/SYN_REPORT/0 failed\n");
-        return;
-    }
+    libevdev_uinput_write_event(ctx->uidev, EV_KEY, BTN_LEFT, 1);
+    libevdev_uinput_write_event(ctx->uidev, EV_SYN, SYN_REPORT, 0);
+    libevdev_uinput_write_event(ctx->uidev, EV_KEY, BTN_LEFT, 0);
+    libevdev_uinput_write_event(ctx->uidev, EV_SYN, SYN_REPORT, 0);
 }
 
 void udev_clicker_destroy(udev_clicker_t* ctx) {
