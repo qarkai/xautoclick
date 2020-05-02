@@ -5,7 +5,12 @@
 
 #include <stdlib.h>
 
-clicker_t* clicker_create(clicker_type_t type) {
+typedef enum clicker_type_e {
+    CLICKER_UDEV = 0,
+    CLICKER_X11
+} clicker_type_t;
+
+static clicker_t* clicker_create(clicker_type_t type) {
     clicker_t* clicker;
 
     clicker = calloc(1, sizeof(clicker_t));
@@ -24,6 +29,16 @@ clicker_t* clicker_create(clicker_type_t type) {
     }
 
     return clicker;
+}
+
+clicker_t* clicker_init(void) {
+    clicker_t* clicker;
+
+    clicker = clicker_create(CLICKER_UDEV);
+    if (clicker)
+        return clicker;
+
+    return clicker_create(CLICKER_X11);
 }
 
 void clicker_close(clicker_t* clicker) {

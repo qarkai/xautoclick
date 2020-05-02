@@ -54,9 +54,9 @@ void set_button_sensitive(button_t button, bool state) {
 }
 
 int init_gui(int argc, char **argv) {
-    clicker = clicker_create(CLICKER_UDEV);
+    clicker = clicker_init();
     if (!clicker) {
-        std::cerr << "Unable to create udev clicker\n";
+        std::cerr << "Unable to initialize clicker\n";
         return 0;
     }
 

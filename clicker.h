@@ -4,11 +4,6 @@
 typedef void (*clicker_click_t)(void* ctx);
 typedef void (*clicker_close_t)(void* ctx);
 
-typedef enum clicker_type_e {
-    CLICKER_UDEV = 0,
-    CLICKER_X11
-} clicker_type_t;
-
 typedef struct clicker_ctx {
     void* ctx;
 
@@ -16,7 +11,7 @@ typedef struct clicker_ctx {
     clicker_close_t close;
 } clicker_t;
 
-clicker_t* clicker_create(clicker_type_t type);
+clicker_t* clicker_init(void);
 
 static inline void clicker_click(clicker_t* clicker) {
     clicker->click(clicker->ctx);

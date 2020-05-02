@@ -98,9 +98,9 @@ static Fl_Spinner* create_spin(const char* name) {
 }
 
 int init_gui(int argc, char **argv) {
-    clicker = clicker_create(CLICKER_X11);
+    clicker = clicker_init();
     if (!clicker) {
-        fprintf(stderr, "Unable to create X11 clicker\n");
+        fprintf(stderr, "Unable to initialize clicker\n");
         return 0;
     }
 
