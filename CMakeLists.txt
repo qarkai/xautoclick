@@ -16,14 +16,16 @@ add_library(x11clicker STATIC
 )
 target_link_libraries(x11clicker ${X11_LIBRARIES} ${X11_XTest_LIB})
 
-find_package(ECM CONFIG)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
-find_package(UDev)
+find_package(PkgConfig)
+if(PkgConfig_FOUND)
+    PKG_CHECK_MODULES(LIBEVDEV libevdev)
+endif()
 add_library(udevclicker STATIC
     udevclicker.c
     udevclicker.h
 )
-target_link_libraries(udevclicker ${UDev_LIBRARIES})
+target_include_directories(udevclicker PRIVATE ${LIBEVDEV_INCLUDE_DIRS})
+target_link_libraries(udevclicker ${LIBEVDEV_LIBRARIES})
 
 set(SOURCE_COMMON
     main.c
