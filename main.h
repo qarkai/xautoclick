@@ -37,6 +37,5 @@ int get_spin_value(spin_t spin);
 void get_options(void);
 void set_options(void);
 void set_alarm(int ms);
-void click_mouse_button(void);
 
 #endif

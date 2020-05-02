@@ -24,16 +24,10 @@
 
 #include <getopt.h>
 
-#include "clicker.h"
 #include "main.h"
 #include "osdep.h"
 
-static clicker_t *clicker;
 static int spins[SPINS_COUNT], sleeptime;
-
-void click_mouse_button(void) {
-    clicker_click(clicker);
-}
 
 void set_alarm(int ms) {
     sleeptime = ms;
@@ -58,12 +52,6 @@ static void printhelp(char *myname) {
 int init_gui(int argc, char **argv) {
     int c;
 
-    clicker = clicker_init();
-    if (!clicker) {
-        fprintf(stderr, "Unable to initialize clicker\n");
-        return 0;
-    }
-
     get_options();
 
     /* parse command line */
@@ -84,7 +72,6 @@ int init_gui(int argc, char **argv) {
 
 void close_gui(void) {
     /* don't set options from command line */
-    clicker_close(clicker);
 }
 
 void main_loop(void) {

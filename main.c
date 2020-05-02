@@ -26,6 +26,7 @@
 #include <error.h>
 #include <sys/stat.h>
 
+#include "clicker.h"
 #include "main.h"
 #include "osdep.h"
 
@@ -45,6 +46,7 @@ static options_t options = {
     .clicks_number = 100
 };
 
+static clicker_t *clicker;
 static int counter = 0;
 
 void common_stop_button(void) {
@@ -78,7 +80,7 @@ void common_alarm_callback(void) {
     printf("alarm_callback\n");
 #endif
 
-    click_mouse_button();
+    clicker_click(clicker);
 
     interval     = get_spin_value(SPIN_INTERVAL);
     randomfactor = get_spin_value(SPIN_RANDOM);
@@ -310,8 +312,15 @@ static void save_config(options_t *opts)
 int main(int argc, char **argv) {
     load_config(&options);
 
+    clicker = clicker_init();
+    if (!clicker) {
+        fprintf(stderr, "Unable to initialize clicker\n");
+        return -1;
+    }
+
     if (!init_gui(argc, argv)) {
         fprintf(stderr, "Unable to initialize GUI\n");
+        clicker_close(clicker);
         return -1;
     }
 
@@ -320,8 +329,9 @@ int main(int argc, char **argv) {
     set_button_sensitive(BUTTON_START, true);
 
     main_loop();
-    close_gui();
 
+    close_gui();
+    clicker_close(clicker);
     save_config(&options);
 
     return 0;

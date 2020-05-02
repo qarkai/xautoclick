@@ -23,16 +23,10 @@
 #include <string.h>
 #include <errno.h>
 
-#include "clicker.h"
 #include "main.h"
 #include "osdep.h"
 
-static clicker_t *clicker;
 static int spins[SPINS_COUNT], sleeptime;
-
-void click_mouse_button(void) {
-    clicker_click(clicker);
-}
 
 void set_alarm(int ms) {
     sleeptime = ms;
@@ -50,12 +44,6 @@ void set_button_sensitive(button_t button, bool state) {
 }
 
 int init_gui(int argc, char **argv) {
-    clicker = clicker_init();
-    if (!clicker) {
-        fprintf(stderr, "Unable to initialize clicker\n");
-        return 0;
-    }
-
     printf("aautoclick\n\n");
     printf("p - set pre-delay\n");
     printf("i - set interval\n");
@@ -73,7 +61,6 @@ int init_gui(int argc, char **argv) {
 
 void close_gui(void) {
     set_options();
-    clicker_close(clicker);
 }
 
 static void print_variables(void) {

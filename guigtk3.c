@@ -22,18 +22,11 @@
 #include <limits.h>
 #include <gtk/gtk.h>
 
-#include "clicker.h"
 #include "main.h"
-
-static clicker_t *clicker;
 
 static GtkWidget *gAutoClick;
 static GtkWidget *buttons[BUTTONS_COUNT];
 static GtkWidget *spins[SPINS_COUNT];
-
-void click_mouse_button(void) {
-    clicker_click(clicker);
-}
 
 static gboolean myalarm(gpointer data) {
     common_alarm_callback();
@@ -199,12 +192,6 @@ static GtkWidget *create_gAutoClick(void) {
 }
 
 int init_gui(int argc, char **argv) {
-    clicker = clicker_init();
-    if (!clicker) {
-        fprintf(stderr, "Unable to initialize clicker\n");
-        return 0;
-    }
-
     gtk_init(NULL, NULL);
 
     gAutoClick = create_gAutoClick();
@@ -217,7 +204,6 @@ int init_gui(int argc, char **argv) {
 }
 
 void close_gui(void) {
-    clicker_close(clicker);
 }
 
 void main_loop(void) {

@@ -24,22 +24,16 @@
 #include <FL/Fl_Button.H>
 
 extern "C" {
-#include "clicker.h"
 #include "main.h"
 #include "osdep.h"
 #include <stdio.h>
 #include <limits.h>
 }
 
-static clicker_t *clicker;
 static Fl_Double_Window *win;
 static Fl_Button *buttons[BUTTONS_COUNT];
 static Fl_Spinner *spins[SPINS_COUNT];
 static bool repeated = false;
-
-void click_mouse_button(void) {
-    clicker_click(clicker);
-}
 
 static void alarm_callback(void *v) {
     common_alarm_callback();
@@ -98,12 +92,6 @@ static Fl_Spinner* create_spin(const char* name) {
 }
 
 int init_gui(int argc, char **argv) {
-    clicker = clicker_init();
-    if (!clicker) {
-        fprintf(stderr, "Unable to initialize clicker\n");
-        return 0;
-    }
-
     win = new Fl_Double_Window(175, 155, "fltkAutoClick");
     win->begin();
     win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
@@ -125,7 +113,6 @@ int init_gui(int argc, char **argv) {
 
 void close_gui(void) {
     set_options();
-    clicker_close(clicker);
 }
 
 void main_loop(void) {

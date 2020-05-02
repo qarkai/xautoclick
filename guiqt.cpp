@@ -25,17 +25,11 @@
 #include "clickwidget.h"
 
 extern "C" {
-#include "clicker.h"
 #include "main.h"
 }
 
-static clicker_t *clicker;
 static QApplication *app;
 static ClickWidget *clickWidget;
-
-void click_mouse_button(void) {
-    clicker_click(clicker);
-}
 
 void set_alarm(int ms) {
     clickWidget->startTimer(ms);
@@ -54,12 +48,6 @@ void set_button_sensitive(button_t button, bool state) {
 }
 
 int init_gui(int argc, char **argv) {
-    clicker = clicker_init();
-    if (!clicker) {
-        std::cerr << "Unable to initialize clicker\n";
-        return 0;
-    }
-
     static int argn = argc; // QApplication reference to argc workaround
     app = new QApplication(argn, argv);
     clickWidget = new ClickWidget;
@@ -71,7 +59,6 @@ int init_gui(int argc, char **argv) {
 
 void close_gui(void) {
     set_options();
-    clicker_close(clicker);
 }
 
 void main_loop(void) {
