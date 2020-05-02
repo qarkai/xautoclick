@@ -16,10 +16,8 @@ add_library(x11clicker STATIC
 )
 target_link_libraries(x11clicker ${X11_LIBRARIES} ${X11_XTest_LIB})
 
-find_package(PkgConfig)
-if(PkgConfig_FOUND)
-    PKG_CHECK_MODULES(LIBEVDEV libevdev)
-endif()
+find_package(PkgConfig REQUIRED)
+PKG_CHECK_MODULES(LIBEVDEV libevdev)
 add_library(udevclicker STATIC
     udevclicker.c
     udevclicker.h
@@ -65,20 +63,17 @@ if(FLTK_FOUND)
     install(TARGETS fltkautoclick DESTINATION bin)
 endif()
 
-find_package(PkgConfig)
-if(PkgConfig_FOUND)
-    PKG_CHECK_MODULES(GTK3 gtk+-3.0)
-    if(GTK3_FOUND)
-        add_executable(gautoclick3
-            ${SOURCE_COMMON}
-            guigtk3.c
-        )
-        target_include_directories(gautoclick3 PRIVATE ${GTK3_INCLUDE_DIRS})
-        target_link_libraries(gautoclick3 clicker ${GTK3_LIBRARIES})
-        install(TARGETS gautoclick3 DESTINATION bin)
-        install(FILES xautoclick.desktop DESTINATION share/applications)
-        install(FILES xautoclick.svg DESTINATION share/icons/hicolor/scalable/apps)
-    endif()
+PKG_CHECK_MODULES(GTK3 gtk+-3.0)
+if(GTK3_FOUND)
+    add_executable(gautoclick3
+        ${SOURCE_COMMON}
+        guigtk3.c
+    )
+    target_include_directories(gautoclick3 PRIVATE ${GTK3_INCLUDE_DIRS})
+    target_link_libraries(gautoclick3 clicker ${GTK3_LIBRARIES})
+    install(TARGETS gautoclick3 DESTINATION bin)
+    install(FILES xautoclick.desktop DESTINATION share/applications)
+    install(FILES xautoclick.svg DESTINATION share/icons/hicolor/scalable/apps)
 endif()
 
 find_package(Qt5 COMPONENTS Widgets)
