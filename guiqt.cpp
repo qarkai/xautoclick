@@ -19,6 +19,7 @@
  */
 
 #include <QApplication>
+#include <QTimer>
 
 #include "clickwidget.h"
 

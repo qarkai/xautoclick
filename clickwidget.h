@@ -3,7 +3,6 @@
 
 #include <QPushButton>
 #include <QSpinBox>
-#include <QTimer>
 #include <QWidget>
 
 class ClickWidget : public QWidget {
