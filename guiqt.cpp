@@ -30,13 +30,14 @@ extern "C" {
 static Display *display;
 static QApplication *app;
 static ClickWidget *clickWidget;
+static QTimer *clickTimer;
 
 void click_mouse_button(void) {
     x11_clicker_click_mouse_button(display);
 }
 
 void set_alarm(int ms) {
-    clickWidget->startTimer(ms);
+    clickTimer->start(ms);
 }
 
 int get_spin_value(spin_t spin) {
@@ -62,6 +63,10 @@ int init_gui(int argc, char **argv) {
     app = new QApplication(argn, argv);
     clickWidget = new ClickWidget;
 
+    clickTimer = new QTimer;
+    clickTimer->setSingleShot(true);
+    QObject::connect(clickTimer, &QTimer::timeout, common_alarm_callback);
+
     get_options();
 
     return 1;
@@ -69,6 +74,8 @@ int init_gui(int argc, char **argv) {
 
 void close_gui(void) {
     set_options();
+    delete clickTimer;
+    delete clickWidget;
     x11_clicker_close_display(display);
 }
 

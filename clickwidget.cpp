@@ -61,14 +61,6 @@ ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
     setWindowIcon(QIcon::fromTheme("xautoclick"));
     setWindowTitle("qAutoClick");
     setLayout(vbox);
-
-    timer = new QTimer;
-    timer->setSingleShot(true);
-    connect(timer, SIGNAL(timeout()), this, SLOT(timer_done()));
-}
-
-void ClickWidget::startTimer(int ms) {
-    timer->start(ms);
 }
 
 int ClickWidget::getSpinValue(int spin) {
@@ -93,8 +85,4 @@ void ClickWidget::stop(void) {
 
 void ClickWidget::start(void) {
     common_start_button();
-}
-
-void ClickWidget::timer_done(void) {
-    common_alarm_callback();
 }
