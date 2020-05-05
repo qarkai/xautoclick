@@ -35,7 +35,7 @@ static Fl_Button *buttons[BUTTONS_COUNT];
 static Fl_Spinner *spins[SPINS_COUNT];
 static bool repeated = false;
 
-static void alarm_callback(void *v) {
+static void alarm_callback(void*) {
     common_alarm_callback();
 }
 
@@ -61,16 +61,16 @@ void set_button_sensitive(button_t button, bool state) {
     else       buttons[button]->deactivate();
 }
 
-static void tap_callback(Fl_Widget *w, void *v) {
+static void tap_callback(Fl_Widget*, void*) {
     common_tap_button();
 }
 
-static void stop_callback(Fl_Widget *w, void *v) {
+static void stop_callback(Fl_Widget*, void*) {
     repeated = false;
     common_stop_button();
 }
 
-static void start_callback(Fl_Widget *w, void *v) {
+static void start_callback(Fl_Widget*, void*) {
     common_start_button();
 }
 
@@ -92,7 +92,7 @@ static Fl_Spinner* create_spin(const char* name) {
     return spin;
 }
 
-int init_gui(int argc, char **argv) {
+int init_gui(int, char**) {
     win = new Fl_Double_Window(205, 155, "fltkAutoClick");
     win->begin();
     win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
