@@ -21,6 +21,7 @@
 #include <iostream>
 
 #include <QApplication>
+#include <QTimer>
 
 #include "clickwidget.h"
 
@@ -30,9 +31,10 @@ extern "C" {
 
 static QApplication *app;
 static ClickWidget *clickWidget;
+static QTimer *clickTimer;
 
 void set_alarm(int ms) {
-    clickWidget->startTimer(ms);
+    clickTimer->start(ms);
 }
 
 int get_spin_value(spin_t spin) {
@@ -52,6 +54,10 @@ int init_gui(int argc, char **argv) {
     app = new QApplication(argn, argv);
     clickWidget = new ClickWidget;
 
+    clickTimer = new QTimer;
+    clickTimer->setSingleShot(true);
+    QObject::connect(clickTimer, &QTimer::timeout, common_alarm_callback);
+
     get_options();
 
     return 1;
@@ -59,6 +65,8 @@ int init_gui(int argc, char **argv) {
 
 void close_gui(void) {
     set_options();
+    delete clickTimer;
+    delete clickWidget;
 }
 
 void main_loop(void) {

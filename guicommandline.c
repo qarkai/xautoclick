@@ -45,7 +45,7 @@ void set_button_sensitive(button_t button, bool state) {
 }
 
 static void printhelp(char *myname) {
-    printf("usage: %s [-h][-i value][-n value][-p value][-r value]\n", myname);
+    printf("usage: %s [-h][-i <interval, ms>][-n <# of clicks>][-p <pre-delay, ms>][-r <random +/-, ms>]\n", myname);
     exit(0);
 }
 

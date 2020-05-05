@@ -82,7 +82,7 @@ static GtkWidget *create_labeled_spin(GObject *root,
     GtkWidget *label;
     GtkWidget *spin;
 
-    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
     add_widget(root, hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
@@ -112,10 +112,10 @@ static void create_spins(GObject *root, GtkWidget *box) {
         const char* text;
         int min_value;
     } spin_params[SPINS_COUNT] = {
-        {"Pre-delay  ", 0},
-        {"Interval  ", 0},
-        {"Random +/-  ", 0},
-        {"# of clicks  ", 1}
+        {"Pre-delay, ms", 0},
+        {"Interval, ms", 0},
+        {"Random +/-, ms", 0},
+        {"# of clicks", 1}
     };
 
     for (int c = 0; c < SPINS_COUNT; ++c)
@@ -170,6 +170,7 @@ static GtkWidget *create_gAutoClick(void) {
     g_object_set_data (gAutoClick_obj, "gAutoClick", gAutoClick_win);
 
     gtk_container_set_border_width (GTK_CONTAINER (gAutoClick_win), 4);
+    gtk_window_set_icon_name (GTK_WINDOW (gAutoClick_win), "xautoclick");
     gtk_window_set_title (GTK_WINDOW (gAutoClick_win), "gAutoClick");
     /*  gtk_window_set_position (GTK_WINDOW (gAutoClick), GTK_WIN_POS_CENTER); */
     gtk_window_set_resizable(GTK_WINDOW (gAutoClick_win), FALSE);

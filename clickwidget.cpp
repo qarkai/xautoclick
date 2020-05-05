@@ -30,7 +30,7 @@ extern "C" {
 #include <QVBoxLayout>
 
 ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
-    QString label[SPINS_COUNT] = { "Pre-delay", "Interval", "Random +/-", "# of clicks" };
+    QString label[SPINS_COUNT] = { "Pre-delay, ms", "Interval, ms", "Random +/-, ms", "# of clicks" };
     QString butnames[BUTTONS_COUNT] = { "Tap", "Stop", "Start" };
 
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -58,16 +58,9 @@ ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
     connect(buttons[BUTTON_START], SIGNAL(clicked()), this, SLOT(start(void)));
 
     vbox->addLayout(layout);
+    setWindowIcon(QIcon::fromTheme("xautoclick"));
     setWindowTitle("qAutoClick");
     setLayout(vbox);
-
-    timer = new QTimer;
-    timer->setSingleShot(true);
-    connect(timer, SIGNAL(timeout()), this, SLOT(timer_done()));
-}
-
-void ClickWidget::startTimer(int ms) {
-    timer->start(ms);
 }
 
 int ClickWidget::getSpinValue(int spin) {
@@ -92,8 +85,4 @@ void ClickWidget::stop(void) {
 
 void ClickWidget::start(void) {
     common_start_button();
-}
-
-void ClickWidget::timer_done(void) {
-    common_alarm_callback();
 }
