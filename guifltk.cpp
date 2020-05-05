@@ -26,6 +26,7 @@
 #include <FL/Fl_Button.H>
 
 extern "C" {
+#include "gui.h"
 #include "main.h"
 #include "osdep.h"
 }

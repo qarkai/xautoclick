@@ -21,6 +21,7 @@
 #include "clickwidget.h"
 
 extern "C" {
+#include "gui.h"
 #include "main.h"
 }
 

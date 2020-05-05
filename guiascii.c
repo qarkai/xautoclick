@@ -23,6 +23,7 @@
 #include <string.h>
 #include <errno.h>
 
+#include "gui.h"
 #include "main.h"
 #include "osdep.h"
 

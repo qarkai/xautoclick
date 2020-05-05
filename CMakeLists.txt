@@ -32,6 +32,7 @@ add_library(clicker STATIC
 target_link_libraries(clicker udevclicker x11clicker)
 
 set(SOURCE_COMMON
+    gui.h
     main.c
     main.h
     osdep.c

@@ -21,6 +21,7 @@
 #include <limits.h>
 #include <gtk/gtk.h>
 
+#include "gui.h"
 #include "main.h"
 
 static GtkWidget *gAutoClick;

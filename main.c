@@ -27,6 +27,7 @@
 #include <sys/stat.h>
 
 #include "clicker.h"
+#include "gui.h"
 #include "main.h"
 #include "osdep.h"
 

@@ -24,6 +24,7 @@
 
 #include <getopt.h>
 
+#include "gui.h"
 #include "main.h"
 #include "osdep.h"
 
