@@ -33,6 +33,6 @@ sudo cmake --build . --target install
 
 ## Authors
 
-Core, ASCII, GTK1, GTK2, QT3, QT4, FLTK, Command Line, build system: [Ivo van Poorten](@ivop) <ivop@euronet.nl> <ivop@free.fr>
+Core, ASCII, GTK1, GTK2, QT3, QT4, FLTK, Command Line, build system: [Ivo van Poorten](https://github.com/ivop) <ivop@euronet.nl> <ivop@free.fr>
 
-GTK3, Qt5, CMake build system, libevdev: [Arkadiy Illarionov](@qarkai)
+GTK3, Qt5, CMake build system, libevdev: [Arkadiy Illarionov](https://github.com/qarkai)
