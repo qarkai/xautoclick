@@ -22,12 +22,15 @@
 
 extern "C" {
 #include "main.h"
-#include <limits.h>
 }
 
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPushButton>
+#include <QSpinBox>
 #include <QVBoxLayout>
+
+#include <climits>
 
 ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
     QString label[SPINS_COUNT] = { "Pre-delay, ms", "Interval, ms", "Random +/-, ms", "# of clicks" };

@@ -1,9 +1,10 @@
 #ifndef __CLICKWIDGET_H__
 #define __CLICKWIDGET_H__
 
-#include <QPushButton>
-#include <QSpinBox>
 #include <QWidget>
+
+class QPushButton;
+class QSpinBox;
 
 class ClickWidget : public QWidget {
     Q_OBJECT

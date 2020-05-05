@@ -18,6 +18,8 @@
  *
  */
 
+#include <climits>
+
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Spinner.H>
@@ -26,8 +28,6 @@
 extern "C" {
 #include "main.h"
 #include "osdep.h"
-#include <stdio.h>
-#include <limits.h>
 }
 
 static Fl_Double_Window *win;

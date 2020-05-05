@@ -18,8 +18,6 @@
  *
  */
 
-#include <iostream>
-
 #include <QApplication>
 #include <QTimer>
 

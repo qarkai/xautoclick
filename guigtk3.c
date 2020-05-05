@@ -18,7 +18,6 @@
  *
  */
 
-#include <stdio.h>
 #include <limits.h>
 #include <gtk/gtk.h>
 
