@@ -109,13 +109,13 @@ void common_alarm_callback(void) {
 }
 
 static int calculate_average(const int *buffer, int length, int *min, int *max) {
-    int sum = 0, x;
+    int sum = 0;
     int average;
 
     *min =  65536;
     *max = -65536;
 
-    for (x = 0; x < length; ++x) {
+    for (int x = 0; x < length; ++x) {
         int v = buffer[x];
         sum += v;
 
@@ -243,7 +243,6 @@ static void load_config(options_t *opts)
     struct stat config_dir_stat = {0};
     FILE *config_file = NULL;
     int result;
-    int i;
     char *env_config_dir;
     char *config_dir;
 
@@ -278,7 +277,7 @@ static void load_config(options_t *opts)
         return;
     }
 
-    for (i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         result = read_option(config_file, config_options[i].name, config_options[i].value);
         if (result != 1)
