@@ -55,9 +55,9 @@ ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
     for (int c = 0; c < BUTTONS_COUNT; c++)
         layout->addWidget(buttons[c] = new QPushButton(btnNames[c]));
 
-    connect(buttons[BUTTON_TAP], SIGNAL(clicked()), this, SLOT(tap(void)));
-    connect(buttons[BUTTON_STOP], SIGNAL(clicked()), this, SLOT(stop(void)));
-    connect(buttons[BUTTON_START], SIGNAL(clicked()), this, SLOT(start(void)));
+    connect(buttons[BUTTON_TAP], &QPushButton::clicked, common_tap_button);
+    connect(buttons[BUTTON_STOP], &QPushButton::clicked, common_stop_button);
+    connect(buttons[BUTTON_START], &QPushButton::clicked, common_start_button);
 
     vbox->addLayout(layout);
     setWindowIcon(QIcon::fromTheme("xautoclick"));
@@ -75,16 +75,4 @@ void ClickWidget::setSpinValue(int spin, int value) {
 
 void ClickWidget::setButtonSensitive(int button, bool state) {
     buttons[button]->setEnabled(state);
-}
-
-void ClickWidget::tap(void) {
-    common_tap_button();
-}
-
-void ClickWidget::stop(void) {
-    common_stop_button();
-}
-
-void ClickWidget::start(void) {
-    common_start_button();
 }
