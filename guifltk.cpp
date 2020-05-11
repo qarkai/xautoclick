@@ -37,13 +37,48 @@ static Fl_Button *buttons[BUTTONS_COUNT];
 static Fl_Spinner *spins[SPINS_COUNT];
 std::function<void(int)> set_alarm_f;
 
-static void alarm_callback(void*) {
+namespace {
+
+inline void alarm_callback(void*) {
     common_alarm_callback();
 }
 
-static void set_alarm_init(int ms) {
+void set_alarm_init(int ms) {
     Fl::add_timeout(0.001*ms, alarm_callback);
     set_alarm_f = [](int ms) { Fl::repeat_timeout(0.001*ms, alarm_callback); };
+}
+
+Fl_Button* create_button(const char* name, Fl_Callback *callback) {
+    static int n = 0;
+    const int width = 65;
+    auto button = new Fl_Button(5 + width*n, 125, width, 25, name);
+    button->callback(callback);
+    ++n;
+    return button;
+}
+
+void tap_callback(Fl_Widget*, void*) {
+    common_tap_button();
+}
+
+void stop_callback(Fl_Widget*, void*) {
+    set_alarm_f = set_alarm_init;
+    common_stop_button();
+}
+
+void start_callback(Fl_Widget*, void*) {
+    common_start_button();
+}
+
+Fl_Spinner* create_spin(const char* name) {
+    static int n = 0;
+    auto spin = new Fl_Spinner(125, 5+n*30, 75, 25, name);
+    spin->minimum(1);
+    spin->maximum(INT_MAX);
+    ++n;
+    return spin;
+}
+
 }
 
 void set_alarm(int ms) {
@@ -61,37 +96,6 @@ void set_spin_value(spin_t spin, int value) {
 void set_button_sensitive(button_t button, bool state) {
     if (state) buttons[button]->activate();
     else       buttons[button]->deactivate();
-}
-
-static void tap_callback(Fl_Widget*, void*) {
-    common_tap_button();
-}
-
-static void stop_callback(Fl_Widget*, void*) {
-    set_alarm_f = set_alarm_init;
-    common_stop_button();
-}
-
-static void start_callback(Fl_Widget*, void*) {
-    common_start_button();
-}
-
-static Fl_Button* create_button(const char* name, Fl_Callback *callback) {
-    static int n = 0;
-    const int width = 65;
-    auto button = new Fl_Button(5 + width*n, 125, width, 25, name);
-    button->callback(callback);
-    ++n;
-    return button;
-}
-
-static Fl_Spinner* create_spin(const char* name) {
-    static int n = 0;
-    auto spin = new Fl_Spinner(125, 5+n*30, 75, 25, name);
-    spin->minimum(1);
-    spin->maximum(INT_MAX);
-    ++n;
-    return spin;
 }
 
 int init_gui(int, char**) {
