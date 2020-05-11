@@ -19,6 +19,7 @@
  */
 
 #include <climits>
+#include <functional>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -34,19 +35,19 @@ extern "C" {
 static Fl_Double_Window *win;
 static Fl_Button *buttons[BUTTONS_COUNT];
 static Fl_Spinner *spins[SPINS_COUNT];
-static bool repeated = false;
+std::function<void(int)> set_alarm_f;
 
 static void alarm_callback(void*) {
     common_alarm_callback();
 }
 
+static void set_alarm_init(int ms) {
+    Fl::add_timeout(0.001*ms, alarm_callback);
+    set_alarm_f = [](int ms) { Fl::repeat_timeout(0.001*ms, alarm_callback); };
+}
+
 void set_alarm(int ms) {
-    if (!repeated) {
-        Fl::add_timeout(0.001*ms, alarm_callback);
-        repeated = true;
-    } else {
-        Fl::repeat_timeout(0.001*ms, alarm_callback);
-    }
+    set_alarm_f(ms);
 }
 
 int get_spin_value(spin_t spin) {
@@ -67,7 +68,7 @@ static void tap_callback(Fl_Widget*, void*) {
 }
 
 static void stop_callback(Fl_Widget*, void*) {
-    repeated = false;
+    set_alarm_f = set_alarm_init;
     common_stop_button();
 }
 
@@ -107,6 +108,8 @@ int init_gui(int, char**) {
         spins[c] = create_spin(label[c]);
 
     win->end();
+
+    set_alarm_f = set_alarm_init;
 
     get_options();
 
