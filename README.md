@@ -10,6 +10,8 @@ This autoclicker application enables you to automatically click the left mousebu
 
 Possible fields of use are (obviously) programs that require a lot of repetitive clicking, but it can also be used to click restart every ten minutes in a presentation program.
 
+In order to temporary disable clicking hold left mouse button.
+
 Currently, xAutoClick has GUI front-ends for X11/CLI, X11/FLTK, X11/GTK+ 3.0 and X11/Qt 5.x and has been tested on Linux/x86.
 
 ## Installation
