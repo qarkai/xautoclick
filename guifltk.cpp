@@ -33,8 +33,8 @@ extern "C" {
 }
 
 static Fl_Double_Window *win;
-static Fl_Button *buttons[BUTTONS_COUNT];
-static Fl_Spinner *spins[SPINS_COUNT];
+static std::array<Fl_Button*, BUTTONS_COUNT> buttons;
+static std::array<Fl_Spinner*, SPINS_COUNT> spins;
 std::function<void(int)> set_alarm_f;
 
 namespace {
