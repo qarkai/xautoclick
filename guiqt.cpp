@@ -70,5 +70,5 @@ void close_gui(void) {
 
 void main_loop(void) {
     clickWidget->show();
-    app->exec();
+    QApplication::exec();
 }
