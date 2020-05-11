@@ -28,7 +28,7 @@ static GtkWidget *gAutoClick;
 static GtkWidget *buttons[BUTTONS_COUNT];
 static GtkWidget *spins[SPINS_COUNT];
 
-static gboolean myalarm(gpointer data) {
+static gboolean myalarm(G_GNUC_UNUSED gpointer data) {
     common_alarm_callback();
     return FALSE;   /* call only once; FALSE destroys timer */
 }
@@ -49,15 +49,15 @@ void set_button_sensitive(button_t button, bool state) {
     gtk_widget_set_sensitive(buttons[button], state);
 }
 
-static void on_tap_button_clicked(GtkButton *button, gpointer user_data) {
+static void on_tap_button_clicked(G_GNUC_UNUSED GtkButton *button, G_GNUC_UNUSED gpointer user_data) {
     common_tap_button();
 }
 
-static void on_stop_button_clicked(GtkButton *button, gpointer user_data) {
+static void on_stop_button_clicked(G_GNUC_UNUSED GtkButton *button, G_GNUC_UNUSED gpointer user_data) {
     common_stop_button();
 }
 
-static void on_start_button_clicked(GtkButton *button, gpointer user_data) {
+static void on_start_button_clicked(G_GNUC_UNUSED GtkButton *button, G_GNUC_UNUSED gpointer user_data) {
     common_start_button();
 }
 
@@ -193,7 +193,7 @@ static GtkWidget *create_gAutoClick(void) {
 }
 
 int init_gui(int argc, char **argv) {
-    gtk_init(NULL, NULL);
+    gtk_init(&argc, &argv);
 
     gAutoClick = create_gAutoClick();
 
