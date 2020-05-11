@@ -37,10 +37,10 @@ ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
     std::array<QString, SPINS_COUNT> labels = { "Pre-delay, ms", "Interval, ms", "Random +/-, ms", "# of clicks" };
     std::array<QString, BUTTONS_COUNT> btnNames = { "Tap", "Stop", "Start" };
 
-    QVBoxLayout *vbox = new QVBoxLayout;
+    auto vbox = new QVBoxLayout;
 
     for (int c = 0; c < SPINS_COUNT; c++) {
-        QHBoxLayout *layout = new QHBoxLayout;
+        auto layout = new QHBoxLayout;
         spins[c] = new QSpinBox;
         spins[c]->setMinimum(1);
         spins[c]->setMaximum(INT_MAX);
@@ -50,7 +50,7 @@ ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
         vbox->addLayout(layout);
     }
 
-    QHBoxLayout *layout = new QHBoxLayout;
+    auto layout = new QHBoxLayout;
 
     for (int c = 0; c < BUTTONS_COUNT; c++)
         layout->addWidget(buttons[c] = new QPushButton(btnNames[c]));
