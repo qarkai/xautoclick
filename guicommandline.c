@@ -28,21 +28,58 @@
 #include "main.h"
 #include "osdep.h"
 
-static int spins[SPINS_COUNT], sleeptime;
+typedef struct cli_gui_ctx {
+    int spins[SPINS_COUNT];
+} cli_gui_t;
+
+static int sleeptime;
+
+static void printhelp(char *myname);
+static int cli_gui_get_spin_value(cli_gui_t* ctx, spin_t spin);
+static void cli_gui_set_spin_value(cli_gui_t* ctx, spin_t spin, int value);
+static void cli_gui_main_loop(cli_gui_t* ctx);
+
+void init_gui(gui_t* gui, int argc, char **argv) {
+    cli_gui_t* ctx;
+    int c;
+
+    ctx = calloc(1, sizeof(cli_gui_t));
+    if (!ctx) {
+        fprintf(stderr, "Can't allocate memory for CLI GUI\n");
+        return;
+    }
+
+    gui->ctx = ctx;
+    gui->get_spin_value = (gui_get_spin_value_t)cli_gui_get_spin_value;
+    gui->set_spin_value = (gui_set_spin_value_t)cli_gui_set_spin_value;
+    gui->main_loop = (gui_main_loop_t)cli_gui_main_loop;
+    /* don't set options from command line */
+
+    get_options(gui);
+
+    /* parse command line */
+    while ((c = getopt(argc, argv, "hi:n:p:r:")) != - 1) {
+        switch (c) {
+        case 'h': printhelp(argv[0]); break;
+        case 'i': ctx->spins[SPIN_INTERVAL] = atoi(optarg); break;
+        case 'n': ctx->spins[SPIN_NUMBER] = atoi(optarg); break;
+        case 'p': ctx->spins[SPIN_PREDELAY] = atoi(optarg); break;
+        case 'r': ctx->spins[SPIN_RANDOM] = atoi(optarg); break;
+        case '?':
+            free(ctx);
+            gui->ctx = NULL;
+            return;
+        default:
+            fprintf(stderr, "unknown command line option: %s\n", argv[optind]);
+            free(ctx);
+            gui->ctx = NULL;
+            return;
+        }
+    }
+}
 
 void set_alarm(int ms) {
     sleeptime = ms;
-}
-
-int get_spin_value(spin_t spin) {
-    return spins[spin];
-}
-
-void set_spin_value(spin_t spin, int value) {
-    spins[spin] = value;
-}
-
-void set_button_sensitive(button_t button, bool state) {
 }
 
 static void printhelp(char *myname) {
@@ -50,32 +87,15 @@ static void printhelp(char *myname) {
     exit(0);
 }
 
-int init_gui(int argc, char **argv) {
-    int c;
-
-    get_options();
-
-    /* parse command line */
-    while ((c = getopt(argc, argv, "hi:n:p:r:")) != - 1) {
-        switch (c) {
-        case 'h': printhelp(argv[0]); break;
-        case 'i': spins[SPIN_INTERVAL] = atoi(optarg); break;
-        case 'n': spins[SPIN_NUMBER] = atoi(optarg); break;
-        case 'p': spins[SPIN_PREDELAY] = atoi(optarg); break;
-        case 'r': spins[SPIN_RANDOM] = atoi(optarg); break;
-        case '?': return 0;
-        default: fprintf(stderr, "unknown command line option: %s\n", argv[optind]); return 0;
-        }
-    }
-
-    return 1;
+static int cli_gui_get_spin_value(cli_gui_t* ctx, spin_t spin) {
+    return ctx->spins[spin];
 }
 
-void close_gui(void) {
-    /* don't set options from command line */
+static void cli_gui_set_spin_value(cli_gui_t* ctx, spin_t spin, int value) {
+    ctx->spins[spin] = value;
 }
 
-void main_loop(void) {
+static void cli_gui_main_loop(cli_gui_t* ctx) {
     common_start_button();
 
     while (sleeptime) {
@@ -83,6 +103,4 @@ void main_loop(void) {
         sleeptime = 0;
         common_alarm_callback();
     }
-
-    return;
 }

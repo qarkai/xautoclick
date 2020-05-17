@@ -48,26 +48,25 @@ static options_t options = {
 };
 
 static clicker_t *clicker;
+static gui_t *gui;
 static int counter = 0;
 
 void common_stop_button(void) {
-
-    set_button_sensitive(BUTTON_TAP, true);
-    set_button_sensitive(BUTTON_STOP, false);
-    set_button_sensitive(BUTTON_START, true);
+    gui_set_button_sensitive(gui, BUTTON_TAP, true);
+    gui_set_button_sensitive(gui, BUTTON_STOP, false);
+    gui_set_button_sensitive(gui, BUTTON_START, true);
 
     counter = 0;
 }
 
 void common_start_button(void) {
+    gui_set_button_sensitive(gui, BUTTON_TAP, false);
+    gui_set_button_sensitive(gui, BUTTON_STOP, true);
+    gui_set_button_sensitive(gui, BUTTON_START, false);
 
-    set_button_sensitive(BUTTON_TAP, false);
-    set_button_sensitive(BUTTON_STOP, true);
-    set_button_sensitive(BUTTON_START, false);
+    counter = gui_get_spin_value(gui, SPIN_NUMBER);
 
-    counter = get_spin_value(SPIN_NUMBER);
-
-    set_alarm(get_spin_value(SPIN_PREDELAY));
+    set_alarm(gui_get_spin_value(gui, SPIN_PREDELAY));
 }
 
 void common_alarm_callback(void) {
@@ -83,8 +82,8 @@ void common_alarm_callback(void) {
 
     clicker_click(clicker);
 
-    interval     = get_spin_value(SPIN_INTERVAL);
-    randomfactor = get_spin_value(SPIN_RANDOM);
+    interval     = gui_get_spin_value(gui, SPIN_INTERVAL);
+    randomfactor = gui_get_spin_value(gui, SPIN_RANDOM);
 
     if (randomfactor > 0)
     {
@@ -176,29 +175,26 @@ void common_tap_button(void) {
 
     average = calculate_average(history, fill, &min, &max);
 
-    set_spin_value(SPIN_INTERVAL, average);
-    set_spin_value(SPIN_RANDOM, (max - min) >> 1);
+    gui_set_spin_value(gui, SPIN_INTERVAL, average);
+    gui_set_spin_value(gui, SPIN_RANDOM, (max - min) >> 1);
     prevtime = curtime;
 }
 
-void get_options(void)
-{
-    set_spin_value(SPIN_PREDELAY, options.predelay);
-    set_spin_value(SPIN_INTERVAL, options.interval);
-    set_spin_value(SPIN_RANDOM, options.random_factor);
-    set_spin_value(SPIN_NUMBER, options.clicks_number);
+void get_options(gui_t *gui) {
+    gui_set_spin_value(gui, SPIN_PREDELAY, options.predelay);
+    gui_set_spin_value(gui, SPIN_INTERVAL, options.interval);
+    gui_set_spin_value(gui, SPIN_RANDOM, options.random_factor);
+    gui_set_spin_value(gui, SPIN_NUMBER, options.clicks_number);
 }
 
-void set_options(void)
-{
-    options.predelay = get_spin_value(SPIN_PREDELAY);
-    options.interval = get_spin_value(SPIN_INTERVAL);
-    options.random_factor = get_spin_value(SPIN_RANDOM);
-    options.clicks_number = get_spin_value(SPIN_NUMBER);
+void set_options(void) {
+    options.predelay = gui_get_spin_value(gui, SPIN_PREDELAY);
+    options.interval = gui_get_spin_value(gui, SPIN_INTERVAL);
+    options.random_factor = gui_get_spin_value(gui, SPIN_RANDOM);
+    options.clicks_number = gui_get_spin_value(gui, SPIN_NUMBER);
 }
 
-static int read_option(FILE *cfg_file, char *name, int *value)
-{
+static int read_option(FILE *cfg_file, char *name, int *value) {
     int result;
     char scan_format[20] = {0};
 
@@ -318,19 +314,20 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    if (!init_gui(argc, argv)) {
+    gui = gui_init(argc, argv);
+    if (!gui) {
         fprintf(stderr, "Unable to initialize GUI\n");
         clicker_close(clicker);
         return -1;
     }
 
-    set_button_sensitive(BUTTON_TAP, true);
-    set_button_sensitive(BUTTON_STOP, false);
-    set_button_sensitive(BUTTON_START, true);
+    gui_set_button_sensitive(gui, BUTTON_TAP, true);
+    gui_set_button_sensitive(gui, BUTTON_STOP, false);
+    gui_set_button_sensitive(gui, BUTTON_START, true);
 
-    main_loop();
+    gui_main_loop(gui);
 
-    close_gui();
+    gui_close(gui);
     clicker_close(clicker);
     save_config(&options);
 

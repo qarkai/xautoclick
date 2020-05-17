@@ -32,9 +32,12 @@ extern "C" {
 #include "osdep.h"
 }
 
-static Fl_Double_Window *win;
-static std::array<Fl_Button*, BUTTONS_COUNT> buttons;
-static std::array<Fl_Spinner*, SPINS_COUNT> spins;
+struct fltk_gui_t {
+    Fl_Double_Window *win;
+    std::array<Fl_Spinner*, SPINS_COUNT> spins;
+    std::array<Fl_Button*, BUTTONS_COUNT> buttons;
+};
+
 std::function<void(int)> set_alarm_f;
 
 namespace {
@@ -79,52 +82,59 @@ Fl_Spinner* create_spin(const char* name) {
     return spin;
 }
 
+void fltk_gui_set_button_sensitive(fltk_gui_t* ctx, button_t button, bool state) {
+    if (state) ctx->buttons[button]->activate();
+    else       ctx->buttons[button]->deactivate();
+}
+
+int fltk_gui_get_spin_value(fltk_gui_t* ctx, spin_t spin) {
+    return static_cast<int>(ctx->spins[spin]->value());
+}
+
+void fltk_gui_set_spin_value(fltk_gui_t* ctx, spin_t spin, int value) {
+    ctx->spins[spin]->value(value);
+}
+
+void fltk_gui_main_loop(fltk_gui_t* ctx) {
+    ctx->win->show();
+    Fl::run();
+}
+
+void fltk_gui_close(fltk_gui_t*) {
+    set_options();
+}
+
+}
+
+void init_gui(gui_t* gui, int, char**) {
+    auto ctx = new fltk_gui_t;
+
+    ctx->win = new Fl_Double_Window(205, 155, "fltkAutoClick");
+    ctx->win->begin();
+    ctx->win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
+
+    ctx->buttons[BUTTON_TAP] = create_button("Tap", tap_callback);
+    ctx->buttons[BUTTON_STOP] = create_button("Stop", stop_callback);
+    ctx->buttons[BUTTON_START] = create_button("Start", start_callback);
+
+    const char * const label[SPINS_COUNT] = { "Pre-delay, ms", "Interval, ms", "Random +/-, ms", "# of clicks" };
+    for (int c = 0; c < SPINS_COUNT; c++)
+        ctx->spins[c] = create_spin(label[c]);
+
+    ctx->win->end();
+
+    set_alarm_f = set_alarm_init;
+
+    gui->ctx = ctx;
+    gui->set_button_sensitive = (gui_set_button_sensitive_t)fltk_gui_set_button_sensitive;
+    gui->get_spin_value = (gui_get_spin_value_t)fltk_gui_get_spin_value;
+    gui->set_spin_value = (gui_set_spin_value_t)fltk_gui_set_spin_value;
+    gui->main_loop = (gui_main_loop_t)fltk_gui_main_loop;
+    gui->close = (gui_close_t)fltk_gui_close;
+
+    get_options(gui);
 }
 
 void set_alarm(int ms) {
     set_alarm_f(ms);
-}
-
-int get_spin_value(spin_t spin) {
-    return static_cast<int>(spins[spin]->value());
-}
-
-void set_spin_value(spin_t spin, int value) {
-    spins[spin]->value(value);
-}
-
-void set_button_sensitive(button_t button, bool state) {
-    if (state) buttons[button]->activate();
-    else       buttons[button]->deactivate();
-}
-
-int init_gui(int, char**) {
-    win = new Fl_Double_Window(205, 155, "fltkAutoClick");
-    win->begin();
-    win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
-
-    buttons[BUTTON_TAP] = create_button("Tap", tap_callback);
-    buttons[BUTTON_STOP] = create_button("Stop", stop_callback);
-    buttons[BUTTON_START] = create_button("Start", start_callback);
-
-    const char * const label[SPINS_COUNT] = { "Pre-delay, ms", "Interval, ms", "Random +/-, ms", "# of clicks" };
-    for (int c = 0; c < SPINS_COUNT; c++)
-        spins[c] = create_spin(label[c]);
-
-    win->end();
-
-    set_alarm_f = set_alarm_init;
-
-    get_options();
-
-    return 1;
-}
-
-void close_gui(void) {
-    set_options();
-}
-
-void main_loop(void) {
-    win->show();
-    Fl::run();
 }

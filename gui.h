@@ -18,14 +18,33 @@ typedef enum spin_e {
     SPINS_COUNT
 } spin_t;
 
+typedef void (*gui_set_button_sensitive_t)(void* ctx, button_t button, bool state);
+typedef int (*gui_get_spin_value_t)(void* ctx, spin_t spin);
+typedef void (*gui_set_spin_value_t)(void* ctx, spin_t spin, int value);
+typedef void (*gui_main_loop_t)(void* ctx);
+typedef void (*gui_close_t)(void* ctx);
+
+typedef struct gui_ctx {
+    void* ctx;
+
+    gui_set_button_sensitive_t set_button_sensitive;
+    gui_get_spin_value_t get_spin_value;
+    gui_set_spin_value_t set_spin_value;
+    gui_main_loop_t main_loop;
+    gui_close_t close;
+} gui_t;
+
+gui_t* gui_init(int argc, char **argv);
+
+void gui_set_button_sensitive(gui_t* gui, button_t button, bool state);
+int gui_get_spin_value(gui_t* gui, spin_t spin);
+void gui_set_spin_value(gui_t* gui, spin_t spin, int value);
+void gui_main_loop(gui_t* gui);
+void gui_close(gui_t* gui);
+
 /* Stuff that has to be implemented for each GUI */
 
-int init_gui(int argc, char **argv);
-void set_button_sensitive(button_t button, bool state);
-int get_spin_value(spin_t spin);
-void set_spin_value(spin_t spin, int value);
-void main_loop(void);
+void init_gui(gui_t* gui, int argc, char **argv);
 void set_alarm(int ms);
-void close_gui(void);
 
 #endif

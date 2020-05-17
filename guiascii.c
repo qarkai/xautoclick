@@ -20,6 +20,7 @@
 
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
@@ -27,24 +28,35 @@
 #include "main.h"
 #include "osdep.h"
 
-static int spins[SPINS_COUNT], sleeptime;
+typedef struct ascii_gui_ctx {
+    int spins[SPINS_COUNT];
+} ascii_gui_t;
 
-void set_alarm(int ms) {
-    sleeptime = ms;
+static int sleeptime;
+
+static void ascii_gui_main_loop(ascii_gui_t* ctx);
+
+static int ascii_gui_get_spin_value(ascii_gui_t* ctx, spin_t spin) {
+    return ctx->spins[spin];
 }
 
-int get_spin_value(spin_t spin) {
-    return spins[spin];
+static void ascii_gui_set_spin_value(ascii_gui_t* ctx, spin_t spin, int value) {
+    ctx->spins[spin] = value;
 }
 
-void set_spin_value(spin_t spin, int value) {
-    spins[spin] = value;
+static void ascii_gui_close(ascii_gui_t* ctx) {
+    set_options();
 }
 
-void set_button_sensitive(button_t button, bool state) {
-}
+void init_gui(gui_t* gui, int argc, char **argv) {
+    ascii_gui_t* ctx;
 
-int init_gui(int argc, char **argv) {
+    ctx = calloc(1, sizeof(ascii_gui_t));
+    if (!ctx) {
+        fprintf(stderr, "Can't allocate memory for ASCII GUI\n");
+        return;
+    }
+
     printf("aautoclick\n\n");
     printf("p - set pre-delay, ms\n");
     printf("i - set interval, ms\n");
@@ -55,20 +67,24 @@ int init_gui(int argc, char **argv) {
     printf("q - quit\n");
     printf("\n");
 
-    get_options();
+    gui->ctx = ctx;
+    gui->get_spin_value = (gui_get_spin_value_t)ascii_gui_get_spin_value;
+    gui->set_spin_value = (gui_set_spin_value_t)ascii_gui_set_spin_value;
+    gui->main_loop = (gui_main_loop_t)ascii_gui_main_loop;
+    gui->close = (gui_close_t)ascii_gui_close;
 
-    return 1;
+    get_options(gui);
 }
 
-void close_gui(void) {
-    set_options();
+void set_alarm(int ms) {
+    sleeptime = ms;
 }
 
-static void print_variables(void) {
-    printf("pre-delay:          %i ms\n", spins[SPIN_PREDELAY]);
-    printf("interval:           %i ms\n", spins[SPIN_INTERVAL]);
-    printf("random +/-:         %i ms\n", spins[SPIN_RANDOM]);
-    printf("number of clicks:   %i\n", spins[SPIN_NUMBER]);
+static void print_variables(ascii_gui_t* ctx) {
+    printf("pre-delay:          %i ms\n", ctx->spins[SPIN_PREDELAY]);
+    printf("interval:           %i ms\n", ctx->spins[SPIN_INTERVAL]);
+    printf("random +/-:         %i ms\n", ctx->spins[SPIN_RANDOM]);
+    printf("number of clicks:   %i\n", ctx->spins[SPIN_NUMBER]);
     printf("\n");
 }
 
@@ -115,10 +131,10 @@ static void run(void) {
     }
 }
 
-void main_loop(void) {
+static void ascii_gui_main_loop(ascii_gui_t* ctx) {
     int c;
 
-    print_variables();
+    print_variables(ctx);
     printf("> ");
     c = fgetc(stdin);
 
@@ -134,17 +150,17 @@ void main_loop(void) {
         flush_to_eol(c);
 
         switch (c) {
-        case 'p': read_int(&spins[SPIN_PREDELAY]); break;
-        case 'i': read_int(&spins[SPIN_INTERVAL]); break;
-        case 'r': read_int(&spins[SPIN_RANDOM]);   break;
-        case 'n': read_int(&spins[SPIN_NUMBER]);   break;
+        case 'p': read_int(&ctx->spins[SPIN_PREDELAY]); break;
+        case 'i': read_int(&ctx->spins[SPIN_INTERVAL]); break;
+        case 'r': read_int(&ctx->spins[SPIN_RANDOM]);   break;
+        case 'n': read_int(&ctx->spins[SPIN_NUMBER]);   break;
         case 't': common_tap_button();             break;
         case 's': run();                           return;
         case 'q':                                  return;
         default:  printf("unknown command\n");     break;
         }
 
-        print_variables();
+        print_variables(ctx);
 
         usleep(100 * 1000);
         printf("> ");

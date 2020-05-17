@@ -29,46 +29,53 @@ extern "C" {
 }
 
 static QApplication *app;
-static ClickWidget *clickWidget;
 static QTimer *clickTimer;
 
-void set_alarm(int ms) {
-    clickTimer->start(ms);
-}
+namespace {
 
-int get_spin_value(spin_t spin) {
-    return clickWidget->getSpinValue(spin);
-}
-
-void set_spin_value(spin_t spin, int value) {
-    clickWidget->setSpinValue(spin, value);
-}
-
-void set_button_sensitive(button_t button, bool state) {
+void qt_gui_set_button_sensitive(ClickWidget *clickWidget, button_t button, bool state) {
     clickWidget->setButtonSensitive(button, state);
 }
 
-int init_gui(int argc, char **argv) {
-    static int argn = argc; // QApplication reference to argc workaround
-    app = new QApplication(argn, argv);
-    clickWidget = new ClickWidget;
-
-    clickTimer = new QTimer;
-    clickTimer->setSingleShot(true);
-    QObject::connect(clickTimer, &QTimer::timeout, common_alarm_callback);
-
-    get_options();
-
-    return 1;
+int qt_gui_get_spin_value(ClickWidget *clickWidget, spin_t spin) {
+    return clickWidget->getSpinValue(spin);
 }
 
-void close_gui(void) {
+void qt_gui_set_spin_value(ClickWidget *clickWidget, spin_t spin, int value) {
+    clickWidget->setSpinValue(spin, value);
+}
+
+void qt_gui_main_loop(ClickWidget *clickWidget) {
+    clickWidget->show();
+    QApplication::exec();
+}
+
+void qt_gui_close(ClickWidget *clickWidget) {
     set_options();
     delete clickTimer;
     delete clickWidget;
 }
 
-void main_loop(void) {
-    clickWidget->show();
-    QApplication::exec();
+}
+
+void set_alarm(int ms) {
+    clickTimer->start(ms);
+}
+
+void init_gui(gui_t* gui, int argc, char **argv) {
+    static int argn = argc; // QApplication reference to argc workaround
+    app = new QApplication(argn, argv);
+
+    clickTimer = new QTimer;
+    clickTimer->setSingleShot(true);
+    QObject::connect(clickTimer, &QTimer::timeout, common_alarm_callback);
+
+    gui->ctx = new ClickWidget;
+    gui->set_button_sensitive = (gui_set_button_sensitive_t)qt_gui_set_button_sensitive;
+    gui->get_spin_value = (gui_get_spin_value_t)qt_gui_get_spin_value;
+    gui->set_spin_value = (gui_set_spin_value_t)qt_gui_set_spin_value;
+    gui->main_loop = (gui_main_loop_t)qt_gui_main_loop;
+    gui->close = (gui_close_t)qt_gui_close;
+
+    get_options(gui);
 }

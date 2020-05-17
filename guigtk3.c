@@ -24,9 +24,11 @@
 #include "gui.h"
 #include "main.h"
 
-static GtkWidget *gAutoClick;
-static GtkWidget *buttons[BUTTONS_COUNT];
-static GtkWidget *spins[SPINS_COUNT];
+typedef struct gtk_gui_ctx {
+    GtkWidget *gAutoClick;
+    GtkWidget *spins[SPINS_COUNT];
+    GtkWidget *buttons[BUTTONS_COUNT];
+} gtk_gui_t;
 
 static gboolean myalarm(G_GNUC_UNUSED gpointer data) {
     common_alarm_callback();
@@ -37,16 +39,21 @@ void set_alarm(int ms) {
     g_timeout_add(ms, myalarm, NULL);
 }
 
-int get_spin_value(spin_t spin) {
-    return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spins[spin]));
+static int gtk_gui_get_spin_value(gtk_gui_t* ctx, spin_t spin) {
+    return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ctx->spins[spin]));
 }
 
-void set_spin_value(spin_t spin, int value) {
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(spins[spin]), value);
+static void gtk_gui_set_spin_value(gtk_gui_t* ctx, spin_t spin, int value) {
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(ctx->spins[spin]), value);
 }
 
-void set_button_sensitive(button_t button, bool state) {
-    gtk_widget_set_sensitive(buttons[button], state);
+static void gtk_gui_set_button_sensitive(gtk_gui_t* ctx, button_t button, bool state) {
+    gtk_widget_set_sensitive(ctx->buttons[button], state);
+}
+
+static void gtk_gui_main_loop(gtk_gui_t* ctx) {
+    gtk_widget_show(ctx->gAutoClick);
+    gtk_main();
 }
 
 static void on_tap_button_clicked(G_GNUC_UNUSED GtkButton *button, G_GNUC_UNUSED gpointer user_data) {
@@ -61,8 +68,7 @@ static void on_start_button_clicked(G_GNUC_UNUSED GtkButton *button, G_GNUC_UNUS
     common_start_button();
 }
 
-static void add_widget(GObject *root, GtkWidget *widget)
-{
+static void add_widget(GObject *root, GtkWidget *widget) {
     static guint n = 0;
     gchar *key = g_strdup_printf("widget_%u", n++);
 
@@ -75,8 +81,7 @@ static void add_widget(GObject *root, GtkWidget *widget)
 static GtkWidget *create_labeled_spin(GObject *root,
                                       GtkWidget *vbox,
                                       const gchar *label_text,
-                                      gdouble spin_min_value)
-{
+                                      gdouble spin_min_value) {
     GtkAdjustment *adj;
     GtkWidget *hbox;
     GtkWidget *label;
@@ -107,7 +112,7 @@ static GtkWidget *create_labeled_spin(GObject *root,
     return spin;
 }
 
-static void create_spins(GObject *root, GtkWidget *box) {
+static void create_spins(gtk_gui_t* ctx, GObject *root, GtkWidget *box) {
     struct spin_param {
         const char* text;
         int min_value;
@@ -119,14 +124,13 @@ static void create_spins(GObject *root, GtkWidget *box) {
     };
 
     for (int c = 0; c < SPINS_COUNT; ++c)
-        spins[c] = create_labeled_spin(root, box, spin_params[c].text, spin_params[c].min_value);
+        ctx->spins[c] = create_labeled_spin(root, box, spin_params[c].text, spin_params[c].min_value);
 }
 
 static GtkWidget *create_labeled_button(GObject *root,
                                         GtkWidget *hbox,
                                         const gchar *button_text,
-                                        GCallback on_button_clicked_func)
-{
+                                        GCallback on_button_clicked_func) {
     GtkWidget *button;
 
     button = gtk_button_new_with_label (button_text);
@@ -139,7 +143,7 @@ static GtkWidget *create_labeled_button(GObject *root,
     return button;
 }
 
-static void create_buttons(GObject *root, GtkWidget *box) {
+static void create_buttons(gtk_gui_t* ctx, GObject *root, GtkWidget *box) {
     struct btn_param {
         const char* text;
         GCallback callback;
@@ -150,16 +154,15 @@ static void create_buttons(GObject *root, GtkWidget *box) {
     };
 
     for (int c = 0; c < BUTTONS_COUNT; ++c)
-        buttons[c] = create_labeled_button(root, box, btn_params[c].text, btn_params[c].callback);
+        ctx->buttons[c] = create_labeled_button(root, box, btn_params[c].text, btn_params[c].callback);
 }
 
-static void gautoclick_exit(void)
-{
+static void gautoclick_exit(void) {
     set_options();
     gtk_main_quit();
 }
 
-static GtkWidget *create_gAutoClick(void) {
+static void create_gAutoClick(gtk_gui_t* ctx) {
     GObject *gAutoClick_obj;
     GtkWidget *gAutoClick_win;
     GtkWidget *vbox;
@@ -179,34 +182,38 @@ static GtkWidget *create_gAutoClick(void) {
     add_widget(gAutoClick_obj, vbox);
     gtk_container_add (GTK_CONTAINER (gAutoClick_win), vbox);
 
-    create_spins(gAutoClick_obj, vbox);
+    create_spins(ctx, gAutoClick_obj, vbox);
 
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     add_widget(gAutoClick_obj, hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
-    create_buttons(gAutoClick_obj, hbox);
+    create_buttons(ctx, gAutoClick_obj, hbox);
 
     g_signal_connect (gAutoClick_obj, "delete_event",
                       G_CALLBACK (gautoclick_exit), NULL);
-    return gAutoClick_win;
+
+    ctx->gAutoClick = gAutoClick_win;
 }
 
-int init_gui(int argc, char **argv) {
+void init_gui(gui_t* gui, int argc, char **argv) {
+    gtk_gui_t* ctx;
+
+    ctx = calloc(1, sizeof(gtk_gui_t));
+    if (!ctx) {
+        fprintf(stderr, "Can't allocate memory for GTK3 GUI\n");
+        return;
+    }
+
     gtk_init(&argc, &argv);
 
-    gAutoClick = create_gAutoClick();
+    create_gAutoClick(ctx);
 
-    get_options();
+    gui->ctx = ctx;
+    gui->set_button_sensitive = (gui_set_button_sensitive_t)gtk_gui_set_button_sensitive;
+    gui->get_spin_value = (gui_get_spin_value_t)gtk_gui_get_spin_value;
+    gui->set_spin_value = (gui_set_spin_value_t)gtk_gui_set_spin_value;
+    gui->main_loop = (gui_main_loop_t)gtk_gui_main_loop;
 
-    gtk_widget_show(gAutoClick);
-
-    return 1;
-}
-
-void close_gui(void) {
-}
-
-void main_loop(void) {
-    gtk_main();
+    get_options(gui);
 }
