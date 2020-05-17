@@ -32,7 +32,6 @@
 #include "osdep.h"
 
 typedef struct options {
-    char *config_file;
     int predelay;
     int interval;
     int random_factor;
@@ -40,7 +39,6 @@ typedef struct options {
 } options_t;
 
 static options_t options = {
-    .config_file = NULL,
     .predelay = 2000,
     .interval = 1000,
     .random_factor = 250,
@@ -194,7 +192,7 @@ void set_options(void) {
     options.clicks_number = gui_get_spin_value(gui, SPIN_NUMBER);
 }
 
-static int read_option(FILE *cfg_file, char *name, int *value) {
+static int read_option(FILE *cfg_file, const char *name, int *value) {
     int result;
     char scan_format[20] = {0};
 
@@ -225,61 +223,60 @@ static int read_option(FILE *cfg_file, char *name, int *value) {
     return result;
 }
 
-static void load_config(options_t *opts)
-{
-    struct config_options_struct {
-        char *name;
-        int *value;
-    } config_options[4] = {
-        { .name = "predelay", .value = &opts->predelay},
-        { .name = "interval", .value = &opts->interval},
-        { .name = "random_factor", .value = &opts->random_factor},
-        { .name = "clicks_number", .value = &opts->clicks_number}
-    };
+static char* get_config_file(void) {
     struct stat config_dir_stat = {0};
-    FILE *config_file = NULL;
     int result;
     char *env_config_dir;
     char *config_dir;
+    char *config_file = NULL;
 
     env_config_dir = getenv("XDG_CONFIG_HOME");
-    if (NULL == env_config_dir || '\0' == env_config_dir[0])
-    {
+    if (!env_config_dir || *env_config_dir == '\0') {
         env_config_dir = getenv("HOME");
         config_dir = calloc(strlen(env_config_dir) + strlen("/.config/xautoclick") + 1, sizeof(char));
         sprintf(config_dir, "%s/.config/xautoclick", env_config_dir);
     }
-    else
-    {
+    else {
         config_dir = calloc(strlen(env_config_dir) + strlen("/xautoclick") + 1, sizeof(char));
         sprintf(config_dir, "%s/xautoclick", env_config_dir);
     }
 
     result = stat(config_dir, &config_dir_stat);
-    if (result == -1)
-    {
+    if (result == -1) {
         /* create xautoclick config dir */
         mkdir(config_dir, 0700);
     }
 
-    opts->config_file = calloc(strlen(config_dir) + strlen("/config") + 1, sizeof(char));
-    sprintf(opts->config_file, "%s/config", config_dir);
+    config_file = calloc(strlen(config_dir) + strlen("/config") + 1, sizeof(char));
+    sprintf(config_file, "%s/config", config_dir);
     free(config_dir);
 
-    config_file = fopen(opts->config_file, "r");
-    if (NULL == config_file)
-    {
-        error(0, errno, "Can't open config file %s", opts->config_file);
+    return config_file;
+}
+
+static void load_config(const char* filename, options_t *opts) {
+    struct config_option {
+        char *name;
+        int *value;
+    } config_options[] = {
+        { .name = "predelay", .value = &opts->predelay},
+        { .name = "interval", .value = &opts->interval},
+        { .name = "random_factor", .value = &opts->random_factor},
+        { .name = "clicks_number", .value = &opts->clicks_number}
+    };
+    size_t config_opts_num = sizeof(config_options) / sizeof(struct config_option);
+    FILE *config_file = NULL;
+
+    config_file = fopen(filename, "r");
+    if (!config_file) {
+        error(0, errno, "Can't open config file %s", filename);
         return;
     }
 
-    for (int i = 0; i < 4; ++i)
-    {
-        result = read_option(config_file, config_options[i].name, config_options[i].value);
-        if (result != 1)
-        {
-            fprintf(stderr, "Can't parse config file %s", opts->config_file);
-        }
+    for (size_t i = 0; i < config_opts_num; ++i) {
+        int read_count = read_option(config_file, config_options[i].name, config_options[i].value);
+        if (read_count != 1)
+            fprintf(stderr, "Can't parse config file %s\n", filename);
     }
 
 #ifdef DEBUG
@@ -291,13 +288,13 @@ static void load_config(options_t *opts)
     return;
 }
 
-static void save_config(options_t *opts)
-{
-    FILE *config_file = NULL;
+static void save_config(const char* filename, const options_t *opts) {
+    FILE *config_file;
 
-    config_file = fopen(opts->config_file, "w+");
+    config_file = fopen(filename, "w+");
     if (!config_file)
-      return;
+        return;
+
     fprintf(config_file, "predelay=%d\n", opts->predelay);
     fprintf(config_file, "interval=%d\n", opts->interval);
     fprintf(config_file, "random_factor=%d\n", opts->random_factor);
@@ -306,7 +303,9 @@ static void save_config(options_t *opts)
 }
 
 int main(int argc, char **argv) {
-    load_config(&options);
+    const char* config_file = get_config_file();
+
+    load_config(config_file, &options);
 
     clicker = clicker_init();
     if (!clicker) {
@@ -329,7 +328,7 @@ int main(int argc, char **argv) {
 
     gui_close(gui);
     clicker_close(clicker);
-    save_config(&options);
+    save_config(config_file, &options);
 
     return 0;
 }
