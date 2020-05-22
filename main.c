@@ -38,13 +38,6 @@ typedef struct options {
     int clicks_number;
 } options_t;
 
-static options_t options = {
-    .predelay = 2000,
-    .interval = 1000,
-    .random_factor = 250,
-    .clicks_number = 100
-};
-
 static clicker_t *clicker;
 static gui_t *gui;
 static int counter = 0;
@@ -178,18 +171,18 @@ void common_tap_button(void) {
     prevtime = curtime;
 }
 
-static void get_options(gui_t *gui) {
-    gui_set_spin_value(gui, SPIN_PREDELAY, options.predelay);
-    gui_set_spin_value(gui, SPIN_INTERVAL, options.interval);
-    gui_set_spin_value(gui, SPIN_RANDOM, options.random_factor);
-    gui_set_spin_value(gui, SPIN_NUMBER, options.clicks_number);
+static void get_options(gui_t *gui, const options_t *options) {
+    gui_set_spin_value(gui, SPIN_PREDELAY, options->predelay);
+    gui_set_spin_value(gui, SPIN_INTERVAL, options->interval);
+    gui_set_spin_value(gui, SPIN_RANDOM, options->random_factor);
+    gui_set_spin_value(gui, SPIN_NUMBER, options->clicks_number);
 }
 
-static void set_options(const gui_t *gui) {
-    options.predelay = gui_get_spin_value(gui, SPIN_PREDELAY);
-    options.interval = gui_get_spin_value(gui, SPIN_INTERVAL);
-    options.random_factor = gui_get_spin_value(gui, SPIN_RANDOM);
-    options.clicks_number = gui_get_spin_value(gui, SPIN_NUMBER);
+static void set_options(const gui_t *gui, options_t *options) {
+    options->predelay = gui_get_spin_value(gui, SPIN_PREDELAY);
+    options->interval = gui_get_spin_value(gui, SPIN_INTERVAL);
+    options->random_factor = gui_get_spin_value(gui, SPIN_RANDOM);
+    options->clicks_number = gui_get_spin_value(gui, SPIN_NUMBER);
 }
 
 static int read_option(FILE *cfg_file, const char *name, int *value) {
@@ -303,6 +296,12 @@ static void save_config(const char* filename, const options_t *opts) {
 }
 
 int main(int argc, char **argv) {
+    options_t options = {
+        .predelay = 2000,
+        .interval = 1000,
+        .random_factor = 250,
+        .clicks_number = 100
+    };
     const char* config_file = get_config_file();
 
     load_config(config_file, &options);
@@ -320,7 +319,7 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    get_options(gui);
+    get_options(gui, &options);
 
     gui_set_button_sensitive(gui, BUTTON_TAP, true);
     gui_set_button_sensitive(gui, BUTTON_STOP, false);
@@ -329,7 +328,7 @@ int main(int argc, char **argv) {
     gui_main_loop(gui);
 
     if (gui->is_save_values)
-        set_options(gui);
+        set_options(gui, &options);
 
     gui_close(gui);
     clicker_close(clicker);
