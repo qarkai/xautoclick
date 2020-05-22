@@ -100,8 +100,11 @@ void fltk_gui_main_loop(fltk_gui_t* ctx) {
     Fl::run();
 }
 
-void fltk_gui_close(fltk_gui_t*) {
+void fltk_gui_close(fltk_gui_t* ctx) {
     set_options();
+
+    delete ctx->win;
+    delete ctx;
 }
 
 }

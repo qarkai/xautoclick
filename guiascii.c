@@ -46,6 +46,7 @@ static void ascii_gui_set_spin_value(ascii_gui_t* ctx, spin_t spin, int value) {
 
 static void ascii_gui_close(ascii_gui_t* ctx) {
     set_options();
+    free(ctx);
 }
 
 void init_gui(gui_t* gui, int argc, char **argv) {

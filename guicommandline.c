@@ -38,6 +38,7 @@ static void printhelp(char *myname);
 static int cli_gui_get_spin_value(cli_gui_t* ctx, spin_t spin);
 static void cli_gui_set_spin_value(cli_gui_t* ctx, spin_t spin, int value);
 static void cli_gui_main_loop(cli_gui_t* ctx);
+static void cli_gui_close(cli_gui_t* ctx);
 
 void init_gui(gui_t* gui, int argc, char **argv) {
     cli_gui_t* ctx;
@@ -53,6 +54,7 @@ void init_gui(gui_t* gui, int argc, char **argv) {
     gui->get_spin_value = (gui_get_spin_value_t)cli_gui_get_spin_value;
     gui->set_spin_value = (gui_set_spin_value_t)cli_gui_set_spin_value;
     gui->main_loop = (gui_main_loop_t)cli_gui_main_loop;
+    gui->close = (gui_close_t)cli_gui_close;
     /* don't set options from command line */
 
     get_options(gui);
@@ -103,4 +105,8 @@ static void cli_gui_main_loop(cli_gui_t* ctx) {
         sleeptime = 0;
         common_alarm_callback();
     }
+}
+
+static void cli_gui_close(cli_gui_t* ctx) {
+    free(ctx);
 }

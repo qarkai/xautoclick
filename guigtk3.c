@@ -56,6 +56,10 @@ static void gtk_gui_main_loop(gtk_gui_t* ctx) {
     gtk_main();
 }
 
+static void gtk_gui_close(gtk_gui_t* ctx) {
+    free(ctx);
+}
+
 static void on_tap_button_clicked(G_GNUC_UNUSED GtkButton *button, G_GNUC_UNUSED gpointer user_data) {
     common_tap_button();
 }
@@ -214,6 +218,7 @@ void init_gui(gui_t* gui, int argc, char **argv) {
     gui->get_spin_value = (gui_get_spin_value_t)gtk_gui_get_spin_value;
     gui->set_spin_value = (gui_set_spin_value_t)gtk_gui_set_spin_value;
     gui->main_loop = (gui_main_loop_t)gtk_gui_main_loop;
+    gui->close = (gui_close_t)gtk_gui_close;
 
     get_options(gui);
 }
