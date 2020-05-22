@@ -45,7 +45,6 @@ static void ascii_gui_set_spin_value(ascii_gui_t* ctx, spin_t spin, int value) {
 }
 
 static void ascii_gui_close(ascii_gui_t* ctx) {
-    set_options();
     free(ctx);
 }
 
@@ -73,8 +72,6 @@ void init_gui(gui_t* gui, int argc, char **argv) {
     gui->set_spin_value = (gui_set_spin_value_t)ascii_gui_set_spin_value;
     gui->main_loop = (gui_main_loop_t)ascii_gui_main_loop;
     gui->close = (gui_close_t)ascii_gui_close;
-
-    get_options(gui);
 }
 
 void set_alarm(int ms) {

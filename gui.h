@@ -26,6 +26,7 @@ typedef void (*gui_close_t)(void* ctx);
 
 typedef struct gui_ctx {
     void* ctx;
+    bool is_save_values;
 
     gui_set_button_sensitive_t set_button_sensitive;
     gui_get_spin_value_t get_spin_value;
@@ -35,9 +36,8 @@ typedef struct gui_ctx {
 } gui_t;
 
 gui_t* gui_init(int argc, char **argv);
-
 void gui_set_button_sensitive(gui_t* gui, button_t button, bool state);
-int gui_get_spin_value(gui_t* gui, spin_t spin);
+int gui_get_spin_value(const gui_t* gui, spin_t spin);
 void gui_set_spin_value(gui_t* gui, spin_t spin, int value);
 void gui_main_loop(gui_t* gui);
 void gui_close(gui_t* gui);

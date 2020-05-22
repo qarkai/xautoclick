@@ -178,14 +178,14 @@ void common_tap_button(void) {
     prevtime = curtime;
 }
 
-void get_options(gui_t *gui) {
+static void get_options(gui_t *gui) {
     gui_set_spin_value(gui, SPIN_PREDELAY, options.predelay);
     gui_set_spin_value(gui, SPIN_INTERVAL, options.interval);
     gui_set_spin_value(gui, SPIN_RANDOM, options.random_factor);
     gui_set_spin_value(gui, SPIN_NUMBER, options.clicks_number);
 }
 
-void set_options(void) {
+static void set_options(const gui_t *gui) {
     options.predelay = gui_get_spin_value(gui, SPIN_PREDELAY);
     options.interval = gui_get_spin_value(gui, SPIN_INTERVAL);
     options.random_factor = gui_get_spin_value(gui, SPIN_RANDOM);
@@ -320,11 +320,16 @@ int main(int argc, char **argv) {
         return -1;
     }
 
+    get_options(gui);
+
     gui_set_button_sensitive(gui, BUTTON_TAP, true);
     gui_set_button_sensitive(gui, BUTTON_STOP, false);
     gui_set_button_sensitive(gui, BUTTON_START, true);
 
     gui_main_loop(gui);
+
+    if (gui->is_save_values)
+        set_options(gui);
 
     gui_close(gui);
     clicker_close(clicker);

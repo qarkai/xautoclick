@@ -9,6 +9,8 @@ gui_t* gui_init(int argc, char **argv) {
     if (!gui)
         return NULL;
 
+    gui->is_save_values = true;
+
     init_gui(gui, argc, argv);
     if (!gui->ctx) {
         free(gui);
@@ -23,7 +25,7 @@ void gui_set_button_sensitive(gui_t* gui, button_t button, bool state) {
         gui->set_button_sensitive(gui->ctx, button, state);
 }
 
-int gui_get_spin_value(gui_t* gui, spin_t spin) {
+int gui_get_spin_value(const gui_t* gui, spin_t spin) {
     if (gui && gui->get_spin_value)
         return gui->get_spin_value(gui->ctx, spin);
     return -1;

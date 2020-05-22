@@ -51,7 +51,6 @@ void qt_gui_main_loop(ClickWidget *clickWidget) {
 }
 
 void qt_gui_close(ClickWidget *clickWidget) {
-    set_options();
     delete clickTimer;
     delete clickWidget;
 }
@@ -76,6 +75,4 @@ void init_gui(gui_t* gui, int argc, char **argv) {
     gui->set_spin_value = (gui_set_spin_value_t)qt_gui_set_spin_value;
     gui->main_loop = (gui_main_loop_t)qt_gui_main_loop;
     gui->close = (gui_close_t)qt_gui_close;
-
-    get_options(gui);
 }

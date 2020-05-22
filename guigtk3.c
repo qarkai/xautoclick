@@ -28,6 +28,7 @@ typedef struct gtk_gui_ctx {
     GtkWidget *gAutoClick;
     GtkWidget *spins[SPINS_COUNT];
     GtkWidget *buttons[BUTTONS_COUNT];
+    int values[SPINS_COUNT];
 } gtk_gui_t;
 
 static gboolean myalarm(G_GNUC_UNUSED gpointer data) {
@@ -40,6 +41,8 @@ void set_alarm(int ms) {
 }
 
 static int gtk_gui_get_spin_value(gtk_gui_t* ctx, spin_t spin) {
+    if (!ctx->spins[spin])
+        return ctx->values[spin];
     return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ctx->spins[spin]));
 }
 
@@ -161,9 +164,12 @@ static void create_buttons(gtk_gui_t* ctx, GObject *root, GtkWidget *box) {
         ctx->buttons[c] = create_labeled_button(root, box, btn_params[c].text, btn_params[c].callback);
 }
 
-static void gautoclick_exit(void) {
-    set_options();
+static gboolean gautoclick_exit(G_GNUC_UNUSED GtkWidget *widget, G_GNUC_UNUSED GdkEvent  *event, gtk_gui_t* ctx) {
+    for (int i = 0; i < SPINS_COUNT; ++i)
+        ctx->values[i] = gtk_gui_get_spin_value(ctx, i);
+
     gtk_main_quit();
+    return FALSE;
 }
 
 static void create_gAutoClick(gtk_gui_t* ctx) {
@@ -194,8 +200,8 @@ static void create_gAutoClick(gtk_gui_t* ctx) {
 
     create_buttons(ctx, gAutoClick_obj, hbox);
 
-    g_signal_connect (gAutoClick_obj, "delete_event",
-                      G_CALLBACK (gautoclick_exit), NULL);
+    g_signal_connect (gAutoClick_obj, "delete-event",
+                      G_CALLBACK (gautoclick_exit), ctx);
 
     ctx->gAutoClick = gAutoClick_win;
 }
@@ -219,6 +225,4 @@ void init_gui(gui_t* gui, int argc, char **argv) {
     gui->set_spin_value = (gui_set_spin_value_t)gtk_gui_set_spin_value;
     gui->main_loop = (gui_main_loop_t)gtk_gui_main_loop;
     gui->close = (gui_close_t)gtk_gui_close;
-
-    get_options(gui);
 }

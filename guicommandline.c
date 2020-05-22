@@ -29,6 +29,8 @@
 #include "osdep.h"
 
 typedef struct cli_gui_ctx {
+    int argc;
+    char **argv;
     int spins[SPINS_COUNT];
 } cli_gui_t;
 
@@ -42,7 +44,6 @@ static void cli_gui_close(cli_gui_t* ctx);
 
 void init_gui(gui_t* gui, int argc, char **argv) {
     cli_gui_t* ctx;
-    int c;
 
     ctx = calloc(1, sizeof(cli_gui_t));
     if (!ctx) {
@@ -50,34 +51,15 @@ void init_gui(gui_t* gui, int argc, char **argv) {
         return;
     }
 
+    ctx->argc = argc;
+    ctx->argv = argv;
+
     gui->ctx = ctx;
+    gui->is_save_values = false; /* don't set options from command line */
     gui->get_spin_value = (gui_get_spin_value_t)cli_gui_get_spin_value;
     gui->set_spin_value = (gui_set_spin_value_t)cli_gui_set_spin_value;
     gui->main_loop = (gui_main_loop_t)cli_gui_main_loop;
     gui->close = (gui_close_t)cli_gui_close;
-    /* don't set options from command line */
-
-    get_options(gui);
-
-    /* parse command line */
-    while ((c = getopt(argc, argv, "hi:n:p:r:")) != - 1) {
-        switch (c) {
-        case 'h': printhelp(argv[0]); break;
-        case 'i': ctx->spins[SPIN_INTERVAL] = atoi(optarg); break;
-        case 'n': ctx->spins[SPIN_NUMBER] = atoi(optarg); break;
-        case 'p': ctx->spins[SPIN_PREDELAY] = atoi(optarg); break;
-        case 'r': ctx->spins[SPIN_RANDOM] = atoi(optarg); break;
-        case '?':
-            free(ctx);
-            gui->ctx = NULL;
-            return;
-        default:
-            fprintf(stderr, "unknown command line option: %s\n", argv[optind]);
-            free(ctx);
-            gui->ctx = NULL;
-            return;
-        }
-    }
 }
 
 void set_alarm(int ms) {
@@ -98,6 +80,24 @@ static void cli_gui_set_spin_value(cli_gui_t* ctx, spin_t spin, int value) {
 }
 
 static void cli_gui_main_loop(cli_gui_t* ctx) {
+    int c;
+
+    /* parse command line */
+    while ((c = getopt(ctx->argc, ctx->argv, "hi:n:p:r:")) != - 1) {
+        switch (c) {
+        case 'h': printhelp(ctx->argv[0]); break;
+        case 'i': ctx->spins[SPIN_INTERVAL] = atoi(optarg); break;
+        case 'n': ctx->spins[SPIN_NUMBER] = atoi(optarg); break;
+        case 'p': ctx->spins[SPIN_PREDELAY] = atoi(optarg); break;
+        case 'r': ctx->spins[SPIN_RANDOM] = atoi(optarg); break;
+        case '?':
+            return;
+        default:
+            fprintf(stderr, "unknown command line option: %s\n", ctx->argv[optind]);
+            return;
+        }
+    }
+
     common_start_button();
 
     while (sleeptime) {

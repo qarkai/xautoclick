@@ -101,8 +101,6 @@ void fltk_gui_main_loop(fltk_gui_t* ctx) {
 }
 
 void fltk_gui_close(fltk_gui_t* ctx) {
-    set_options();
-
     delete ctx->win;
     delete ctx;
 }
@@ -134,8 +132,6 @@ void init_gui(gui_t* gui, int, char**) {
     gui->set_spin_value = (gui_set_spin_value_t)fltk_gui_set_spin_value;
     gui->main_loop = (gui_main_loop_t)fltk_gui_main_loop;
     gui->close = (gui_close_t)fltk_gui_close;
-
-    get_options(gui);
 }
 
 void set_alarm(int ms) {
