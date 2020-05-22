@@ -44,11 +44,14 @@ static int counter = 0;
 static int interval = 0;
 static int randomfactor = 0;
 
-void common_stop_button(void) {
+static void reset_buttons_state(gui_t *gui) {
     gui_set_button_sensitive(gui, BUTTON_TAP, true);
     gui_set_button_sensitive(gui, BUTTON_STOP, false);
     gui_set_button_sensitive(gui, BUTTON_START, true);
+}
 
+void common_stop_button(void) {
+    reset_buttons_state(gui);
     counter = 0;
 }
 
@@ -320,10 +323,7 @@ int main(int argc, char **argv) {
     }
 
     get_options(gui, &options);
-
-    gui_set_button_sensitive(gui, BUTTON_TAP, true);
-    gui_set_button_sensitive(gui, BUTTON_STOP, false);
-    gui_set_button_sensitive(gui, BUTTON_START, true);
+    reset_buttons_state(gui);
 
     gui_main_loop(gui);
 
