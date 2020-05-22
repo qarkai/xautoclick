@@ -41,6 +41,8 @@ typedef struct options {
 static clicker_t *clicker;
 static gui_t *gui;
 static int counter = 0;
+static int interval = 0;
+static int randomfactor = 0;
 
 void common_stop_button(void) {
     gui_set_button_sensitive(gui, BUTTON_TAP, true);
@@ -56,12 +58,13 @@ void common_start_button(void) {
     gui_set_button_sensitive(gui, BUTTON_START, false);
 
     counter = gui_get_spin_value(gui, SPIN_NUMBER);
-
+    interval  = gui_get_spin_value(gui, SPIN_INTERVAL);
+    randomfactor = gui_get_spin_value(gui, SPIN_RANDOM);
     set_alarm(gui_get_spin_value(gui, SPIN_PREDELAY));
 }
 
 void common_alarm_callback(void) {
-    int interval, randomfactor, alarmtime;
+    int alarmtime;
     int rv = 0;
 
     if (!counter)
@@ -72,9 +75,6 @@ void common_alarm_callback(void) {
 #endif
 
     clicker_click(clicker);
-
-    interval     = gui_get_spin_value(gui, SPIN_INTERVAL);
-    randomfactor = gui_get_spin_value(gui, SPIN_RANDOM);
 
     if (randomfactor > 0)
     {
