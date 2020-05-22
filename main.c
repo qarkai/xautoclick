@@ -327,12 +327,13 @@ int main(int argc, char **argv) {
 
     gui_main_loop(gui);
 
-    if (gui->is_save_values)
+    if (gui->is_save_values) {
         set_options(gui, &options);
+        save_config(config_file, &options);
+    }
 
     gui_close(gui);
     clicker_close(clicker);
-    save_config(config_file, &options);
 
     return 0;
 }
