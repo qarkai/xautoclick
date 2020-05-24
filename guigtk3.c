@@ -28,6 +28,7 @@ typedef struct gtk_gui_ctx {
     GtkWidget *gAutoClick;
     GtkWidget *spins[SPINS_COUNT];
     GtkWidget *buttons[BUTTONS_COUNT];
+    bool deleted;
     int values[SPINS_COUNT];
 } gtk_gui_t;
 
@@ -41,7 +42,7 @@ void set_alarm(int ms) {
 }
 
 static int gtk_gui_get_spin_value(gtk_gui_t* ctx, spin_t spin) {
-    if (!ctx->spins[spin])
+    if (ctx->deleted)
         return ctx->values[spin];
     return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ctx->spins[spin]));
 }
@@ -168,6 +169,7 @@ static gboolean gautoclick_exit(G_GNUC_UNUSED GtkWidget *widget, G_GNUC_UNUSED G
     for (int i = 0; i < SPINS_COUNT; ++i)
         ctx->values[i] = gtk_gui_get_spin_value(ctx, i);
 
+    ctx->deleted = true;
     gtk_main_quit();
     return FALSE;
 }
@@ -204,6 +206,7 @@ static void create_gAutoClick(gtk_gui_t* ctx) {
                       G_CALLBACK (gautoclick_exit), ctx);
 
     ctx->gAutoClick = gAutoClick_win;
+    ctx->deleted = false;
 }
 
 void init_gui(gui_t* gui, int argc, char **argv) {
