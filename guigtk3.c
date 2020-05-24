@@ -64,18 +64,6 @@ static void gtk_gui_close(gtk_gui_t* ctx) {
     free(ctx);
 }
 
-static void on_tap_button_clicked(G_GNUC_UNUSED GtkButton *button, G_GNUC_UNUSED gpointer user_data) {
-    common_tap_button();
-}
-
-static void on_stop_button_clicked(G_GNUC_UNUSED GtkButton *button, G_GNUC_UNUSED gpointer user_data) {
-    common_stop_button();
-}
-
-static void on_start_button_clicked(G_GNUC_UNUSED GtkButton *button, G_GNUC_UNUSED gpointer user_data) {
-    common_start_button();
-}
-
 static void add_widget(GObject *root, GtkWidget *widget) {
     static guint n = 0;
     gchar *key = g_strdup_printf("widget_%u", n++);
@@ -156,16 +144,16 @@ static void create_buttons(gtk_gui_t* ctx, GObject *root, GtkWidget *box) {
         const char* text;
         GCallback callback;
     } btn_params[BUTTONS_COUNT] = {
-        {"Tap", G_CALLBACK (on_tap_button_clicked)},
-        {"Stop", G_CALLBACK (on_stop_button_clicked)},
-        {"Start", G_CALLBACK (on_start_button_clicked)}
+        {"Tap", G_CALLBACK (common_tap_button)},
+        {"Stop", G_CALLBACK (common_stop_button)},
+        {"Start", G_CALLBACK (common_start_button)}
     };
 
     for (int c = 0; c < BUTTONS_COUNT; ++c)
         ctx->buttons[c] = create_labeled_button(root, box, btn_params[c].text, btn_params[c].callback);
 }
 
-static gboolean gautoclick_exit(G_GNUC_UNUSED GtkWidget *widget, G_GNUC_UNUSED GdkEvent  *event, gtk_gui_t* ctx) {
+static gboolean gautoclick_exit(G_GNUC_UNUSED GtkWidget *widget, G_GNUC_UNUSED GdkEvent *event, gtk_gui_t* ctx) {
     for (int i = 0; i < SPINS_COUNT; ++i)
         ctx->values[i] = gtk_gui_get_spin_value(ctx, i);
 
