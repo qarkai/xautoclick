@@ -1,6 +1,14 @@
 ChangeLog
 =========
 
+v0.34
+    * add uinput clicker backend with fallback to X11
+    * pkg-config is required for build
+    * add units of measurements (#3)
+    * add window icon for GTK and Qt GUI (#4)
+    * remove getting values during clicking (fa5d057)
+    * update Readme
+
 v0.33
     * port to CMake
     * add .desktop file and icon (thanks to @freddii)
