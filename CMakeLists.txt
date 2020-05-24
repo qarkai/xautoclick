@@ -36,6 +36,8 @@ set(SOURCE_COMMON
     gui.h
     main.c
     main.h
+    options.c
+    options.h
     osdep.c
     osdep.h
 )
