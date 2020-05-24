@@ -28,9 +28,10 @@ typedef struct gtk_gui_ctx {
     GtkWidget *gAutoClick;
     GtkWidget *spins[SPINS_COUNT];
     GtkWidget *buttons[BUTTONS_COUNT];
-    bool deleted;
     int values[SPINS_COUNT];
 } gtk_gui_t;
+
+#define VALUE_PTR "value-ptr"
 
 static gboolean myalarm(G_GNUC_UNUSED gpointer data) {
     common_alarm_callback();
@@ -42,9 +43,7 @@ void set_alarm(int ms) {
 }
 
 static int gtk_gui_get_spin_value(gtk_gui_t* ctx, spin_t spin) {
-    if (ctx->deleted)
-        return ctx->values[spin];
-    return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ctx->spins[spin]));
+    return ctx->values[spin];
 }
 
 static void gtk_gui_set_spin_value(gtk_gui_t* ctx, spin_t spin, int value) {
@@ -108,6 +107,12 @@ static GtkWidget *create_labeled_spin(GObject *root,
     return spin;
 }
 
+static void on_spin_value_changed(GtkSpinButton *spin_button, G_GNUC_UNUSED gpointer user_data) {
+    int* ctx_value = g_object_get_data (G_OBJECT (spin_button), VALUE_PTR);
+    if (ctx_value)
+        *ctx_value = gtk_spin_button_get_value_as_int (spin_button);
+}
+
 static void create_spins(gtk_gui_t* ctx, GObject *root, GtkWidget *box) {
     struct spin_param {
         const char* text;
@@ -119,8 +124,13 @@ static void create_spins(gtk_gui_t* ctx, GObject *root, GtkWidget *box) {
         {"# of clicks", 1}
     };
 
-    for (int c = 0; c < SPINS_COUNT; ++c)
+    for (int c = 0; c < SPINS_COUNT; ++c) {
         ctx->spins[c] = create_labeled_spin(root, box, spin_params[c].text, spin_params[c].min_value);
+        ctx->values[c] = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (ctx->spins[c]));
+        g_object_set_data (G_OBJECT (ctx->spins[c]), VALUE_PTR, &ctx->values[c]);
+        g_signal_connect (G_OBJECT (ctx->spins[c]), "value-changed",
+                          G_CALLBACK (on_spin_value_changed), NULL);
+    }
 }
 
 static GtkWidget *create_labeled_button(GObject *root,
@@ -157,7 +167,6 @@ static gboolean gautoclick_exit(G_GNUC_UNUSED GtkWidget *widget, G_GNUC_UNUSED G
     for (int i = 0; i < SPINS_COUNT; ++i)
         ctx->values[i] = gtk_gui_get_spin_value(ctx, i);
 
-    ctx->deleted = true;
     gtk_main_quit();
     return FALSE;
 }
@@ -194,7 +203,6 @@ static void create_gAutoClick(gtk_gui_t* ctx) {
                       G_CALLBACK (gautoclick_exit), ctx);
 
     ctx->gAutoClick = gAutoClick_win;
-    ctx->deleted = false;
 }
 
 void init_gui(gui_t* gui, int argc, char **argv) {
