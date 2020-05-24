@@ -115,8 +115,6 @@ void load_options(const char* filename, options_t *opts) {
 #endif
 
     fclose(config_file);
-
-    return;
 }
 
 void save_options(const char* filename, const options_t *opts) {
