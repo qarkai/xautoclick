@@ -28,11 +28,32 @@
 #include "options.h"
 #include "osdep.h"
 
-static clicker_t *clicker;
-static gui_t *gui;
-static int counter = 0;
-static int interval = 0;
-static int randomfactor = 0;
+typedef struct {
+    options_t options;
+    clicker_t *clicker;
+    gui_t *gui;
+    int counter;
+} main_t;
+
+static main_t main_ctx = { {0, 0, 0, 0}, NULL, NULL, 0 };
+
+static options_t get_values(const gui_t *gui) {
+    options_t options = {
+        .predelay      = gui_get_spin_value(gui, SPIN_PREDELAY),
+        .interval      = gui_get_spin_value(gui, SPIN_INTERVAL),
+        .random_factor = gui_get_spin_value(gui, SPIN_RANDOM),
+        .clicks_number = gui_get_spin_value(gui, SPIN_NUMBER)
+    };
+
+    return options;
+}
+
+static void set_values(gui_t *gui, const options_t *options) {
+    gui_set_spin_value(gui, SPIN_PREDELAY, options->predelay);
+    gui_set_spin_value(gui, SPIN_INTERVAL, options->interval);
+    gui_set_spin_value(gui, SPIN_RANDOM, options->random_factor);
+    gui_set_spin_value(gui, SPIN_NUMBER, options->clicks_number);
+}
 
 static void reset_buttons_state(gui_t *gui) {
     gui_set_button_sensitive(gui, BUTTON_TAP, true);
@@ -41,51 +62,50 @@ static void reset_buttons_state(gui_t *gui) {
 }
 
 void common_stop_button(void) {
-    reset_buttons_state(gui);
-    counter = 0;
+    reset_buttons_state(main_ctx.gui);
+    main_ctx.counter = 0;
 }
 
 void common_start_button(void) {
-    gui_set_button_sensitive(gui, BUTTON_TAP, false);
-    gui_set_button_sensitive(gui, BUTTON_STOP, true);
-    gui_set_button_sensitive(gui, BUTTON_START, false);
+    gui_set_button_sensitive(main_ctx.gui, BUTTON_TAP, false);
+    gui_set_button_sensitive(main_ctx.gui, BUTTON_STOP, true);
+    gui_set_button_sensitive(main_ctx.gui, BUTTON_START, false);
 
-    counter = gui_get_spin_value(gui, SPIN_NUMBER);
-    interval  = gui_get_spin_value(gui, SPIN_INTERVAL);
-    randomfactor = gui_get_spin_value(gui, SPIN_RANDOM);
-    set_alarm(gui_get_spin_value(gui, SPIN_PREDELAY));
+    main_ctx.options = get_values(main_ctx.gui);
+
+    main_ctx.counter = main_ctx.options.clicks_number;
+    set_alarm(main_ctx.options.predelay);
 }
 
 void common_alarm_callback(void) {
     int alarmtime;
-    int rv = 0;
+    int random_value = 0;
 
-    if (!counter)
+    if (!main_ctx.counter)
         return;
 
 #ifdef DEBUG
     printf("alarm_callback\n");
 #endif
 
-    clicker_click(clicker);
+    clicker_click(main_ctx.clicker);
 
-    if (randomfactor > 0)
-    {
+    if (main_ctx.options.random_factor > 0) {
         int sign = rand() / (RAND_MAX >> 1);
 
-        rv = (sign ? 1 : -1) * (rand() / (RAND_MAX / randomfactor));
+        random_value = (sign ? 1 : -1) * (rand() / (RAND_MAX / main_ctx.options.random_factor));
     }
 
 #ifdef DEBUG
     printf("rv = %i\n", rv);
 #endif
 
-    alarmtime = interval + rv;
+    alarmtime = main_ctx.options.interval + random_value;
     if (alarmtime < 1)
         alarmtime = 1;
 
-    --counter;
-    if (counter)
+    --main_ctx.counter;
+    if (main_ctx.counter)
         set_alarm(alarmtime);
     else
         common_stop_button();
@@ -127,7 +147,7 @@ static int calculate_average(const int *buffer, int length, int *min, int *max) 
 void common_tap_button(void) {
     static int history[HISTORYSIZE];
     static int prevtime = 0, x = 0, fill = 0, curtime, interval;
-    int average, min, max;
+    int min, max;
 
     curtime  = GetTimer() / 1000;
     interval = curtime - prevtime;
@@ -136,7 +156,7 @@ void common_tap_button(void) {
     printf("interval = %i\n", interval);
 #endif
 
-    if ( interval > THRESHOLD ) {
+    if (interval > THRESHOLD) {
 #ifdef DEBUG
         printf("new tapping...\n");
 #endif
@@ -157,25 +177,12 @@ void common_tap_button(void) {
         fill = HISTORYSIZE;
     }
 
-    average = calculate_average(history, fill, &min, &max);
+    main_ctx.options.interval = calculate_average(history, fill, &min, &max);
+    main_ctx.options.random_factor = (max - min) >> 1;
 
-    gui_set_spin_value(gui, SPIN_INTERVAL, average);
-    gui_set_spin_value(gui, SPIN_RANDOM, (max - min) >> 1);
+    set_values(main_ctx.gui, &main_ctx.options);
+
     prevtime = curtime;
-}
-
-static void get_options(gui_t *gui, const options_t *options) {
-    gui_set_spin_value(gui, SPIN_PREDELAY, options->predelay);
-    gui_set_spin_value(gui, SPIN_INTERVAL, options->interval);
-    gui_set_spin_value(gui, SPIN_RANDOM, options->random_factor);
-    gui_set_spin_value(gui, SPIN_NUMBER, options->clicks_number);
-}
-
-static void set_options(const gui_t *gui, options_t *options) {
-    options->predelay = gui_get_spin_value(gui, SPIN_PREDELAY);
-    options->interval = gui_get_spin_value(gui, SPIN_INTERVAL);
-    options->random_factor = gui_get_spin_value(gui, SPIN_RANDOM);
-    options->clicks_number = gui_get_spin_value(gui, SPIN_NUMBER);
 }
 
 int main(int argc, char **argv) {
@@ -189,31 +196,33 @@ int main(int argc, char **argv) {
 
     load_options(config_file, &options);
 
-    clicker = clicker_init();
-    if (!clicker) {
+    main_ctx.options = options;
+
+    main_ctx.clicker = clicker_init();
+    if (!main_ctx.clicker) {
         fprintf(stderr, "Unable to initialize clicker\n");
         return -1;
     }
 
-    gui = gui_init(argc, argv);
-    if (!gui) {
+    main_ctx.gui = gui_init(argc, argv);
+    if (!main_ctx.gui) {
         fprintf(stderr, "Unable to initialize GUI\n");
-        clicker_close(clicker);
+        clicker_close(main_ctx.clicker);
         return -1;
     }
 
-    get_options(gui, &options);
-    reset_buttons_state(gui);
+    set_values(main_ctx.gui, &main_ctx.options);
+    reset_buttons_state(main_ctx.gui);
 
-    gui_main_loop(gui);
+    gui_main_loop(main_ctx.gui);
 
-    if (gui->is_save_values) {
-        set_options(gui, &options);
+    if (main_ctx.gui->is_save_values) {
+        options = get_values(main_ctx.gui);
         save_options(config_file, &options);
     }
 
-    gui_close(gui);
-    clicker_close(clicker);
+    gui_close(main_ctx.gui);
+    clicker_close(main_ctx.clicker);
 
     return 0;
 }
