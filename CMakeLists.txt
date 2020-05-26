@@ -97,5 +97,6 @@ install(FILES xautoclick.1 DESTINATION share/man/man1)
 
 set(CPACK_GENERATOR "DEB")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "none")
+set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 
 include(CPack)
