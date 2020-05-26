@@ -5,9 +5,10 @@ project(xautoclick)
 find_package(X11 REQUIRED)
 
 include(CheckIncludeFile)
-CHECK_INCLUDE_FILE("unistd.h" HAVE_UNISTD)
+check_include_file("unistd.h" HAVE_UNISTD)
 if(${HAVE_UNISTD})
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHAVE_UNISTD_H")
+    # TODO add_compile_definitions(HAVE_UNISTD_H)
 endif()
 
 add_library(x11clicker STATIC
@@ -17,7 +18,7 @@ add_library(x11clicker STATIC
 target_link_libraries(x11clicker ${X11_LIBRARIES} ${X11_XTest_LIB})
 
 find_package(PkgConfig REQUIRED)
-PKG_CHECK_MODULES(LIBEVDEV libevdev)
+pkg_check_modules(LIBEVDEV libevdev)
 add_library(udevclicker STATIC
     udevclicker.c
     udevclicker.h
@@ -66,7 +67,7 @@ if(FLTK_FOUND)
     install(TARGETS fltkautoclick DESTINATION bin)
 endif()
 
-PKG_CHECK_MODULES(GTK3 gtk+-3.0)
+pkg_check_modules(GTK3 gtk+-3.0)
 if(GTK3_FOUND)
     add_executable(gautoclick3
         ${SOURCE_COMMON}
