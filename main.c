@@ -155,7 +155,8 @@ static unsigned int get_timer(void) {
 
 void common_tap_button(void) {
     static int history[HISTORYSIZE];
-    static int prevtime = 0, x = 0, fill = 0, curtime, interval;
+    static int prevtime = 0, x = 0, fill = 0;
+    int curtime, interval;
     int min, max;
 
     curtime  = get_timer() / 1000;
