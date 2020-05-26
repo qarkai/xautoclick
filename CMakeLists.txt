@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(xautoclick)
+project(xautoclick VERSION 0.34)
 
 find_package(X11 REQUIRED)
 
