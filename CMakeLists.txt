@@ -38,7 +38,6 @@ set(SOURCE_COMMON
     main.h
     options.c
     options.h
-    osdep.c
     osdep.h
 )
 

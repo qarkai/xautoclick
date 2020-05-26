@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "clicker.h"
 #include "gui.h"
@@ -144,12 +145,20 @@ static int calculate_average(const int *buffer, int length, int *min, int *max) 
 #define THRESHOLD (5 * 1000)   /* 5 seconds */
 #define HISTORYSIZE 10
 
+static unsigned int get_timer(void) {
+    struct timespec tv;
+
+    timespec_get(&tv, TIME_UTC);
+
+    return tv.tv_sec * 1000000 + tv.tv_nsec / 1000;
+}
+
 void common_tap_button(void) {
     static int history[HISTORYSIZE];
     static int prevtime = 0, x = 0, fill = 0, curtime, interval;
     int min, max;
 
-    curtime  = GetTimer() / 1000;
+    curtime  = get_timer() / 1000;
     interval = curtime - prevtime;
 
 #ifdef DEBUG

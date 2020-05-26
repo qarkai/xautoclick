@@ -5,15 +5,9 @@
 #include <unistd.h>
 #endif
 
-unsigned int GetTimer(void);
-
 /* -ansi -pedantic stuff */
 
 #ifdef __STRICT_ANSI__
-struct timezone {
-    int tz_minuteswest;
-    int tz_dsttime;
-};
 int usleep(unsigned long usec);
 #endif
 
@@ -24,7 +18,6 @@ int usleep(unsigned long usec);
 
 #include <Windows.h>
 
-#define strdup(a) _strdup(a)
 #define usleep(a) Sleep( a<1000 ? 1000 : a / 1000)
 
 #endif
