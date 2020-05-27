@@ -36,7 +36,7 @@ typedef struct {
     int counter;
 } main_t;
 
-static main_t main_ctx = { {0, 0, 0, 0}, NULL, NULL, 0 };
+static main_t main_ctx = { OPTIONS_INIT, NULL, NULL, 0 };
 
 static options_t get_values(const gui_t *gui) {
     options_t options = {

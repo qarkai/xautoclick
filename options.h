@@ -8,6 +8,8 @@ typedef struct options {
     int clicks_number;
 } options_t;
 
+#define OPTIONS_INIT {0, 0, 0, 0}
+
 char* get_config_file(void);
 void load_options(const char* filename, options_t *opts);
 void save_options(const char* filename, const options_t *opts);
