@@ -29,14 +29,17 @@
 #include "options.h"
 #include "osdep.h"
 
+typedef int (*get_alarm_time_t)(int interval, int random_factor);
+
 typedef struct {
     options_t options;
     clicker_t *clicker;
     gui_t *gui;
+    get_alarm_time_t get_alarm_time;
     int counter;
 } main_t;
 
-static main_t main_ctx = { OPTIONS_INIT, NULL, NULL, 0 };
+static main_t main_ctx = { OPTIONS_INIT, NULL, NULL, NULL, 0 };
 
 static options_t get_values(const gui_t *gui) {
     options_t options = {
@@ -62,6 +65,20 @@ static void reset_buttons_state(gui_t *gui) {
     gui_set_button_sensitive(gui, BUTTON_START, true);
 }
 
+static int get_alarm_time_simple(int interval, int random_factor) {
+    (void)random_factor;
+    return interval;
+}
+
+static int get_alarm_time_full(int interval, int random_factor) {
+    int sign = rand() / (RAND_MAX >> 1);
+    int random_value = (sign ? 1 : -1) * (rand() / (RAND_MAX / random_factor));
+#ifdef DEBUG
+    fprintf(stdout, "random_value = %i\n", random_value);
+#endif
+    return interval + random_value;
+}
+
 void common_stop_button(void) {
     reset_buttons_state(main_ctx.gui);
     main_ctx.counter = 0;
@@ -74,13 +91,13 @@ void common_start_button(void) {
 
     main_ctx.options = get_values(main_ctx.gui);
 
+    main_ctx.get_alarm_time = (main_ctx.options.random_factor > 0) ? get_alarm_time_full : get_alarm_time_simple;
     main_ctx.counter = main_ctx.options.clicks_number;
     set_alarm(main_ctx.options.predelay);
 }
 
 void common_alarm_callback(void) {
     int alarmtime;
-    int random_value = 0;
 
     if (!main_ctx.counter)
         return;
@@ -91,17 +108,7 @@ void common_alarm_callback(void) {
 
     clicker_click(main_ctx.clicker);
 
-    if (main_ctx.options.random_factor > 0) {
-        int sign = rand() / (RAND_MAX >> 1);
-
-        random_value = (sign ? 1 : -1) * (rand() / (RAND_MAX / main_ctx.options.random_factor));
-    }
-
-#ifdef DEBUG
-    printf("rv = %i\n", rv);
-#endif
-
-    alarmtime = main_ctx.options.interval + random_value;
+    alarmtime = main_ctx.get_alarm_time(main_ctx.options.interval, main_ctx.options.random_factor);
     if (alarmtime < 1)
         alarmtime = 1;
 
