@@ -18,19 +18,19 @@
  *
  */
 
-#include <climits>
-#include <functional>
+extern "C" {
+#include "gui.h"
+#include "main.h"
+#include "osdep.h"
+}
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Button.H>
 
-extern "C" {
-#include "gui.h"
-#include "main.h"
-#include "osdep.h"
-}
+#include <climits>
+#include <functional>
 
 struct fltk_gui_t {
     Fl_Double_Window *win;

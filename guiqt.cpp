@@ -18,15 +18,15 @@
  *
  */
 
-#include <QApplication>
-#include <QTimer>
-
-#include "clickwidget.h"
-
 extern "C" {
 #include "gui.h"
 #include "main.h"
 }
+
+#include "clickwidget.h"
+
+#include <QApplication>
+#include <QTimer>
 
 static QApplication *app;
 static QTimer *clickTimer;

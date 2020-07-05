@@ -18,15 +18,15 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <getopt.h>
-
 #include "gui.h"
 #include "main.h"
 #include "osdep.h"
+
+#include <getopt.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct cli_gui_ctx {
     int argc;

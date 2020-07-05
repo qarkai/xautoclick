@@ -19,16 +19,17 @@
  *
  */
 
+#include "main.h"
+
+#include "clicker.h"
+#include "gui.h"
+#include "options.h"
+#include "osdep.h"
+
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
-#include "clicker.h"
-#include "gui.h"
-#include "main.h"
-#include "options.h"
-#include "osdep.h"
 
 typedef int (*get_alarm_time_t)(int interval, int random_factor);
 

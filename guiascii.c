@@ -18,15 +18,15 @@
  *
  */
 
+#include "gui.h"
+#include "main.h"
+#include "osdep.h"
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-
-#include "gui.h"
-#include "main.h"
-#include "osdep.h"
 
 typedef struct ascii_gui_ctx {
     int spins[SPINS_COUNT];
