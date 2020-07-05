@@ -19,6 +19,7 @@
  *
  */
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -123,8 +124,9 @@ static int calculate_average(const int *buffer, int length, int *min, int *max) 
     int sum = 0;
     int average;
 
-    *min =  65536;
-    *max = -65536;
+    /* NOTE: values are in proper order */
+    *min = INT_MAX;
+    *max = INT_MIN;
 
     for (int x = 0; x < length; ++x) {
         int v = buffer[x];
