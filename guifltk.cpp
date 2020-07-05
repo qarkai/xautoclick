@@ -53,7 +53,7 @@ void set_alarm_init(int ms) {
 
 Fl_Button* create_button(const char* name, Fl_Callback *callback) {
     static int n = 0;
-    const int width = 65;
+    constexpr int width = 55;
     auto button = new Fl_Button(5 + width*n, 125, width, 25, name);
     button->callback(callback);
     ++n;
@@ -75,7 +75,7 @@ void start_callback(Fl_Widget*, void*) {
 
 Fl_Spinner* create_spin(const spin_param_t& param) {
     static int n = 0;
-    auto spin = new Fl_Spinner(125, 5+n*30, 75, 25, param.descr);
+    auto spin = new Fl_Spinner(95, 5+n*30, 75, 25, param.descr);
     spin->range(param.min_value, INT_MAX);
 
     if (param.suffix && *param.suffix != '\0') {
@@ -120,7 +120,7 @@ void fltk_gui_close(fltk_gui_t* ctx) {
 void init_gui(gui_t* gui, const spin_param_t* spin_params, const char** button_names, int, char**) {
     auto ctx = new fltk_gui_t;
 
-    ctx->win = new Fl_Double_Window(205, 155, "fltkAutoClick");
+    ctx->win = new Fl_Double_Window(175, 155, "fltkAutoClick");
     ctx->win->begin();
     ctx->win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
