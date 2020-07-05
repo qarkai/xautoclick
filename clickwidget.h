@@ -5,12 +5,13 @@
 
 class QPushButton;
 class QSpinBox;
+struct spin_param;
 
 class ClickWidget : public QWidget {
     Q_OBJECT
 
     public:
-        ClickWidget(QWidget *parent = 0);
+        ClickWidget(const spin_param* spin_params, QWidget *parent = 0);
         int getSpinValue(int spin);
         void setSpinValue(int spin, int value);
         void setButtonSensitive(int button, bool state);

@@ -73,11 +73,21 @@ void start_callback(Fl_Widget*, void*) {
     common_start_button();
 }
 
-Fl_Spinner* create_spin(const char* name) {
+Fl_Spinner* create_spin(const spin_param_t& param) {
     static int n = 0;
-    auto spin = new Fl_Spinner(125, 5+n*30, 75, 25, name);
-    spin->minimum(1);
-    spin->maximum(INT_MAX);
+    auto spin = new Fl_Spinner(125, 5+n*30, 75, 25, param.descr);
+    spin->range(param.min_value, INT_MAX);
+
+    if (param.suffix && *param.suffix != '\0') {
+        auto curFormat = spin->format();
+        auto size = strlen(curFormat) + 1 + strlen(param.suffix) + 1;
+        char* format = static_cast<char*>(calloc(size, sizeof(char)));
+        format = strcat(format, curFormat);
+        format = strcat(format, " ");
+        format = strcat(format, param.suffix);
+        spin->format(format); // TODO: memleak format?
+    }
+
     ++n;
     return spin;
 }
@@ -107,7 +117,7 @@ void fltk_gui_close(fltk_gui_t* ctx) {
 
 }
 
-void init_gui(gui_t* gui, int, char**) {
+void init_gui(gui_t* gui, const spin_param_t* spin_params, int, char**) {
     auto ctx = new fltk_gui_t;
 
     ctx->win = new Fl_Double_Window(205, 155, "fltkAutoClick");
@@ -118,9 +128,8 @@ void init_gui(gui_t* gui, int, char**) {
     ctx->buttons[BUTTON_STOP] = create_button("Stop", stop_callback);
     ctx->buttons[BUTTON_START] = create_button("Start", start_callback);
 
-    const char * const label[SPINS_COUNT] = { "Pre-delay, ms", "Interval, ms", "Random +/-, ms", "# of clicks" };
     for (int c = 0; c < SPINS_COUNT; c++)
-        ctx->spins[c] = create_spin(label[c]);
+        ctx->spins[c] = create_spin(spin_params[c]);
 
     ctx->win->end();
 

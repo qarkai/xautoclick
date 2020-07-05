@@ -33,19 +33,19 @@ extern "C" {
 
 #include <climits>
 
-ClickWidget::ClickWidget(QWidget *parent) : QWidget(parent) {
-    std::array<QString, SPINS_COUNT> labels = { "Pre-delay, ms", "Interval, ms", "Random +/-, ms", "# of clicks" };
+ClickWidget::ClickWidget(const spin_param_t* spin_params, QWidget *parent) : QWidget(parent) {
     std::array<QString, BUTTONS_COUNT> btnNames = { "Tap", "Stop", "Start" };
 
     auto vbox = new QVBoxLayout;
 
     for (int c = 0; c < SPINS_COUNT; c++) {
-        auto layout = new QHBoxLayout;
         spins[c] = new QSpinBox;
-        spins[c]->setMinimum(1);
-        spins[c]->setMaximum(INT_MAX);
+        spins[c]->setRange(spin_params[c].min_value, INT_MAX);
+        if (spin_params[c].suffix && *spin_params[c].suffix != '\0')
+            spins[c]->setSuffix(QString(" ") + spin_params[c].suffix);
 
-        layout->addWidget(new QLabel(labels[c]));
+        auto layout = new QHBoxLayout;
+        layout->addWidget(new QLabel(spin_params[c].descr));
         layout->addWidget(spins[c]);
         vbox->addLayout(layout);
     }

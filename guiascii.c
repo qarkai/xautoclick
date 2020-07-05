@@ -48,8 +48,18 @@ static void ascii_gui_close(ascii_gui_t* ctx) {
     free(ctx);
 }
 
-void init_gui(gui_t* gui, int argc, char **argv) {
+static void print_spin_command(char cmd, const spin_param_t* spin_param) {
+    if (spin_param->suffix && *spin_param->suffix != '\0')
+        printf("%c - set %s, %s\n", cmd, spin_param->descr, spin_param->suffix);
+    else
+        printf("%c - set %s\n", cmd, spin_param->descr);
+}
+
+void init_gui(gui_t* gui, const spin_param_t* spin_params, int argc, char **argv) {
     ascii_gui_t* ctx;
+
+    (void)argc;
+    (void)argv;
 
     ctx = calloc(1, sizeof(ascii_gui_t));
     if (!ctx) {
@@ -58,10 +68,10 @@ void init_gui(gui_t* gui, int argc, char **argv) {
     }
 
     printf("aautoclick\n\n");
-    printf("p - set pre-delay, ms\n");
-    printf("i - set interval, ms\n");
-    printf("r - set random +/-, ms\n");
-    printf("n - set number of clicks\n");
+    print_spin_command('p', &spin_params[SPIN_PREDELAY]);
+    print_spin_command('i', &spin_params[SPIN_INTERVAL]);
+    print_spin_command('r', &spin_params[SPIN_RANDOM]);
+    print_spin_command('n', &spin_params[SPIN_NUMBER]);
     printf("t - tap\n");
     printf("s - start\n");
     printf("q - quit\n");

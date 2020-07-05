@@ -105,19 +105,18 @@ static GtkWidget *create_labeled_spin(GObject *root,
     return spin;
 }
 
-static void create_spins(gtk_gui_t* ctx, GObject *root, GtkWidget *box) {
-    struct spin_param {
-        const char* text;
-        int min_value;
-    } spin_params[SPINS_COUNT] = {
-        {"Pre-delay, ms", 0},
-        {"Interval, ms", 0},
-        {"Random +/-, ms", 0},
-        {"# of clicks", 1}
-    };
+static void create_spins(gtk_gui_t* ctx, GObject *root, GtkWidget *box, const spin_param_t* spin_params) {
+    for (int c = 0; c < SPINS_COUNT; ++c) {
+        gchar* descr;
 
-    for (int c = 0; c < SPINS_COUNT; ++c)
-        ctx->spins[c] = create_labeled_spin(root, box, spin_params[c].text, spin_params[c].min_value);
+        if (spin_params[c].suffix && *spin_params[c].suffix != '\0')
+            descr = g_strdup_printf("%s, %s", spin_params[c].descr, spin_params[c].suffix);
+        else
+            descr = g_strdup(spin_params[c].descr);
+
+        ctx->spins[c] = create_labeled_spin(root, box, descr, spin_params[c].min_value);
+        g_free(descr);
+    }
 }
 
 static GtkWidget *create_labeled_button(GObject *root,
@@ -156,7 +155,7 @@ static gboolean gautoclick_exit(GtkWidget *widget, G_GNUC_UNUSED GdkEvent *event
     return TRUE;
 }
 
-static void create_gAutoClick(gtk_gui_t* ctx) {
+static void create_gAutoClick(gtk_gui_t* ctx, const spin_param_t* spin_params) {
     GObject *gAutoClick_obj;
     GtkWidget *gAutoClick_win;
     GtkWidget *vbox;
@@ -176,7 +175,7 @@ static void create_gAutoClick(gtk_gui_t* ctx) {
     add_widget(gAutoClick_obj, vbox);
     gtk_container_add (GTK_CONTAINER (gAutoClick_win), vbox);
 
-    create_spins(ctx, gAutoClick_obj, vbox);
+    create_spins(ctx, gAutoClick_obj, vbox, spin_params);
 
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     add_widget(gAutoClick_obj, hbox);
@@ -190,7 +189,7 @@ static void create_gAutoClick(gtk_gui_t* ctx) {
     ctx->window = gAutoClick_win;
 }
 
-void init_gui(gui_t* gui, int argc, char **argv) {
+void init_gui(gui_t* gui, const spin_param_t* spin_params, int argc, char **argv) {
     gtk_gui_t* ctx;
 
     ctx = calloc(1, sizeof(gtk_gui_t));
@@ -201,7 +200,7 @@ void init_gui(gui_t* gui, int argc, char **argv) {
 
     gtk_init(&argc, &argv);
 
-    create_gAutoClick(ctx);
+    create_gAutoClick(ctx, spin_params);
 
     gui->ctx = ctx;
     gui->set_button_sensitive = (gui_set_button_sensitive_t)gtk_gui_set_button_sensitive;

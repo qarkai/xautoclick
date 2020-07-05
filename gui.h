@@ -18,6 +18,12 @@ typedef enum spin_e {
     SPINS_COUNT
 } spin_t;
 
+typedef struct spin_param {
+    const char* descr;
+    const char* suffix;
+    int min_value;
+} spin_param_t;
+
 typedef void (*gui_set_button_sensitive_t)(void* ctx, button_t button, bool state);
 typedef int (*gui_get_spin_value_t)(void* ctx, spin_t spin);
 typedef void (*gui_set_spin_value_t)(void* ctx, spin_t spin, int value);
@@ -44,7 +50,7 @@ void gui_close(gui_t* gui);
 
 /* Stuff that has to be implemented for each GUI */
 
-void init_gui(gui_t* gui, int argc, char **argv);
+void init_gui(gui_t* gui, const spin_param_t* spin_params, int argc, char **argv);
 void set_alarm(int ms);
 
 #endif

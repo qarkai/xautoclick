@@ -24,6 +24,12 @@
 #include <stdlib.h>
 
 gui_t* gui_init(int argc, char **argv) {
+    const spin_param_t spin_params[SPINS_COUNT] = {
+        {"Pre-delay", "ms", 0},
+        {"Interval", "ms", 0},
+        {"Random +/-", "ms", 0},
+        {"# of clicks", "", 1}
+    };
     gui_t* gui;
 
     gui = calloc(1, sizeof(gui_t));
@@ -32,7 +38,7 @@ gui_t* gui_init(int argc, char **argv) {
 
     gui->is_save_values = true;
 
-    init_gui(gui, argc, argv);
+    init_gui(gui, spin_params, argc, argv);
     if (!gui->ctx) {
         free(gui);
         return NULL;
