@@ -61,10 +61,14 @@ static void set_values(gui_t *gui, const options_t *options) {
     gui_set_spin_value(gui, SPIN_NUMBER, options->clicks_number);
 }
 
+static void set_buttons_state(gui_t *gui, bool is_running) {
+    gui_set_button_sensitive(gui, BUTTON_TAP, !is_running);
+    gui_set_button_sensitive(gui, BUTTON_STOP, is_running);
+    gui_set_button_sensitive(gui, BUTTON_START, !is_running);
+}
+
 static void reset_buttons_state(gui_t *gui) {
-    gui_set_button_sensitive(gui, BUTTON_TAP, true);
-    gui_set_button_sensitive(gui, BUTTON_STOP, false);
-    gui_set_button_sensitive(gui, BUTTON_START, true);
+    set_buttons_state(gui, /*is_running*/false);
 }
 
 static int get_alarm_time_simple(int interval, int random_factor) {
@@ -87,9 +91,7 @@ void common_stop_button(void) {
 }
 
 void common_start_button(void) {
-    gui_set_button_sensitive(main_ctx.gui, BUTTON_TAP, false);
-    gui_set_button_sensitive(main_ctx.gui, BUTTON_STOP, true);
-    gui_set_button_sensitive(main_ctx.gui, BUTTON_START, false);
+    set_buttons_state(main_ctx.gui, /*is_running*/true);
 
     main_ctx.options = get_values(main_ctx.gui);
 
