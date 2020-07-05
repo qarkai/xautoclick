@@ -100,7 +100,7 @@ void common_start_button(void) {
 void common_alarm_callback(void) {
     int alarmtime;
 
-    if (!main_ctx.counter)
+    if (main_ctx.counter <= 0)
         return;
 
 #ifdef DEBUG
@@ -114,7 +114,7 @@ void common_alarm_callback(void) {
         alarmtime = 1;
 
     --main_ctx.counter;
-    if (main_ctx.counter)
+    if (main_ctx.counter > 0)
         set_alarm(alarmtime);
     else
         common_stop_button();
