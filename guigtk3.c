@@ -25,7 +25,7 @@
 #include "main.h"
 
 typedef struct gtk_gui_ctx {
-    GtkWidget *gAutoClick;
+    GtkWidget *window;
     GtkWidget *spins[SPINS_COUNT];
     GtkWidget *buttons[BUTTONS_COUNT];
 } gtk_gui_t;
@@ -52,7 +52,7 @@ static void gtk_gui_set_button_sensitive(gtk_gui_t* ctx, button_t button, bool s
 }
 
 static void gtk_gui_main_loop(gtk_gui_t* ctx) {
-    gtk_widget_show(ctx->gAutoClick);
+    gtk_widget_show(ctx->window);
     gtk_main();
 }
 
@@ -186,7 +186,7 @@ static void create_gAutoClick(gtk_gui_t* ctx) {
     g_signal_connect (gAutoClick_obj, "delete-event",
                       G_CALLBACK (gautoclick_exit), NULL);
 
-    ctx->gAutoClick = gAutoClick_win;
+    ctx->window = gAutoClick_win;
 }
 
 void init_gui(gui_t* gui, int argc, char **argv) {
