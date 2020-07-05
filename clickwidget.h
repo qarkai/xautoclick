@@ -11,7 +11,7 @@ class ClickWidget : public QWidget {
     Q_OBJECT
 
     public:
-        ClickWidget(const spin_param* spin_params, QWidget *parent = 0);
+        ClickWidget(const spin_param* spin_params, const char** button_names, QWidget *parent = 0);
         int getSpinValue(int spin);
         void setSpinValue(int spin, int value);
         void setButtonSensitive(int button, bool state);

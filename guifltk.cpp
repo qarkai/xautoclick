@@ -117,19 +117,19 @@ void fltk_gui_close(fltk_gui_t* ctx) {
 
 }
 
-void init_gui(gui_t* gui, const spin_param_t* spin_params, int, char**) {
+void init_gui(gui_t* gui, const spin_param_t* spin_params, const char** button_names, int, char**) {
     auto ctx = new fltk_gui_t;
 
     ctx->win = new Fl_Double_Window(205, 155, "fltkAutoClick");
     ctx->win->begin();
     ctx->win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
-    ctx->buttons[BUTTON_TAP] = create_button("Tap", tap_callback);
-    ctx->buttons[BUTTON_STOP] = create_button("Stop", stop_callback);
-    ctx->buttons[BUTTON_START] = create_button("Start", start_callback);
-
     for (int c = 0; c < SPINS_COUNT; c++)
         ctx->spins[c] = create_spin(spin_params[c]);
+
+    std::array<Fl_Callback*, BUTTONS_COUNT> callbacks = { tap_callback, stop_callback, start_callback };
+    for (int c = 0; c < BUTTONS_COUNT; c++)
+        ctx->buttons[c] = create_button(button_names[c], callbacks[c]);
 
     ctx->win->end();
 

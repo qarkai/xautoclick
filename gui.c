@@ -30,6 +30,7 @@ gui_t* gui_init(int argc, char **argv) {
         {"Random +/-", "ms", 0},
         {"# of clicks", "", 1}
     };
+    const char* button_names[BUTTONS_COUNT] = { "Tap", "Stop", "Start" };
     gui_t* gui;
 
     gui = calloc(1, sizeof(gui_t));
@@ -38,7 +39,7 @@ gui_t* gui_init(int argc, char **argv) {
 
     gui->is_save_values = true;
 
-    init_gui(gui, spin_params, argc, argv);
+    init_gui(gui, spin_params, button_names, argc, argv);
     if (!gui->ctx) {
         free(gui);
         return NULL;

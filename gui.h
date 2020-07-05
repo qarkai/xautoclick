@@ -50,7 +50,7 @@ void gui_close(gui_t* gui);
 
 /* Stuff that has to be implemented for each GUI */
 
-void init_gui(gui_t* gui, const spin_param_t* spin_params, int argc, char **argv);
+void init_gui(gui_t* gui, const spin_param_t* spin_params, const char** button_names, int argc, char **argv);
 void set_alarm(int ms);
 
 #endif

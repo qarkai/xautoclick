@@ -55,7 +55,7 @@ static void print_spin_command(char cmd, const spin_param_t* spin_param) {
         printf("%c - set %s\n", cmd, spin_param->descr);
 }
 
-void init_gui(gui_t* gui, const spin_param_t* spin_params, int argc, char **argv) {
+void init_gui(gui_t* gui, const spin_param_t* spin_params, const char** button_names, int argc, char **argv) {
     ascii_gui_t* ctx;
 
     (void)argc;
@@ -72,8 +72,8 @@ void init_gui(gui_t* gui, const spin_param_t* spin_params, int argc, char **argv
     print_spin_command('i', &spin_params[SPIN_INTERVAL]);
     print_spin_command('r', &spin_params[SPIN_RANDOM]);
     print_spin_command('n', &spin_params[SPIN_NUMBER]);
-    printf("t - tap\n");
-    printf("s - start\n");
+    printf("t - %s\n", button_names[BUTTON_TAP]);
+    printf("s - %s\n", button_names[BUTTON_START]);
     printf("q - quit\n");
     printf("\n");
 

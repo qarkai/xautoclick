@@ -61,7 +61,7 @@ void set_alarm(int ms) {
     clickTimer->start(ms);
 }
 
-void init_gui(gui_t* gui, const spin_param_t* spin_params, int argc, char **argv) {
+void init_gui(gui_t* gui, const spin_param_t* spin_params, const char** button_names, int argc, char **argv) {
     static int argn = argc; // QApplication reference to argc workaround
     app = new QApplication(argn, argv);
 
@@ -69,7 +69,7 @@ void init_gui(gui_t* gui, const spin_param_t* spin_params, int argc, char **argv
     clickTimer->setSingleShot(true);
     QObject::connect(clickTimer, &QTimer::timeout, common_alarm_callback);
 
-    gui->ctx = new ClickWidget(spin_params);
+    gui->ctx = new ClickWidget(spin_params, button_names);
     gui->set_button_sensitive = (gui_set_button_sensitive_t)qt_gui_set_button_sensitive;
     gui->get_spin_value = (gui_get_spin_value_t)qt_gui_get_spin_value;
     gui->set_spin_value = (gui_set_spin_value_t)qt_gui_set_spin_value;

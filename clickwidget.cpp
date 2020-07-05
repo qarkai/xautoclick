@@ -33,9 +33,7 @@ extern "C" {
 
 #include <climits>
 
-ClickWidget::ClickWidget(const spin_param_t* spin_params, QWidget *parent) : QWidget(parent) {
-    std::array<QString, BUTTONS_COUNT> btnNames = { "Tap", "Stop", "Start" };
-
+ClickWidget::ClickWidget(const spin_param_t* spin_params, const char** button_names, QWidget *parent) : QWidget(parent) {
     auto vbox = new QVBoxLayout;
 
     for (int c = 0; c < SPINS_COUNT; c++) {
@@ -50,14 +48,13 @@ ClickWidget::ClickWidget(const spin_param_t* spin_params, QWidget *parent) : QWi
         vbox->addLayout(layout);
     }
 
+    std::array<std::function<void()>, BUTTONS_COUNT> callbacks = { common_tap_button, common_stop_button, common_start_button };
     auto layout = new QHBoxLayout;
 
-    for (int c = 0; c < BUTTONS_COUNT; c++)
-        layout->addWidget(buttons[c] = new QPushButton(btnNames[c]));
-
-    connect(buttons[BUTTON_TAP], &QPushButton::clicked, common_tap_button);
-    connect(buttons[BUTTON_STOP], &QPushButton::clicked, common_stop_button);
-    connect(buttons[BUTTON_START], &QPushButton::clicked, common_start_button);
+    for (int c = 0; c < BUTTONS_COUNT; c++) {
+        layout->addWidget(buttons[c] = new QPushButton(button_names[c]));
+        connect(buttons[c], &QPushButton::clicked, callbacks[c]);
+    }
 
     vbox->addLayout(layout);
     setWindowIcon(QIcon::fromTheme("xautoclick"));

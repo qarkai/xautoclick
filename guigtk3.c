@@ -135,18 +135,15 @@ static GtkWidget *create_labeled_button(GObject *root,
     return button;
 }
 
-static void create_buttons(gtk_gui_t* ctx, GObject *root, GtkWidget *box) {
-    struct btn_param {
-        const char* text;
-        GCallback callback;
-    } btn_params[BUTTONS_COUNT] = {
-        {"Tap", G_CALLBACK (common_tap_button)},
-        {"Stop", G_CALLBACK (common_stop_button)},
-        {"Start", G_CALLBACK (common_start_button)}
+static void create_buttons(gtk_gui_t* ctx, GObject *root, GtkWidget *box, const char** names) {
+    GCallback callbacks[BUTTONS_COUNT] = {
+        G_CALLBACK (common_tap_button),
+        G_CALLBACK (common_stop_button),
+        G_CALLBACK (common_start_button)
     };
 
     for (int c = 0; c < BUTTONS_COUNT; ++c)
-        ctx->buttons[c] = create_labeled_button(root, box, btn_params[c].text, btn_params[c].callback);
+        ctx->buttons[c] = create_labeled_button(root, box, names[c], callbacks[c]);
 }
 
 static gboolean gautoclick_exit(GtkWidget *widget, G_GNUC_UNUSED GdkEvent *event, G_GNUC_UNUSED gpointer user_data) {
@@ -155,7 +152,7 @@ static gboolean gautoclick_exit(GtkWidget *widget, G_GNUC_UNUSED GdkEvent *event
     return TRUE;
 }
 
-static void create_gAutoClick(gtk_gui_t* ctx, const spin_param_t* spin_params) {
+static void create_gAutoClick(gtk_gui_t* ctx, const spin_param_t* spin_params, const char** button_names) {
     GObject *gAutoClick_obj;
     GtkWidget *gAutoClick_win;
     GtkWidget *vbox;
@@ -181,7 +178,7 @@ static void create_gAutoClick(gtk_gui_t* ctx, const spin_param_t* spin_params) {
     add_widget(gAutoClick_obj, hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
-    create_buttons(ctx, gAutoClick_obj, hbox);
+    create_buttons(ctx, gAutoClick_obj, hbox, button_names);
 
     g_signal_connect (gAutoClick_obj, "delete-event",
                       G_CALLBACK (gautoclick_exit), NULL);
@@ -189,7 +186,7 @@ static void create_gAutoClick(gtk_gui_t* ctx, const spin_param_t* spin_params) {
     ctx->window = gAutoClick_win;
 }
 
-void init_gui(gui_t* gui, const spin_param_t* spin_params, int argc, char **argv) {
+void init_gui(gui_t* gui, const spin_param_t* spin_params, const char** button_names, int argc, char **argv) {
     gtk_gui_t* ctx;
 
     ctx = calloc(1, sizeof(gtk_gui_t));
@@ -200,7 +197,7 @@ void init_gui(gui_t* gui, const spin_param_t* spin_params, int argc, char **argv
 
     gtk_init(&argc, &argv);
 
-    create_gAutoClick(ctx, spin_params);
+    create_gAutoClick(ctx, spin_params, button_names);
 
     gui->ctx = ctx;
     gui->set_button_sensitive = (gui_set_button_sensitive_t)gtk_gui_set_button_sensitive;

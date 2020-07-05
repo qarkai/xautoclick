@@ -42,10 +42,11 @@ static void cli_gui_set_spin_value(cli_gui_t* ctx, spin_t spin, int value);
 static void cli_gui_main_loop(cli_gui_t* ctx);
 static void cli_gui_close(cli_gui_t* ctx);
 
-void init_gui(gui_t* gui, const spin_param_t* spin_params, int argc, char **argv) {
+void init_gui(gui_t* gui, const spin_param_t* spin_params, const char** button_names, int argc, char **argv) {
     cli_gui_t* ctx;
 
     (void)spin_params;
+    (void)button_names;
 
     ctx = calloc(1, sizeof(cli_gui_t));
     if (!ctx) {
