@@ -152,12 +152,12 @@ static int calculate_average(const int *buffer, int length, int *min, int *max) 
 #define THRESHOLD (5 * 1000)   /* 5 seconds */
 #define HISTORYSIZE 10
 
-static unsigned int get_timer(void) {
+static unsigned int get_timer_ms(void) {
     struct timespec tv;
 
     timespec_get(&tv, TIME_UTC);
 
-    return tv.tv_sec * 1000000 + tv.tv_nsec / 1000;
+    return tv.tv_sec * 1000 + tv.tv_nsec / 1000000;
 }
 
 void common_tap_button(void) {
@@ -166,7 +166,7 @@ void common_tap_button(void) {
     int curtime, interval;
     int min, max;
 
-    curtime  = get_timer() / 1000;
+    curtime  = get_timer_ms();
     interval = curtime - prevtime;
 
 #ifdef DEBUG
