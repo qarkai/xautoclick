@@ -29,55 +29,45 @@ target_link_libraries(udevclicker ${LIBEVDEV_LIBRARIES})
 add_library(clicker STATIC
     clicker.c
     clicker.h
+    gui.c
+    gui.h
+    main.c
+    main.h
+    options.c
+    options.h
+    osdep.h
 )
 target_link_libraries(clicker udevclicker x11clicker)
 
-add_library(common STATIC
-    gui.c
-    gui.h
-    options.c
-    options.h
-)
-
-set(SOURCE_COMMON
-    main.c
-    main.h
-    osdep.h
-)
-
 add_executable(aautoclick
-    ${SOURCE_COMMON}
     guiascii.c
 )
-target_link_libraries(aautoclick clicker common)
+target_link_libraries(aautoclick clicker)
 install(TARGETS aautoclick DESTINATION bin)
 
 add_executable(cautoclick
-    ${SOURCE_COMMON}
     guicommandline.c
 )
-target_link_libraries(cautoclick clicker common)
+target_link_libraries(cautoclick clicker)
 install(TARGETS cautoclick DESTINATION bin)
 
 set(FLTK_SKIP_OPENGL ON)
 find_package(FLTK)
 if(FLTK_FOUND)
     add_executable(fltkautoclick
-        ${SOURCE_COMMON}
         guifltk.cpp
     )
-    target_link_libraries(fltkautoclick clicker common ${FLTK_LIBRARIES})
+    target_link_libraries(fltkautoclick clicker ${FLTK_LIBRARIES})
     install(TARGETS fltkautoclick DESTINATION bin)
 endif()
 
 pkg_check_modules(GTK3 gtk+-3.0)
 if(GTK3_FOUND)
     add_executable(gautoclick3
-        ${SOURCE_COMMON}
         guigtk3.c
     )
     target_include_directories(gautoclick3 PRIVATE ${GTK3_INCLUDE_DIRS})
-    target_link_libraries(gautoclick3 clicker common ${GTK3_LIBRARIES})
+    target_link_libraries(gautoclick3 clicker ${GTK3_LIBRARIES})
     install(TARGETS gautoclick3 DESTINATION bin)
     install(FILES xautoclick.desktop DESTINATION share/applications)
     install(FILES xautoclick.svg DESTINATION share/icons/hicolor/scalable/apps)
@@ -87,12 +77,11 @@ find_package(Qt5 COMPONENTS Widgets)
 if(Qt5_FOUND)
     set(CMAKE_AUTOMOC ON)
     add_executable(qt5autoclick
-        ${SOURCE_COMMON}
         clickwidget.cpp
         clickwidget.h
         guiqt.cpp
     )
-    target_link_libraries(qt5autoclick clicker common Qt5::Widgets)
+    target_link_libraries(qt5autoclick clicker Qt5::Widgets)
     install(TARGETS qt5autoclick DESTINATION bin)
 endif()
 
