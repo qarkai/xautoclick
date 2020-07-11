@@ -1,5 +1,7 @@
 # xAutoClick
 
+![CodeQL analysis](https://github.com/qarkai/xautoclick/workflows/CodeQL%20analysis/badge.svg)
+
 ## Note
 
 It's the fork of [xAutoClick](http://xautoclick.sourceforge.net/).
