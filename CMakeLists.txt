@@ -35,7 +35,7 @@ list(APPEND CLICKERS udevclicker)
 endif(LIBEVDEV_FOUND)
 endif(PKG_CONFIG_FOUND)
 
-if(NOT clickers)
+if(NOT CLICKERS)
     message(FATAL_ERROR "No clicker engines could be built.")
 endif()
 
