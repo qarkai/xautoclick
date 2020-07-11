@@ -26,18 +26,30 @@ Currently, xAutoClick has GUI front-ends for X11/CLI, X11/FLTK, X11/GTK+ 3.0 and
 
 ## Compilation
 
+### Dependencies
+
 Dependency | Debian / Ubuntu
 -- | --
-CMake      | `cmake`
+CMake | `cmake`
+
+At least one of clicker engines
+
+X11 clicker engine | Debian / Ubuntu
+-- | --
+libxtst | `libxtst-dev`
+
+Udev clicker engine | Debian / Ubuntu
+-- | --
 libevdev   | `libevdev-dev`
-libxtst    | `libxtst-dev`
 pkg-config | `pkgconf` or `pkg-config`
 
-Optional | Debian / Ubuntu
+Optional GUI | Debian / Ubuntu
 -- | --
 FLTK | `libfltk1.3-dev`
 GTK3 | `libgtk-3-dev`
 Qt5  | `qtbase5-dev`
+
+### Build
 
 To prepare, run:
 
@@ -53,6 +65,16 @@ To build if all is fine (at least one GUI must be set to yes), run:
 cmake --build .
 ```
 
+### Install
+
+To install, run:
+
+```sh
+sudo cmake --build . --target install
+```
+
+### Run
+
 To run without installation, use one of compiled executables in `./build` according to:
 
 GUI | Executable
@@ -62,12 +84,6 @@ CLI   | `cautoclick`
 FLTK  | `fltkautoclick`
 GTK   | `gautoclick3`
 Qt    | `qt5autoclick`
-
-To install, run:
-
-```sh
-sudo cmake --build . --target install
-```
 
 ## Authors
 

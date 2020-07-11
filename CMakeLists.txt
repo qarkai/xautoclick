@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.6)
 
 project(xautoclick VERSION 0.34)
 
-find_package(X11 REQUIRED)
-
 include(CheckIncludeFile)
 check_include_file("unistd.h" HAVE_UNISTD)
 if(${HAVE_UNISTD})
@@ -11,20 +9,35 @@ if(${HAVE_UNISTD})
     # TODO add_compile_definitions(HAVE_UNISTD_H)
 endif()
 
+find_package(X11)
+if(X11_FOUND)
 add_library(x11clicker STATIC
     x11clicker.c
     x11clicker.h
 )
 target_link_libraries(x11clicker ${X11_LIBRARIES} ${X11_XTest_LIB})
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHAVE_X11_CLICKER")
+list(APPEND CLICKERS x11clicker)
+endif()
 
-find_package(PkgConfig REQUIRED)
+find_package(PkgConfig)
+if(PKG_CONFIG_FOUND)
 pkg_check_modules(LIBEVDEV libevdev)
+if(LIBEVDEV_FOUND)
 add_library(udevclicker STATIC
     udevclicker.c
     udevclicker.h
 )
 target_include_directories(udevclicker PRIVATE ${LIBEVDEV_INCLUDE_DIRS})
 target_link_libraries(udevclicker ${LIBEVDEV_LIBRARIES})
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHAVE_UDEV_CLICKER")
+list(APPEND CLICKERS udevclicker)
+endif(LIBEVDEV_FOUND)
+endif(PKG_CONFIG_FOUND)
+
+if(NOT clickers)
+    message(FATAL_ERROR "No clicker engines could be built.")
+endif()
 
 add_library(clicker STATIC
     clicker.c
@@ -37,7 +50,7 @@ add_library(clicker STATIC
     options.h
     osdep.h
 )
-target_link_libraries(clicker udevclicker x11clicker)
+target_link_libraries(clicker ${CLICKERS})
 
 add_executable(aautoclick
     guiascii.c

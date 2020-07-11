@@ -21,8 +21,12 @@
 
 #include "clicker.h"
 
+#ifdef HAVE_UDEV_CLICKER
 #include "udevclicker.h"
+#endif
+#ifdef HAVE_X11_CLICKER
 #include "x11clicker.h"
+#endif
 
 #include <stdlib.h>
 
@@ -39,8 +43,12 @@ static clicker_t* clicker_create(clicker_type_t type) {
         return NULL;
 
     switch (type) {
+#ifdef HAVE_UDEV_CLICKER
     case CLICKER_UDEV: udev_clicker_init(clicker); break;
+#endif
+#ifdef HAVE_X11_CLICKER
     case CLICKER_X11: x11_clicker_init(clicker); break;
+#endif
     default: break;
     }
 
