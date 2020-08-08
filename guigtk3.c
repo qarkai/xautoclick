@@ -125,12 +125,6 @@ static GtkWidget *create_labeled_spin(GObject *root,
     return spin;
 }
 
-static void create_spins(gtk_gui_t* ctx, GObject *root, GtkWidget *box, const spin_param_t* spin_params) {
-    for (int c = 0; c < SPINS_COUNT; ++c) {
-        ctx->spins[c] = create_labeled_spin(root, box, &spin_params[c]);
-    }
-}
-
 static GtkWidget *create_labeled_button(GObject *root,
                                         GtkWidget *hbox,
                                         const gchar *button_text,
@@ -184,7 +178,8 @@ static void create_gAutoClick(gtk_gui_t* ctx, const spin_param_t* spin_params, c
     add_widget(gAutoClick_obj, vbox);
     gtk_container_add (GTK_CONTAINER (gAutoClick_win), vbox);
 
-    create_spins(ctx, gAutoClick_obj, vbox, spin_params);
+    for (int c = 0; c < SPINS_COUNT; ++c)
+        ctx->spins[c] = create_labeled_spin(gAutoClick_obj, vbox, &spin_params[c]);
 
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     add_widget(gAutoClick_obj, hbox);
