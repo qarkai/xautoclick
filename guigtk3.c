@@ -71,10 +71,25 @@ static void add_widget(GObject *root, GtkWidget *widget) {
     gtk_widget_show(widget);
 }
 
+static gboolean
+add_suffix (GtkSpinButton *spin, gchar* suffix)
+{
+   GtkAdjustment *adjustment;
+   gchar *text;
+   int value;
+
+   adjustment = gtk_spin_button_get_adjustment (spin);
+   value = (int)gtk_adjustment_get_value (adjustment);
+   text = g_strdup_printf ("%d %s", value, suffix);
+   gtk_entry_set_text (GTK_ENTRY (spin), text);
+   g_free (text);
+
+   return TRUE;
+}
+
 static GtkWidget *create_labeled_spin(GObject *root,
                                       GtkWidget *vbox,
-                                      const gchar *label_text,
-                                      gdouble spin_min_value) {
+                                      const spin_param_t* param) {
     GtkAdjustment *adj;
     GtkWidget *hbox;
     GtkWidget *label;
@@ -84,7 +99,7 @@ static GtkWidget *create_labeled_spin(GObject *root,
     add_widget(root, hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
-    label = gtk_label_new (label_text);
+    label = gtk_label_new (param->descr);
     add_widget(root, label);
     gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
     /*gtk_label_set_justify (GTK_LABEL (predelay_label), GTK_JUSTIFY_FILL);*/
@@ -93,29 +108,26 @@ static GtkWidget *create_labeled_spin(GObject *root,
     add_widget(root, label);
     gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, FALSE, 0);
 
-    adj = gtk_adjustment_new (spin_min_value, spin_min_value, INT_MAX, 1, 10, 0);
+    adj = gtk_adjustment_new (param->min_value, param->min_value, INT_MAX, 1, 10, 0);
 
     spin = gtk_spin_button_new (adj, 1, 0);
+    if (param->suffix && *param->suffix != '\0')
+        g_signal_connect (G_OBJECT (spin), "output",
+                          G_CALLBACK (add_suffix), (gpointer) param->suffix);
+    else
+        gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (spin), TRUE);
+
     add_widget(root, spin);
     gtk_box_pack_start (GTK_BOX (hbox), spin, FALSE, FALSE, 0);
 
     gtk_widget_set_size_request (spin, 64, 0);
-    gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (spin), TRUE);
 
     return spin;
 }
 
 static void create_spins(gtk_gui_t* ctx, GObject *root, GtkWidget *box, const spin_param_t* spin_params) {
     for (int c = 0; c < SPINS_COUNT; ++c) {
-        gchar* descr;
-
-        if (spin_params[c].suffix && *spin_params[c].suffix != '\0')
-            descr = g_strdup_printf("%s, %s", spin_params[c].descr, spin_params[c].suffix);
-        else
-            descr = g_strdup(spin_params[c].descr);
-
-        ctx->spins[c] = create_labeled_spin(root, box, descr, spin_params[c].min_value);
-        g_free(descr);
+        ctx->spins[c] = create_labeled_spin(root, box, &spin_params[c]);
     }
 }
 
