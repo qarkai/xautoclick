@@ -95,7 +95,7 @@ static GtkWidget *create_labeled_spin(GObject *root,
     GtkWidget *label;
     GtkWidget *spin;
 
-    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
+    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
     add_widget(root, hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
@@ -165,20 +165,21 @@ static void create_gAutoClick(gtk_gui_t* ctx, const spin_param_t* spin_params, c
     gAutoClick_obj = G_OBJECT (gAutoClick_win);
     g_object_set_data (gAutoClick_obj, "gAutoClick", gAutoClick_win);
 
-    gtk_container_set_border_width (GTK_CONTAINER (gAutoClick_win), 4);
+    gtk_container_set_border_width (GTK_CONTAINER (gAutoClick_win), 18);
     gtk_window_set_icon_name (GTK_WINDOW (gAutoClick_win), "xautoclick");
     gtk_window_set_title (GTK_WINDOW (gAutoClick_win), "gAutoClick");
     /*  gtk_window_set_position (GTK_WINDOW (gAutoClick), GTK_WIN_POS_CENTER); */
     gtk_window_set_resizable(GTK_WINDOW (gAutoClick_win), FALSE);
 
-    vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+    vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
     add_widget(gAutoClick_obj, vbox);
     gtk_container_add (GTK_CONTAINER (gAutoClick_win), vbox);
 
     for (int c = 0; c < SPINS_COUNT; ++c)
         ctx->spins[c] = create_labeled_spin(gAutoClick_obj, vbox, &spin_params[c]);
 
-    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+    gtk_widget_set_margin_top (hbox, 12);
     add_widget(gAutoClick_obj, hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
