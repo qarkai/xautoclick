@@ -111,6 +111,7 @@ static GtkWidget *create_labeled_spin(GObject *root,
     adj = gtk_adjustment_new (param->min_value, param->min_value, INT_MAX, 1, 10, 0);
 
     spin = gtk_spin_button_new (adj, 1, 0);
+    gtk_entry_set_alignment (GTK_ENTRY (spin), 1.0);
     if (param->suffix && *param->suffix != '\0')
         g_signal_connect (G_OBJECT (spin), "output",
                           G_CALLBACK (add_suffix), (gpointer) param->suffix);
