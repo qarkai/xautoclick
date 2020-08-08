@@ -100,13 +100,9 @@ static GtkWidget *create_labeled_spin(GObject *root,
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
     label = gtk_label_new (param->descr);
+    gtk_widget_set_halign (label, GTK_ALIGN_END);
     add_widget(root, label);
-    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-    /*gtk_label_set_justify (GTK_LABEL (predelay_label), GTK_JUSTIFY_FILL);*/
-
-    label = gtk_label_new ("");
-    add_widget(root, label);
-    gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
 
     adj = gtk_adjustment_new (param->min_value, param->min_value, INT_MAX, 1, 10, 0);
 
