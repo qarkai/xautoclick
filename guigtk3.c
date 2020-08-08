@@ -131,7 +131,6 @@ static GtkWidget *create_labeled_button(GObject *root,
     button = gtk_button_new_with_label (button_text);
     add_widget(root, button);
     gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
-    gtk_container_set_border_width (GTK_CONTAINER (button), 2);
     g_signal_connect (G_OBJECT (button), "clicked",
                       on_button_clicked_func, NULL);
 
