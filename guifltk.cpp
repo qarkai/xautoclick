@@ -30,8 +30,8 @@ extern "C" {
 #include <FL/Fl_Spinner.H>
 
 #include <algorithm>
+#include <array>
 #include <climits>
-#include <functional>
 
 struct fltk_gui_t {
     Fl_Double_Window *win;
@@ -39,7 +39,8 @@ struct fltk_gui_t {
     std::array<Fl_Button*, BUTTONS_COUNT> buttons;
 };
 
-std::function<void(int)> set_alarm_f;
+using set_alarm_t = void(*)(int);
+static set_alarm_t set_alarm_f;
 
 static constexpr int border = 10;
 static constexpr int space = 5;
@@ -53,9 +54,13 @@ inline void alarm_callback(void*) {
     common_alarm_callback();
 }
 
+void set_alarm_repeat(int ms) {
+    Fl::repeat_timeout(0.001*ms, alarm_callback);
+}
+
 void set_alarm_init(int ms) {
     Fl::add_timeout(0.001*ms, alarm_callback);
-    set_alarm_f = [](int ms) { Fl::repeat_timeout(0.001*ms, alarm_callback); };
+    set_alarm_f = set_alarm_repeat;
 }
 
 Fl_Button* create_button(int win_height, const char** button_names, const std::array<Fl_Callback*, BUTTONS_COUNT>& callbacks, int n) {
