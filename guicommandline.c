@@ -31,12 +31,12 @@
 typedef struct cli_gui_ctx {
     int argc;
     char **argv;
+    spin_param_t spin_params[SPINS_COUNT];
     int spins[SPINS_COUNT];
 } cli_gui_t;
 
 static int sleeptime;
 
-static void print_help(const char* exec_name);
 static int cli_gui_get_spin_value(cli_gui_t* ctx, spin_t spin);
 static void cli_gui_set_spin_value(cli_gui_t* ctx, spin_t spin, int value);
 static void cli_gui_main_loop(cli_gui_t* ctx);
@@ -45,7 +45,6 @@ static void cli_gui_close(cli_gui_t* ctx);
 void init_gui(gui_t* gui, const spin_param_t* spin_params, const char** button_names, int argc, char **argv) {
     cli_gui_t* ctx;
 
-    (void)spin_params;
     (void)button_names;
 
     ctx = calloc(1, sizeof(cli_gui_t));
@@ -56,6 +55,7 @@ void init_gui(gui_t* gui, const spin_param_t* spin_params, const char** button_n
 
     ctx->argc = argc;
     ctx->argv = argv;
+    memcpy(ctx->spin_params, spin_params, sizeof(spin_param_t) * SPINS_COUNT);
 
     gui->ctx = ctx;
     gui->is_save_values = false; /* don't set options from command line */
@@ -69,11 +69,6 @@ void set_alarm(int ms) {
     sleeptime = ms;
 }
 
-static void print_help(const char* exec_name) {
-    printf("usage: %s [-h][-i <interval, ms>][-n <# of clicks>][-p <pre-delay, ms>][-r <random +/-, ms>]\n", exec_name);
-    exit(0);
-}
-
 static int cli_gui_get_spin_value(cli_gui_t* ctx, spin_t spin) {
     return ctx->spins[spin];
 }
@@ -82,13 +77,30 @@ static void cli_gui_set_spin_value(cli_gui_t* ctx, spin_t spin, int value) {
     ctx->spins[spin] = value;
 }
 
+static void print_option(char cmd, const spin_param_t* spin_param) {
+    if (spin_param->suffix && *spin_param->suffix != '\0')
+        printf("[-%c <%s, %s>]", cmd, spin_param->descr, spin_param->suffix);
+    else
+        printf("[-%c <%s>]", cmd, spin_param->descr);
+}
+
+static void print_help(const char* exec_name, const spin_param_t* spin_params) {
+    printf("usage: %s [-h]", exec_name);
+    print_option('p', &spin_params[SPIN_PREDELAY]);
+    print_option('i', &spin_params[SPIN_INTERVAL]);
+    print_option('r', &spin_params[SPIN_RANDOM]);
+    print_option('n', &spin_params[SPIN_NUMBER]);
+    printf("\n");
+    exit(0);
+}
+
 static void cli_gui_main_loop(cli_gui_t* ctx) {
     int c;
 
     /* parse command line */
     while ((c = getopt(ctx->argc, ctx->argv, "hi:n:p:r:")) != - 1) {
         switch (c) {
-        case 'h': print_help(ctx->argv[0]); break;
+        case 'h': print_help(ctx->argv[0], ctx->spin_params); break;
         case 'i': ctx->spins[SPIN_INTERVAL] = atoi(optarg); break;
         case 'n': ctx->spins[SPIN_NUMBER] = atoi(optarg); break;
         case 'p': ctx->spins[SPIN_PREDELAY] = atoi(optarg); break;
