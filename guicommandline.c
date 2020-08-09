@@ -36,7 +36,7 @@ typedef struct cli_gui_ctx {
 
 static int sleeptime;
 
-static void printhelp(char *myname);
+static void print_help(const char* exec_name);
 static int cli_gui_get_spin_value(cli_gui_t* ctx, spin_t spin);
 static void cli_gui_set_spin_value(cli_gui_t* ctx, spin_t spin, int value);
 static void cli_gui_main_loop(cli_gui_t* ctx);
@@ -69,8 +69,8 @@ void set_alarm(int ms) {
     sleeptime = ms;
 }
 
-static void printhelp(char *myname) {
-    printf("usage: %s [-h][-i <interval, ms>][-n <# of clicks>][-p <pre-delay, ms>][-r <random +/-, ms>]\n", myname);
+static void print_help(const char* exec_name) {
+    printf("usage: %s [-h][-i <interval, ms>][-n <# of clicks>][-p <pre-delay, ms>][-r <random +/-, ms>]\n", exec_name);
     exit(0);
 }
 
@@ -88,7 +88,7 @@ static void cli_gui_main_loop(cli_gui_t* ctx) {
     /* parse command line */
     while ((c = getopt(ctx->argc, ctx->argv, "hi:n:p:r:")) != - 1) {
         switch (c) {
-        case 'h': printhelp(ctx->argv[0]); break;
+        case 'h': print_help(ctx->argv[0]); break;
         case 'i': ctx->spins[SPIN_INTERVAL] = atoi(optarg); break;
         case 'n': ctx->spins[SPIN_NUMBER] = atoi(optarg); break;
         case 'p': ctx->spins[SPIN_PREDELAY] = atoi(optarg); break;
