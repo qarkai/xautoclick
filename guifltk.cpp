@@ -25,10 +25,11 @@ extern "C" {
 }
 
 #include <FL/Fl.H>
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Spinner.H>
-#include <FL/Fl_Button.H>
 
+#include <algorithm>
 #include <climits>
 #include <functional>
 
@@ -39,6 +40,12 @@ struct fltk_gui_t {
 };
 
 std::function<void(int)> set_alarm_f;
+
+static constexpr int border = 10;
+static constexpr int space = 5;
+static constexpr int spin_width = 75;
+static constexpr int btn_width = 55;
+static constexpr int height = 25;
 
 namespace {
 
@@ -51,12 +58,9 @@ void set_alarm_init(int ms) {
     set_alarm_f = [](int ms) { Fl::repeat_timeout(0.001*ms, alarm_callback); };
 }
 
-Fl_Button* create_button(const char* name, Fl_Callback *callback) {
-    static int n = 0;
-    constexpr int width = 55;
-    auto button = new Fl_Button(5 + width*n, 125, width, 25, name);
-    button->callback(callback);
-    ++n;
+Fl_Button* create_button(int win_height, const char** button_names, const std::array<Fl_Callback*, BUTTONS_COUNT>& callbacks, int n) {
+    auto button = new Fl_Button(border + (btn_width + space) * n, win_height - (height + border), btn_width, height, button_names[n]);
+    button->callback(callbacks[n]);
     return button;
 }
 
@@ -73,9 +77,9 @@ void start_callback(Fl_Widget*, void*) {
     common_start_button();
 }
 
-Fl_Spinner* create_spin(const spin_param_t& param) {
-    static int n = 0;
-    auto spin = new Fl_Spinner(95, 5+n*30, 75, 25, param.descr);
+Fl_Spinner* create_spin(int win_width, const spin_param_t* spin_params, int n) {
+    const auto& param = spin_params[n];
+    auto spin = new Fl_Spinner(win_width - (spin_width + border), border + n * (space + height), spin_width, height, param.descr);
     spin->range(param.min_value, INT_MAX);
 
     if (param.suffix && *param.suffix != '\0') {
@@ -88,7 +92,6 @@ Fl_Spinner* create_spin(const spin_param_t& param) {
         spin->format(format); // TODO: memleak format?
     }
 
-    ++n;
     return spin;
 }
 
@@ -120,16 +123,22 @@ void fltk_gui_close(fltk_gui_t* ctx) {
 void init_gui(gui_t* gui, const spin_param_t* spin_params, const char** button_names, int, char**) {
     auto ctx = new fltk_gui_t;
 
-    ctx->win = new Fl_Double_Window(175, 155, "fltkAutoClick");
+    auto buttons_width = btn_width * BUTTONS_COUNT + space * (BUTTONS_COUNT - 1);
+    auto win_width = std::max(/*label_width*/90 + spin_width, buttons_width) + border * 2;
+
+    auto row_count = SPINS_COUNT + 1;
+    auto win_height = (height + space) * row_count + border * 2;
+
+    ctx->win = new Fl_Double_Window(win_width, win_height, "fltkAutoClick");
     ctx->win->begin();
     ctx->win->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
 
     for (int c = 0; c < SPINS_COUNT; c++)
-        ctx->spins[c] = create_spin(spin_params[c]);
+        ctx->spins[c] = create_spin(win_width, spin_params, c);
 
     std::array<Fl_Callback*, BUTTONS_COUNT> callbacks = { tap_callback, stop_callback, start_callback };
     for (int c = 0; c < BUTTONS_COUNT; c++)
-        ctx->buttons[c] = create_button(button_names[c], callbacks[c]);
+        ctx->buttons[c] = create_button(win_height, button_names, callbacks, c);
 
     ctx->win->end();
 
