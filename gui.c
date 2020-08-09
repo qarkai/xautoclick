@@ -28,7 +28,7 @@ gui_t* gui_init(int argc, char **argv) {
         {"Pre-delay", "ms", 0},
         {"Interval", "ms", 0},
         {"Random +/-", "ms", 0},
-        {"# of clicks", "", 1}
+        {"# of clicks", NULL, 1}
     };
     const char* button_names[BUTTONS_COUNT] = { "Tap", "Stop", "Start" };
     gui_t* gui;
