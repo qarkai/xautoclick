@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.10)
 
 project(xautoclick VERSION 0.34)
 
@@ -70,6 +70,12 @@ if(FLTK_FOUND)
     add_executable(fltkautoclick
         guifltk.cpp
     )
+
+    if(PKG_CONFIG_FOUND)
+        pkg_check_modules(CAIRO REQUIRED cairo)
+        target_compile_options(fltkautoclick PRIVATE ${CAIRO_CFLAGS})
+    endif(PKG_CONFIG_FOUND)
+
     target_link_libraries(fltkautoclick clicker ${FLTK_LIBRARIES})
     install(TARGETS fltkautoclick DESTINATION bin)
 endif()
