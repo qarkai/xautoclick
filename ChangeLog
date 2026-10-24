@@ -1,6 +1,13 @@
 ChangeLog
 =========
 
+v0.35
+    * white frame arround icon ==> better visible on dark mode desktops (#15)
+    * added preview (#16)
+    * follow FLTK and GNOME HIGs
+    * Make libevdev and x11 optional dependencies
+      but at least one have to be satisfied for build
+
 v0.34
     * add uinput clicker backend with fallback to X11
     * pkg-config is required for build

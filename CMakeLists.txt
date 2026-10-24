@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(xautoclick VERSION 0.34)
+project(xautoclick VERSION 0.35)
 
 include(CheckIncludeFile)
 check_include_file("unistd.h" HAVE_UNISTD)
